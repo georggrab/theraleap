@@ -1,0 +1,30 @@
+{
+  "name": "theraleap",
+  "version": "0.0.1-prealpha",
+  "description": "Online Assisted Ergotherapy",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Georg Grab",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/underscore": "^1.8.7",
+    "ts-loader": "^3.5.0",
+    "tsconfig-paths-webpack-plugin": "^2.0.0",
+    "typescript": "^2.7.1",
+    "vue-loader": "^14.1.1",
+    "vue-template-compiler": "^2.5.13",
+    "webpack": "^3.11.0"
+  },
+  "dependencies": {
+    "@reactivex/rxjs": "^5.5.6",
+    "es6-promise": "^4.2.4",
+    "inversify": "^4.10.0",
+    "leapjs": "^0.6.4",
+    "underscore": "^1.8.3",
+    "vue": "^2.5.13",
+    "vue-class-component": "^6.2.0",
+    "vue-property-decorator": "^6.0.0"
+  }
+}

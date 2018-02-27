@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+      "sourceMap": true,
+      "moduleResolution": "node",
+      "allowSyntheticDefaultImports": true,
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true,
+      "strict": true,
+      "baseUrl": "src/",
+      "paths": {
+        "@/*": [ "./*" ]
+      },
+      "lib": [
+        "dom",
+        "es5",
+        "es2015.promise",
+        "es2015.symbol"
+      ]
+    }
+  }
