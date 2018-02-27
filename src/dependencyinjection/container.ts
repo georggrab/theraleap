@@ -1,7 +1,7 @@
 import { Container } from 'inversify';
 
-import { DeviceDriver, HardwareDriverConnectionSettings } from '@/devices';
-import { LeapDriver } from '@/devices/leapmotion';
+import { DeviceDriver, DeviceFacade, HardwareDriverConnectionSettings } from '@/devices';
+import { LeapDriver, LeapFacade } from '@/devices/leapmotion';
 import DIIdent from '@/dependencyinjection/symbols';
 
 const AppContainer = new Container();
@@ -14,5 +14,7 @@ AppContainer.bind<HardwareDriverConnectionSettings>(DIIdent.SETTINGS_HARDWARE_DR
         frameEventName: 'deviceFrame',
         enableGestures: true
     });
+AppContainer.bind<DeviceFacade>(DIIdent.SERVICE_MOTION_TRACKING_DEVICE_FACADE)
+    .to(LeapFacade).inSingletonScope();
 
 export { AppContainer };

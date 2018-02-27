@@ -18,3 +18,8 @@ export default class ConnectionState extends Vue {
     public deviceState: DeviceConnectionState = InitialDeviceState;
 }
 </script>
+<style lang="scss" scoped>
+ul {
+    list-style: none;
+}
+</style>

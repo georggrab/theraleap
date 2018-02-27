@@ -23,6 +23,10 @@ export interface DeviceConnectionState {
     connectedToNativeDeviceDriver: boolean;
 }
 
+export interface HandTrackingData {
+
+}
+
 export interface HardwareDriverConnectionSettings { }
 
 export const InitialDeviceState = { 
@@ -37,4 +41,9 @@ export interface DeviceDriver {
     getDeviceConnectionState: () => Promise<DeviceConnectionState>;
     streamConnectionState: () => Observable<DeviceConnectionState> | undefined;
     establishConnection: () => Observable<DeviceConnectionState>;
+}
+
+export interface DeviceFacade {
+    getDeviceDriver: () => DeviceDriver;
+    getHandTrackingData: () => Observable<HandTrackingData> | undefined;
 }

@@ -1,4 +1,5 @@
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+const path = require('path')
 
 module.exports = {
     entry: "./src/main.ts",
@@ -10,7 +11,10 @@ module.exports = {
         extensions: [".webpack.js", ".web.js", ".ts", ".tsx", ".js", ".vue"],
         plugins: [
             new TsconfigPathsPlugin({})
-        ]
+        ],
+        alias: {
+            styles: path.resolve(__dirname, './assets/')
+        }
     },
     module: {
         loaders: [
@@ -20,7 +24,15 @@ module.exports = {
                 options: {
                     loaders: {
                         ts: 'ts-loader'
-                    }
+                    },
+                    postcss: [
+                        require('postcss-font-magician')({
+                            foundries: ['google'],
+                            variants: {
+                                'Inconsolata': {}
+                            }
+                        })
+                    ]
                 }
             },
             { 

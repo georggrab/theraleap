@@ -5,7 +5,7 @@ import { isEqual } from 'underscore';
 import * as leap from 'leapjs';
 
 import DIIdent from '@/dependencyinjection/symbols';
-import { DeviceDriver, DeviceConnectionState } from '@/devices';
+import { DeviceDriver, DeviceConnectionState, HandTrackingData } from '@/devices';
 
 @injectable()
 export class LeapDriver implements DeviceDriver {
@@ -30,20 +30,21 @@ export class LeapDriver implements DeviceDriver {
             const sock = 
               new WebSocket(`ws://${this.controllerSettings.host}:${this.controllerSettings.port}`);
 
+            const hdl = window.setTimeout(() => { 
+                if (sock.readyState === sock.OPEN) {
+                    resolve(true);
+                    sock.close();
+                } else { 
+                    resolve(false); 
+                }
+             }, maxWaitTimeInMs);
+
             sock.onerror = () => { 
                 resolve(false);
-                sock.close();
+                window.clearTimeout(hdl);
             };
 
-            setTimeout(() => { 
-                resolve(true);
-                sock.close();
-             }, maxWaitTimeInMs);
         });
-    }
-
-    public async isReady(maxWaitTimeInMs: number = 1000): Promise<boolean> {
-        return false;
     }
 
     public async getDeviceConnectionState(): Promise<DeviceConnectionState> {
@@ -75,7 +76,19 @@ export class LeapDriver implements DeviceDriver {
         return this.monitor;
     }
 
-    public connect() {
-        this.controller.connect();
+    public setUpFrameStream(): Observable<HandTrackingData> {
+        return Observable.create((observer: Observer<HandTrackingData>) => {
+            this.controller.on('frame', (frame: any) => observer.next(frame))
+        });
+    }
+
+    public async connect(): Promise<boolean> {
+        this.controller.disconnect();
+        return new Promise((resolve: (v: boolean) => void) => {
+            this.controller.once('connect', () => { 
+                this.connectionActive = true;
+                resolve(true) });
+            this.controller.connect();
+        });
     }
 }
