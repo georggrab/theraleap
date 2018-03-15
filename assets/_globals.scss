@@ -1,7 +1,9 @@
 @import '~styles/_vars.scss';
+@import '../../node_modules/vue-material/dist/vue-material.min.css';
+@import '../../node_modules/vue-material/dist/theme/default-dark.css';
 
 body {
     background-color: $background-primary;
     color: $foreground-primary;
-    font-family: 'Inconsolata', monospace;
+    font-family: 'Roboto', monospace;
 }

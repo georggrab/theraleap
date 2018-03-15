@@ -1,6 +1,13 @@
 import Vue from 'vue';
 import 'es6-promise/auto';
 
+//@ts-ignore
+import VueMaterial from 'vue-material'
+import VueRouter from 'vue-router'
+
+Vue.use(VueMaterial)
+Vue.use(VueRouter)
+
 import LeapDebugInterface from '@/ui/LeapDebugInterface.vue';
 import DIIdent from '@/dependencyinjection/symbols';
 import { AppContainer } from '@/dependencyinjection';

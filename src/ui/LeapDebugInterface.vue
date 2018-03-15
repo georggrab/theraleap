@@ -1,15 +1,56 @@
 <template>
-  <main>
-    <header>
-      <section>TheraLeap Alpha</section>
-      <aside>
-        <connection-state :device-state="driverDeviceState"></connection-state>
-      </aside>
-    </header>
-    <hand-plotter :handtracking-data="deviceFacade.getHandTrackingData()"></hand-plotter>
-  </main>
-</template>
+  <div class="page-container">
+    <md-app md-waterfall md-mode="fixed-last">
+      <md-app-toolbar class="md-large md-dense md-primary">
+        <div class="md-toolbar-row">
+          <div class="md-toolbar-section-start">
+            <span class="md-title">TheraLeap</span>
+            <div v-if="connectionIsOkay" class="device-status device-status--good">
+              <md-icon>settings_remote
+                <md-tooltip md-direction="top">Connected to Leap Device.</md-tooltip>
+              </md-icon>
+            </div>
+            <div v-else class="device-status device-status--bad">
+              <md-icon>settings_remote
+                <md-tooltip md-direction="top">No connection to Leap Device. Check Status Tab.</md-tooltip>
+              </md-icon>
+              <md-progress-spinner class="md-accent" :md-stroke="2" :md-diameter="30" md-mode="indeterminate"></md-progress-spinner>
+            </div>
+          </div>
 
+          <div class="md-toolbar-section-end">
+            <md-button class="md-icon-button">
+              <md-icon>more_vert</md-icon>
+            </md-button>
+          </div>
+        </div>
+
+        <div class="md-toolbar-row">
+          <md-tabs class="md-primary">
+            <md-tab id="tab-home" md-label="Raw Device Logger"></md-tab>
+            <md-tab id="tab-pages" md-label="Hand Logger"></md-tab>
+            <md-tab id="tab-posts" md-label="Status"></md-tab>
+          </md-tabs>
+        </div>
+      </md-app-toolbar>
+
+      <md-app-drawer md-permanent="full">
+        <md-toolbar class="md-transparent" md-elevation="0">Navigation</md-toolbar>
+
+        <md-list>
+          <md-list-item>
+            <md-icon>build</md-icon>
+            <span class="md-list-item-text">Debug Interface</span>
+          </md-list-item>
+
+        </md-list>
+      </md-app-drawer>
+      <md-app-content>
+        <hand-plotter :handtracking-data="deviceFacade.getHandTrackingData()"></hand-plotter>
+      </md-app-content>
+    </md-app>
+  </div>
+</template>
 <script lang="ts">
 import Vue from 'vue'
 import { Inject, Component } from 'vue-property-decorator';
@@ -27,6 +68,7 @@ import { inject } from 'inversify';
 export default class DeviceDebugInterface extends Vue {
   private deviceFacade: DeviceFacade;
   private driverDeviceState: DeviceConnectionState = InitialDeviceState;
+  private connectionIsOkay: boolean | undefined = false;
 
   constructor() {
     super();
@@ -36,7 +78,12 @@ export default class DeviceDebugInterface extends Vue {
   private mounted(): void {
     const conn = this.deviceFacade.getDeviceDriver().streamConnectionState();
     if (conn) {
-      conn.subscribe((newDeviceState) => this.driverDeviceState = newDeviceState);
+      conn.subscribe((update) => {
+        this.driverDeviceState = update;
+        this.connectionIsOkay = update.nativeDeviceDriverOnline 
+          && update.deviceHardwareConnected 
+          && update.connectedToNativeDeviceDriver;
+      });
     }
   }
 
@@ -49,25 +96,37 @@ export default class DeviceDebugInterface extends Vue {
 <style lang="scss" scoped>
 @import '~styles/_vars.scss';
 
-main {
-  display: grid;
-  grid-template-rows: 75px auto;
+.md-app {
+  border: 1px solid rgba(#000, .12);
 }
 
-header {
-  display: grid;
-  grid-template-columns: auto auto auto;
-  background-color: $background-primary;
-  color: $foreground-primary;
-  border-bottom: 1px solid $foreground-primary;
-  section {
-    grid-column: 1 / span 1;
-    padding: 10px;
-    font-size: 2em;
+.md-drawer {
+  width: 230px;
+  max-width: calc(100vw - 125px);
+}
+
+.device-status {
+  position: relative;
+  margin-left: 20px;
+}
+
+.device-status--good {
+  .md-progress-spinner {
+    display: none;
   }
-  aside {
-    grid-column: 2 / span 1;
-    font-size: smaller;
+  .md-icon {
+    padding-left: 4px;
+  }
+}
+
+.device-status--bad {
+  .md-progress-spinner {
+    float: left;
+  }
+  .md-icon {
+    left: 2px;
+    top: 3px;
+    position: absolute;
   }
 }
 </style>
