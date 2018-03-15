@@ -4,22 +4,36 @@ import 'es6-promise/auto';
 //@ts-ignore
 import VueMaterial from 'vue-material'
 import VueRouter from 'vue-router'
+import Vuex from 'vuex'
 
 Vue.use(VueMaterial)
 Vue.use(VueRouter)
+Vue.use(Vuex)
 
-import LeapDebugInterface from '@/ui/LeapDebugInterface.vue';
-import DIIdent from '@/dependencyinjection/symbols';
-import { AppContainer } from '@/dependencyinjection';
+import LeapDebugInterface from '@/ui/debug/LeapDebugInterface.vue';
+import LeapDebugTabs from '@/ui/debug/LeapDebugTabs.vue';
+import App from '@/ui/App.vue';
+
 import { DeviceDriver } from '@/devices';
+import { createStore } from '@/state/store';
 
-
-const driver = AppContainer.get<DeviceDriver>(DIIdent.SERVICE_MOTION_TRACKING_DEVICE_DRIVER);
-const conn = driver.establishConnection().subscribe((state) => {
-    console.log('State of Connection:', state);
-})
 
 new Vue({
     el: '#app',
-    render: (render) => render(LeapDebugInterface),
+    router: new VueRouter({ routes: [
+        {
+            path: '/',
+            component: App,
+            redirect: '/debug',
+            children: [
+                { path: 'debug', 
+                  components: {
+                    main: LeapDebugInterface,
+                    tabs: LeapDebugTabs
+                } }
+            ]
+        }
+    ]}),
+    render: (create) => create('router-view'),
+    store: createStore()
 });

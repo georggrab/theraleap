@@ -5,7 +5,7 @@
         <div class="md-toolbar-row">
           <div class="md-toolbar-section-start">
             <span class="md-title">TheraLeap</span>
-            <div v-if="connectionIsOkay" class="device-status device-status--good">
+            <div v-if="connectionHealthy" class="device-status device-status--good">
               <md-icon>settings_remote
                 <md-tooltip md-direction="top">Connected to Leap Device.</md-tooltip>
               </md-icon>
@@ -26,11 +26,7 @@
         </div>
 
         <div class="md-toolbar-row">
-          <md-tabs class="md-primary">
-            <md-tab id="tab-home" md-label="Raw Device Logger"></md-tab>
-            <md-tab id="tab-pages" md-label="Hand Logger"></md-tab>
-            <md-tab id="tab-posts" md-label="Status"></md-tab>
-          </md-tabs>
+            <router-view name="tabs"></router-view>
         </div>
       </md-app-toolbar>
 
@@ -46,7 +42,7 @@
         </md-list>
       </md-app-drawer>
       <md-app-content>
-        <hand-plotter :handtracking-data="deviceFacade.getHandTrackingData()"></hand-plotter>
+        <router-view name="main"></router-view>
       </md-app-content>
     </md-app>
   </div>
@@ -62,31 +58,15 @@ import { AppContainer } from '@/dependencyinjection';
 import { DeviceConnectionState, InitialDeviceState, DeviceFacade, DeviceDriver } from '@/devices';
 import { inject } from 'inversify';
 
+import * as device from '@/state/modules/device'
+
 @Component({
-  components: { ConnectionState, HandPlotter }
+  components: { }
 })
-export default class DeviceDebugInterface extends Vue {
-  private deviceFacade: DeviceFacade;
-  private driverDeviceState: DeviceConnectionState = InitialDeviceState;
-  private connectionIsOkay: boolean | undefined = false;
-
-  constructor() {
-    super();
-    this.deviceFacade = AppContainer.get(DIIdent.SERVICE_MOTION_TRACKING_DEVICE_FACADE);
+export default class App extends Vue {
+  get connectionHealthy(): boolean | undefined {
+    return device.getConnectionHealthy(this.$store);
   }
-
-  private mounted(): void {
-    const conn = this.deviceFacade.getDeviceDriver().streamConnectionState();
-    if (conn) {
-      conn.subscribe((update) => {
-        this.driverDeviceState = update;
-        this.connectionIsOkay = update.nativeDeviceDriverOnline 
-          && update.deviceHardwareConnected 
-          && update.connectedToNativeDeviceDriver;
-      });
-    }
-  }
-
 }
 </script>
 <style lang="scss">
