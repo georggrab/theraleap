@@ -10,7 +10,7 @@ import { Observable } from '@reactivex/rxjs';
 import { DeviceConnectionState, InitialDeviceState, HandTrackingData } from '@/devices';
 
 @Component
-export default class ConnectionState extends Vue {
+export default class RawDeviceDataPlotter extends Vue {
     @Prop()
     public handtrackingData: Observable<HandTrackingData> | undefined;
     private currentFrame: HandTrackingData = {};
