@@ -22,6 +22,7 @@ export const device = {
 
     getters: {
         getDeviceFacade: (state: DeviceState) => state.facade,
+        getConnectionState: (state: DeviceState) => state.connectionState,
         isConnectionHealthy: (state: DeviceState) => state.connectionHealthy
     },
 
@@ -42,6 +43,7 @@ const { commit, read, dispatch } =
     getStoreAccessors<DeviceState, RootState>("device");
 
 export const getDeviceFacade = read(device.getters.getDeviceFacade);
+export const getConnectionState = read(device.getters.getConnectionState);
 export const getConnectionHealthy = read(device.getters.isConnectionHealthy);
 
 export const setConnectionState = commit(device.mutations.setConnectionState);

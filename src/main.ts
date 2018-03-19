@@ -10,8 +10,10 @@ Vue.use(VueMaterial)
 Vue.use(VueRouter)
 Vue.use(Vuex)
 
-import LeapDebugInterface from '@/ui/debug/LeapDebugInterface.vue';
-import LeapDebugTabs from '@/ui/debug/LeapDebugTabs.vue';
+import DeviceLog from '@/ui/debug/DeviceLog.vue';
+import StatusLog from '@/ui/debug/StatusLog.vue';
+import DeviceComponent from '@/ui/debug/DeviceComponent.vue';
+import DeviceDebugTabs from '@/ui/debug/DeviceDebugTabs.vue';
 import App from '@/ui/App.vue';
 
 import { DeviceDriver } from '@/devices';
@@ -27,11 +29,24 @@ new Vue({
             redirect: '/debug',
             children: [
                 { path: 'debug', 
+                  redirect: '/debug/devicelog',
+                  children: [
+                      {
+                          component: DeviceLog,
+                          path: 'devicelog'
+                      },
+                      {
+                          component: StatusLog,
+                          path: 'status'
+                      }
+                  ],
                   components: {
-                    main: LeapDebugInterface,
-                    tabs: LeapDebugTabs
-                } }
+                    main: DeviceComponent,
+                    tabs: DeviceDebugTabs
+                  }  
+                }
             ]
+            
         }
     ]}),
     render: (create) => create('router-view'),

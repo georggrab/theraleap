@@ -13,7 +13,7 @@ export class LeapDriver implements DeviceDriver {
 
     private controller: Controller;
     private monitor: Observable<DeviceConnectionState> | undefined;
-    private connectionActive: boolean | undefined;
+    private connectionActive: boolean = false;
     private deviceConnected: boolean | undefined;
 
     constructor(
@@ -51,7 +51,7 @@ export class LeapDriver implements DeviceDriver {
         return { 
             nativeDeviceDriverOnline: await this.isLeapServerRunning(1000), 
             connectedToNativeDeviceDriver: this.connectionActive, 
-            deviceHardwareConnected: this.controller.streaming()
+            deviceHardwareConnected: this.connectionActive? this.controller.streaming(): undefined
         } as DeviceConnectionState;
     }
 

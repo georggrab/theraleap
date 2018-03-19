@@ -1,9 +1,28 @@
 @import '~styles/_vars.scss';
-@import '../../node_modules/vue-material/dist/vue-material.min.css';
-@import '../../node_modules/vue-material/dist/theme/default-dark.css';
+@import '../../node_modules/vue-material/dist/vue-material.css';
+@import "../../node_modules/vue-material/dist/theme/engine";
 
 body {
-    background-color: $background-primary;
-    color: $foreground-primary;
     font-family: 'Roboto', monospace;
 }
+
+@include md-register-theme("card-success", (
+  background: md-get-palette-color(green, 500),
+));
+
+@include md-register-theme("card-failure", (
+  background: md-get-palette-color(red, 800)
+));
+
+@include md-register-theme("card-unknown", (
+  background: md-get-palette-color(grey, 500)
+));
+
+@include md-register-theme("default", (
+  primary: md-get-palette-color(blue, A200),
+  accent: md-get-palette-color(red, A200),
+  background: md-get-palette-color(grey, A400),
+  theme: dark
+));
+
+@import "../../node_modules/vue-material/dist/theme/all";

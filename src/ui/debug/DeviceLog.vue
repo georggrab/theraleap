@@ -11,14 +11,14 @@ import { AppContainer } from '@/dependencyinjection';
 import { DeviceConnectionState, InitialDeviceState, DeviceFacade, DeviceDriver } from '@/devices';
 import HandPlotter from '@/ui/HandPlotter.vue';
 
+import * as device from '@/state/modules/device'
+
 @Component({
   components: { HandPlotter }
 })
-export default class LeapDebugInterface extends Vue {
-  private deviceFacade: DeviceFacade;
-  constructor() {
-    super();
-    this.deviceFacade = AppContainer.get(DIIdent.SERVICE_MOTION_TRACKING_DEVICE_FACADE);
+export default class DeviceLog extends Vue {
+  get deviceFacade(): DeviceFacade {
+    return device.getDeviceFacade(this.$store);
   }
 }
 </script>
