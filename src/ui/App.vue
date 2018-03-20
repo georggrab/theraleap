@@ -16,6 +16,7 @@
               </md-icon>
               <md-progress-spinner class="md-accent" :md-stroke="2" :md-diameter="30" md-mode="indeterminate"></md-progress-spinner>
             </div>
+            <div v-if="deviceDataTransferRate">{{ format(deviceDataTransferRate) }}/s</div>
           </div>
 
           <div class="md-toolbar-section-end">
@@ -60,12 +61,20 @@ import { inject } from 'inversify';
 
 import * as device from '@/state/modules/device'
 
+//@ts-ignore
+import { format } from 'sizeof';
+
 @Component({
   components: { }
 })
 export default class App extends Vue {
+  private format = format;
   get connectionHealthy(): boolean | undefined {
     return device.getConnectionHealthy(this.$store);
+  }
+
+  get deviceDataTransferRate(): number | undefined {
+    return device.getDeviceDataTransferRate(this.$store);
   }
 }
 </script>

@@ -13,7 +13,7 @@ import { DeviceConnectionState, InitialDeviceState, HandTrackingData } from '@/d
 export default class RawDeviceDataPlotter extends Vue {
     @Prop()
     public handtrackingData: Observable<HandTrackingData> | undefined;
-    private currentFrame: HandTrackingData = {};
+    private currentFrame: Object = {};
 
     public created() {
       if (this.handtrackingData) {

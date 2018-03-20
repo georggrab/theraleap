@@ -1,5 +1,6 @@
 <template>
 <section>
+  <div id="bad-connection-warning" v-show="!connectionHealthy">No connection to the Device. Check the Status Tab!</div>
   <main class="three-container" ref="animation"></main>
 </section>
 </template>
@@ -10,9 +11,6 @@ import * as THREE from 'three';
 import { Component } from 'vue-property-decorator';
 
 import * as device from '@/state/modules/device'
-
-//@ts-ignore
-import font from './helvetiker_regular.typeface.json';
 
 @Component
 export default class GraphicalHandLogger extends Vue {
@@ -70,6 +68,10 @@ export default class GraphicalHandLogger extends Vue {
             window.cancelAnimationFrame(this.animationHandle);
         }
     }
+
+  get connectionHealthy(): boolean | undefined {
+    return device.getConnectionHealthy(this.$store);
+  }
 }
 </script>
 
@@ -78,4 +80,11 @@ export default class GraphicalHandLogger extends Vue {
     margin-top: 15px;
     height: 50vh;
 }
+
+#bad-connection-warning {
+    position: absolute;
+    margin: 20px;
+    font-family: monospace;
+}
+
 </style>

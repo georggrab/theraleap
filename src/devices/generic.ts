@@ -24,7 +24,7 @@ export interface DeviceConnectionState {
 }
 
 export interface HandTrackingData {
-
+    data: Object;
 }
 
 export interface HardwareDriverConnectionSettings { }
