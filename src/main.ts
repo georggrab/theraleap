@@ -14,6 +14,7 @@ import DeviceLog from '@/ui/debug/DeviceLog.vue';
 import StatusLog from '@/ui/debug/StatusLog.vue';
 import DeviceComponent from '@/ui/debug/DeviceComponent.vue';
 import DeviceDebugTabs from '@/ui/debug/DeviceDebugTabs.vue';
+import GraphicalHandLogger from '@/ui/debug/GraphicalHandLogger.vue';
 import App from '@/ui/App.vue';
 
 import { DeviceDriver } from '@/devices';
@@ -34,6 +35,10 @@ new Vue({
                       {
                           component: DeviceLog,
                           path: 'devicelog'
+                      },
+                      {
+                          component: GraphicalHandLogger,
+                          path: 'hand'
                       },
                       {
                           component: StatusLog,
