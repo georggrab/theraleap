@@ -8,6 +8,6 @@
  * @param targetMin minimum value of the projected plane
  * @param targetMax maximum value of the projected plane
  */
-function project(value: number, min: number, max: number, targetMin: number, targetMax: number): number {
+export function project(value: number, min: number, max: number, targetMin: number, targetMax: number): number {
     return targetMin + (targetMax - targetMin) * ((value - min) / (max - min));
 }
