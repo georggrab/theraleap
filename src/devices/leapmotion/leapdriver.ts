@@ -5,11 +5,13 @@ import { isEqual } from 'underscore';
 import * as leap from 'leapjs';
 
 import DIIdent from '@/dependencyinjection/symbols';
-import { DeviceDriver, DeviceConnectionState, HandTrackingData } from '@/devices';
+import { DeviceDriver, DeviceConnectionState, GenericHandTrackingData } from '@/devices';
+
+export const LEAP_MOTION_DEVICE_NAME = 'Leap Motion'
 
 @injectable()
 export class LeapDriver implements DeviceDriver {
-    public deviceName = 'Leap Motion';
+    public deviceName = LEAP_MOTION_DEVICE_NAME;
 
     private controller: Controller;
     private monitor: Observable<DeviceConnectionState> | undefined;
@@ -76,8 +78,8 @@ export class LeapDriver implements DeviceDriver {
         return this.monitor;
     }
 
-    public setUpFrameStream(): Observable<HandTrackingData> {
-        return Observable.create((observer: Observer<HandTrackingData>) => {
+    public setUpFrameStream(): Observable<GenericHandTrackingData> {
+        return Observable.create((observer: Observer<GenericHandTrackingData>) => {
             this.controller.on('frame', (frame: any) => observer.next(frame))
         });
     }

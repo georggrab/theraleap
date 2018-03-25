@@ -7,12 +7,12 @@ import Vue from 'vue'
 import { Prop, Component } from 'vue-property-decorator';
 import { Observable } from '@reactivex/rxjs';
 
-import { DeviceConnectionState, InitialDeviceState, HandTrackingData } from '@/devices';
+import { DeviceConnectionState, InitialDeviceState, GenericHandTrackingData } from '@/devices';
 
 @Component
 export default class RawDeviceDataPlotter extends Vue {
     @Prop()
-    public handtrackingData: Observable<HandTrackingData> | undefined;
+    public handtrackingData: Observable<GenericHandTrackingData> | undefined;
     private currentFrame: Object = {};
 
     public created() {

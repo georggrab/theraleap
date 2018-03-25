@@ -80,7 +80,7 @@
     <md-card v-if="connectionState.deviceHardwareConnected === undefined" md-theme="card-unknown" md-with-hover>
       <md-card-header>
         <md-card-header-text>
-          <div class="md-title">Connection to Hardware Device</div>
+          <div class="md-title">Physical availability of hardware device</div>
           <div class="md-subhead">
             Could not determine if the Hardware device is Connected. 
           </div>
@@ -93,7 +93,7 @@
     <md-card v-else-if="!connectionState.deviceHardwareConnected" md-theme="card-failure" md-with-hover>
       <md-card-header>
         <md-card-header-text>
-          <div class="md-title">Connection to Hardware Device</div>
+          <div class="md-title">Physical availability of hardware device</div>
           <div class="md-subhead">
             The Hardware Device seems not connected.
           </div>
@@ -106,7 +106,7 @@
     <md-card v-else md-theme="card-success" md-with-hover>
       <md-card-header>
         <md-card-header-text>
-          <div class="md-title">Connection to Hardware Device</div>
+          <div class="md-title">Physical availability of hardware device</div>
           <div class="md-subhead">
             The Hardware Device is connected.
           </div>

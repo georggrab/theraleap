@@ -23,7 +23,7 @@ export interface DeviceConnectionState {
     connectedToNativeDeviceDriver: boolean;
 }
 
-export interface HandTrackingData {
+export interface GenericHandTrackingData {
     data: Object;
 }
 
@@ -45,5 +45,5 @@ export interface DeviceDriver {
 
 export interface DeviceFacade {
     getDeviceDriver: () => DeviceDriver;
-    getHandTrackingData: () => Observable<HandTrackingData> | undefined;
+    getHandTrackingData: () => Observable<GenericHandTrackingData> | undefined;
 }

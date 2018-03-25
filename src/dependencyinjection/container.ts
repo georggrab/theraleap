@@ -11,8 +11,9 @@ AppContainer.bind<HardwareDriverConnectionSettings>(DIIdent.SETTINGS_HARDWARE_DR
     .toConstantValue({
         host: '127.0.0.1',
         port: 6437,
-        frameEventName: 'deviceFrame',
-        enableGestures: true
+        frameEventName: 'animationFrame',
+
+        enableGestures: false
     });
 AppContainer.bind<DeviceFacade>(DIIdent.SERVICE_MOTION_TRACKING_DEVICE_FACADE)
     .to(LeapFacade).inSingletonScope();
