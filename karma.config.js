@@ -27,7 +27,7 @@ module.exports = function (config) {
     frameworks: ['mocha'],
 
     // Runner configuration
-    port: 9876,
+    port: 9877,
     autoWatch: true,
     concurrency: Infinity,
     

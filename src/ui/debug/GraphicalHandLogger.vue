@@ -17,6 +17,9 @@ import * as device from '@/state/modules/device'
 import { DeviceFacade, GenericHandTrackingData } from 'devices';
 import { LEAP_MOTION_DEVICE_NAME, LeapDeviceFrame } from 'devices/leapmotion';
 
+import { project } from '@/ui/graphics/util';
+import { InteractionBox } from 'leapjs';
+
 @Component
 export default class GraphicalHandLogger extends Vue {
     private scene: THREE.Scene = new THREE.Scene();
@@ -25,10 +28,8 @@ export default class GraphicalHandLogger extends Vue {
     private animationHandle: number | undefined;
     private controls: THREE.OrbitControls | undefined;
 
-    private palmBox = new THREE.Mesh(
-        new THREE.BoxBufferGeometry(50, 50, 50), 
-        new THREE.MeshBasicMaterial({ color: 'black' })) 
-    
+    private palmBox: {[type: string]: {mesh: THREE.Mesh, fingers: {[type: number]: THREE.Line}}} = {};
+
     private mounted() {
         this.initializeGraphics();
         this.setupDataStream();
@@ -55,9 +56,48 @@ export default class GraphicalHandLogger extends Vue {
         if (deviceName == LEAP_MOTION_DEVICE_NAME) {
             const leapFrame = frame.data as LeapDeviceFrame
             const hand = leapFrame.hands[0];
-            if (hand) {
-                this.palmBox.position.set(hand.palmPosition[0], hand.palmPosition[1], hand.palmPosition[2])
-            }
+            leapFrame.hands.forEach((hand) => {
+                if (!this.palmBox[hand.type]) {
+                    this.palmBox[hand.type] = { mesh: new THREE.Mesh(
+                        new THREE.SphereBufferGeometry(2),
+                        new THREE.MeshBasicMaterial({ color: 'black' })),
+                        fingers: {}
+                    }
+                    this.scene.add(this.palmBox[hand.type].mesh);
+                }
+                if (hand) {
+                    const x = project(hand.palmPosition[0], leapFrame.interactionBox.center[0] - leapFrame.interactionBox.size[0] / 2, leapFrame.interactionBox.center[0] + leapFrame.interactionBox.size[0] / 2, 0, 50);
+                    const y = project(hand.palmPosition[1], leapFrame.interactionBox.center[1] - leapFrame.interactionBox.size[1] / 2, leapFrame.interactionBox.center[1] + leapFrame.interactionBox.size[1] / 2, 0, 50);
+                    const z = project(hand.palmPosition[2], leapFrame.interactionBox.center[2] - leapFrame.interactionBox.size[2] / 2, leapFrame.interactionBox.center[2] + leapFrame.interactionBox.size[2] / 2, 0, 50);
+                    this.palmBox[hand.type].mesh.position.set(x, y, z)
+
+                    leapFrame.pointables.filter((p) => p.handId == hand.id).forEach((pointable) => {
+                        if (!this.palmBox[hand.type].fingers[pointable.type]) {
+                            this.palmBox[hand.type].fingers[pointable.type] = new THREE.Line(
+                                new THREE.Geometry(),
+                                new THREE.LineBasicMaterial({ color: 0x0000ff })
+                            );
+                            this.scene.add(this.palmBox[hand.type].fingers[pointable.type]);
+                        }
+                        //@ts-ignore
+                        this.palmBox[hand.type].fingers[pointable.type].geometry.vertices = [
+                            new THREE.Vector3(
+                                project(pointable.mcpPosition[0], leapFrame.interactionBox.center[0] - leapFrame.interactionBox.size[0] / 2, leapFrame.interactionBox.center[0] + leapFrame.interactionBox.size[0] / 2, 0, 50),
+                                project(pointable.mcpPosition[1], leapFrame.interactionBox.center[1] - leapFrame.interactionBox.size[1] / 2, leapFrame.interactionBox.center[1] + leapFrame.interactionBox.size[1] / 2, 0, 50),
+                                project(pointable.mcpPosition[2], leapFrame.interactionBox.center[2] - leapFrame.interactionBox.size[2] / 2, leapFrame.interactionBox.center[2] + leapFrame.interactionBox.size[2] / 2, 0, 50),
+                            ),
+                            new THREE.Vector3(
+                                project(pointable.pipPosition[0], leapFrame.interactionBox.center[0] - leapFrame.interactionBox.size[0] / 2, leapFrame.interactionBox.center[0] + leapFrame.interactionBox.size[0] / 2, 0, 50),
+                                project(pointable.pipPosition[1], leapFrame.interactionBox.center[1] - leapFrame.interactionBox.size[1] / 2, leapFrame.interactionBox.center[1] + leapFrame.interactionBox.size[1] / 2, 0, 50),
+                                project(pointable.pipPosition[2], leapFrame.interactionBox.center[2] - leapFrame.interactionBox.size[2] / 2, leapFrame.interactionBox.center[2] + leapFrame.interactionBox.size[2] / 2, 0, 50),
+                            )
+                        ]
+                        //@ts-ignore
+                        this.palmBox[hand.type].fingers[pointable.type].geometry.verticesNeedUpdate = true;
+
+                    });
+                }
+            })
         } else {
             console.warn('Can\'t plot hand tracking data from unsupported device:', deviceName);
         }
@@ -83,7 +123,6 @@ export default class GraphicalHandLogger extends Vue {
 
         let axisHelper = new THREE.AxesHelper(100);
         this.scene.add(axisHelper);
-        this.scene.add(this.palmBox);
     }
 
     private animate() {
