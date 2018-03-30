@@ -19,6 +19,7 @@ import { LEAP_MOTION_DEVICE_NAME, LeapDeviceFrame } from 'devices/leapmotion';
 
 import { project } from '@/ui/graphics/util';
 import { InteractionBox } from 'leapjs';
+import { BufferGeometry, Geometry } from 'three';
 
 @Component
 export default class GraphicalHandLogger extends Vue {
@@ -28,7 +29,11 @@ export default class GraphicalHandLogger extends Vue {
     private animationHandle: number | undefined;
     private controls: THREE.OrbitControls | undefined;
 
-    private palmBox: {[type: string]: {mesh: THREE.Mesh, fingers: {[type: number]: THREE.Line}}} = {};
+    private palmBox: {[type: string]: {mesh: THREE.Object3D, fingers: {[type: number]: THREE.Object3D}}} = {};
+//@ts-ignore
+    private palmNormalVector = new THREE.Line(new THREE.Geometry().setFromPoints([
+        new THREE.Vector3(0, 0, 0), new THREE.Vector3(10, 10, 10)
+    ]), new THREE.LineBasicMaterial( { color: 0xff0000, } ))
 
     private mounted() {
         this.initializeGraphics();
@@ -58,9 +63,29 @@ export default class GraphicalHandLogger extends Vue {
             const hand = leapFrame.hands[0];
             leapFrame.hands.forEach((hand) => {
                 if (!this.palmBox[hand.type]) {
-                    this.palmBox[hand.type] = { mesh: new THREE.Mesh(
-                        new THREE.SphereBufferGeometry(2),
-                        new THREE.MeshBasicMaterial({ color: 'black' })),
+           			var mesh = new THREE.Object3D();
+                    const geometry = 
+                        new THREE.CircleBufferGeometry(10, 32, 0, 2 * Math.PI);
+                    mesh.add( new THREE.LineSegments(
+                            //@ts-ignore
+                            new THREE.WireframeGeometry(geometry),
+                            new THREE.LineBasicMaterial( {
+                                color: 0xffffff,
+                                transparent: true,
+                                opacity: 0.5
+                                } )
+                    ));
+                    mesh.add(new THREE.Mesh(
+                        //@ts-ignore
+                        geometry,
+                        new THREE.MeshPhongMaterial( {
+                            color: 0x156289,
+                            emissive: 0x072534,
+                            side: THREE.DoubleSide,
+                            flatShading: true
+                        } )  
+                    ))
+                    this.palmBox[hand.type] = { mesh: mesh,
                         fingers: {}
                     }
                     this.scene.add(this.palmBox[hand.type].mesh);
@@ -70,31 +95,98 @@ export default class GraphicalHandLogger extends Vue {
                     const y = project(hand.palmPosition[1], leapFrame.interactionBox.center[1] - leapFrame.interactionBox.size[1] / 2, leapFrame.interactionBox.center[1] + leapFrame.interactionBox.size[1] / 2, 0, 50);
                     const z = project(hand.palmPosition[2], leapFrame.interactionBox.center[2] - leapFrame.interactionBox.size[2] / 2, leapFrame.interactionBox.center[2] + leapFrame.interactionBox.size[2] / 2, 0, 50);
                     this.palmBox[hand.type].mesh.position.set(x, y, z)
+                    const dir = new THREE.Vector3(hand.palmNormal[0], hand.palmNormal[1], hand.palmNormal[2]);
+
+                    const palmObj = this.palmBox[hand.type].mesh.children[1] as THREE.Mesh
+                    palmObj.lookAt(dir)
+
+                    const meshObj = this.palmBox[hand.type].mesh.children[0] as THREE.Mesh
+                    meshObj.lookAt(dir)
+
+                    const norm = this.palmNormalVector.geometry as Geometry
+                    norm.vertices = []
+                    norm.vertices.push(new THREE.Vector3(0, 0, 0));
+                    norm.vertices.push(new THREE.Vector3(hand.palmNormal[0]*50, hand.palmNormal[1]*50, hand.palmNormal[2]*50));
+                    this.palmNormalVector.position.set(x, y, z);
+                    norm.verticesNeedUpdate = true;
 
                     leapFrame.pointables.filter((p) => p.handId == hand.id).forEach((pointable) => {
                         if (!this.palmBox[hand.type].fingers[pointable.type]) {
-                            this.palmBox[hand.type].fingers[pointable.type] = new THREE.Line(
-                                new THREE.Geometry(),
-                                new THREE.LineBasicMaterial({ color: 0x0000ff })
-                            );
+                            const fingerMesh = new THREE.Object3D();
+                            const fingerTubeGeometry = new THREE.TubeBufferGeometry(
+                                new THREE.CatmullRomCurve3([
+                                    new THREE.Vector3(
+                                        project(pointable.mcpPosition[0], leapFrame.interactionBox.center[0] - leapFrame.interactionBox.size[0] / 2, leapFrame.interactionBox.center[0] + leapFrame.interactionBox.size[0] / 2, 0, 50),
+                                        project(pointable.mcpPosition[1], leapFrame.interactionBox.center[1] - leapFrame.interactionBox.size[1] / 2, leapFrame.interactionBox.center[1] + leapFrame.interactionBox.size[1] / 2, 0, 50),
+                                        project(pointable.mcpPosition[2], leapFrame.interactionBox.center[2] - leapFrame.interactionBox.size[2] / 2, leapFrame.interactionBox.center[2] + leapFrame.interactionBox.size[2] / 2, 0, 50),
+                                    ),
+                                    new THREE.Vector3(
+                                        project(pointable.pipPosition[0], leapFrame.interactionBox.center[0] - leapFrame.interactionBox.size[0] / 2, leapFrame.interactionBox.center[0] + leapFrame.interactionBox.size[0] / 2, 0, 50),
+                                        project(pointable.pipPosition[1], leapFrame.interactionBox.center[1] - leapFrame.interactionBox.size[1] / 2, leapFrame.interactionBox.center[1] + leapFrame.interactionBox.size[1] / 2, 0, 50),
+                                        project(pointable.pipPosition[2], leapFrame.interactionBox.center[2] - leapFrame.interactionBox.size[2] / 2, leapFrame.interactionBox.center[2] + leapFrame.interactionBox.size[2] / 2, 0, 50),
+                                    ),
+                                    new THREE.Vector3(
+                                        project(pointable.dipPosition[0], leapFrame.interactionBox.center[0] - leapFrame.interactionBox.size[0] / 2, leapFrame.interactionBox.center[0] + leapFrame.interactionBox.size[0] / 2, 0, 50),
+                                        project(pointable.dipPosition[1], leapFrame.interactionBox.center[1] - leapFrame.interactionBox.size[1] / 2, leapFrame.interactionBox.center[1] + leapFrame.interactionBox.size[1] / 2, 0, 50),
+                                        project(pointable.dipPosition[2], leapFrame.interactionBox.center[2] - leapFrame.interactionBox.size[2] / 2, leapFrame.interactionBox.center[2] + leapFrame.interactionBox.size[2] / 2, 0, 50),
+                                    ),
+                                    new THREE.Vector3(
+                                        project(pointable.tipPosition[0], leapFrame.interactionBox.center[0] - leapFrame.interactionBox.size[0] / 2, leapFrame.interactionBox.center[0] + leapFrame.interactionBox.size[0] / 2, 0, 50),
+                                        project(pointable.tipPosition[1], leapFrame.interactionBox.center[1] - leapFrame.interactionBox.size[1] / 2, leapFrame.interactionBox.center[1] + leapFrame.interactionBox.size[1] / 2, 0, 50),
+                                        project(pointable.tipPosition[2], leapFrame.interactionBox.center[2] - leapFrame.interactionBox.size[2] / 2, leapFrame.interactionBox.center[2] + leapFrame.interactionBox.size[2] / 2, 0, 50),
+                                    )
+                                ]), 20, 2, 8, false);
+                            fingerMesh.add(new THREE.LineSegments(
+                                new THREE.WireframeGeometry(fingerTubeGeometry), 
+                                new THREE.LineBasicMaterial({
+                                    color: 0xffffff,
+                                    transparent: true,
+                                    opacity: 0.5
+                                })))
+                            fingerMesh.add(new THREE.Mesh(
+                                fingerTubeGeometry,
+                                new THREE.MeshPhongMaterial( { 
+                                    color: 0x156289,
+                                    emissive: 0x072534,
+                                    side: THREE.DoubleSide,
+                                    flatShading: true
+                                } )
+                            ));
+                            
+                            this.palmBox[hand.type].fingers[pointable.type] = fingerMesh; 
                             this.scene.add(this.palmBox[hand.type].fingers[pointable.type]);
                         }
+                        const fingerTubeGeometry = new THREE.TubeBufferGeometry(
+                            new THREE.CatmullRomCurve3([
+                                new THREE.Vector3(
+                                    project(pointable.mcpPosition[0], leapFrame.interactionBox.center[0] - leapFrame.interactionBox.size[0] / 2, leapFrame.interactionBox.center[0] + leapFrame.interactionBox.size[0] / 2, 0, 50),
+                                    project(pointable.mcpPosition[1], leapFrame.interactionBox.center[1] - leapFrame.interactionBox.size[1] / 2, leapFrame.interactionBox.center[1] + leapFrame.interactionBox.size[1] / 2, 0, 50),
+                                    project(pointable.mcpPosition[2], leapFrame.interactionBox.center[2] - leapFrame.interactionBox.size[2] / 2, leapFrame.interactionBox.center[2] + leapFrame.interactionBox.size[2] / 2, 0, 50),
+                                ),
+                                new THREE.Vector3(
+                                    project(pointable.pipPosition[0], leapFrame.interactionBox.center[0] - leapFrame.interactionBox.size[0] / 2, leapFrame.interactionBox.center[0] + leapFrame.interactionBox.size[0] / 2, 0, 50),
+                                    project(pointable.pipPosition[1], leapFrame.interactionBox.center[1] - leapFrame.interactionBox.size[1] / 2, leapFrame.interactionBox.center[1] + leapFrame.interactionBox.size[1] / 2, 0, 50),
+                                    project(pointable.pipPosition[2], leapFrame.interactionBox.center[2] - leapFrame.interactionBox.size[2] / 2, leapFrame.interactionBox.center[2] + leapFrame.interactionBox.size[2] / 2, 0, 50),
+                                ),
+                                new THREE.Vector3(
+                                    project(pointable.dipPosition[0], leapFrame.interactionBox.center[0] - leapFrame.interactionBox.size[0] / 2, leapFrame.interactionBox.center[0] + leapFrame.interactionBox.size[0] / 2, 0, 50),
+                                    project(pointable.dipPosition[1], leapFrame.interactionBox.center[1] - leapFrame.interactionBox.size[1] / 2, leapFrame.interactionBox.center[1] + leapFrame.interactionBox.size[1] / 2, 0, 50),
+                                    project(pointable.dipPosition[2], leapFrame.interactionBox.center[2] - leapFrame.interactionBox.size[2] / 2, leapFrame.interactionBox.center[2] + leapFrame.interactionBox.size[2] / 2, 0, 50),
+                                ),
+                                new THREE.Vector3(
+                                    project(pointable.tipPosition[0], leapFrame.interactionBox.center[0] - leapFrame.interactionBox.size[0] / 2, leapFrame.interactionBox.center[0] + leapFrame.interactionBox.size[0] / 2, 0, 50),
+                                    project(pointable.tipPosition[1], leapFrame.interactionBox.center[1] - leapFrame.interactionBox.size[1] / 2, leapFrame.interactionBox.center[1] + leapFrame.interactionBox.size[1] / 2, 0, 50),
+                                    project(pointable.tipPosition[2], leapFrame.interactionBox.center[2] - leapFrame.interactionBox.size[2] / 2, leapFrame.interactionBox.center[2] + leapFrame.interactionBox.size[2] / 2, 0, 50),
+                                )
+                            ]), 20, 2, 8, false);
                         //@ts-ignore
-                        this.palmBox[hand.type].fingers[pointable.type].geometry.vertices = [
-                            new THREE.Vector3(
-                                project(pointable.mcpPosition[0], leapFrame.interactionBox.center[0] - leapFrame.interactionBox.size[0] / 2, leapFrame.interactionBox.center[0] + leapFrame.interactionBox.size[0] / 2, 0, 50),
-                                project(pointable.mcpPosition[1], leapFrame.interactionBox.center[1] - leapFrame.interactionBox.size[1] / 2, leapFrame.interactionBox.center[1] + leapFrame.interactionBox.size[1] / 2, 0, 50),
-                                project(pointable.mcpPosition[2], leapFrame.interactionBox.center[2] - leapFrame.interactionBox.size[2] / 2, leapFrame.interactionBox.center[2] + leapFrame.interactionBox.size[2] / 2, 0, 50),
-                            ),
-                            new THREE.Vector3(
-                                project(pointable.pipPosition[0], leapFrame.interactionBox.center[0] - leapFrame.interactionBox.size[0] / 2, leapFrame.interactionBox.center[0] + leapFrame.interactionBox.size[0] / 2, 0, 50),
-                                project(pointable.pipPosition[1], leapFrame.interactionBox.center[1] - leapFrame.interactionBox.size[1] / 2, leapFrame.interactionBox.center[1] + leapFrame.interactionBox.size[1] / 2, 0, 50),
-                                project(pointable.pipPosition[2], leapFrame.interactionBox.center[2] - leapFrame.interactionBox.size[2] / 2, leapFrame.interactionBox.center[2] + leapFrame.interactionBox.size[2] / 2, 0, 50),
-                            )
-                        ]
+                        this.palmBox[hand.type].fingers[pointable.type].children[1].geometry.copy(fingerTubeGeometry);
                         //@ts-ignore
-                        this.palmBox[hand.type].fingers[pointable.type].geometry.verticesNeedUpdate = true;
-
+                        this.palmBox[hand.type].fingers[pointable.type].children[0].geometry.copy(new THREE.WireframeGeometry(fingerTubeGeometry));
+                        //@ts-ignore
+                        this.palmBox[hand.type].fingers[pointable.type].children[0].geometry.verticesNeedUpdate = true;
+                        //@ts-ignore
+                        this.palmBox[hand.type].fingers[pointable.type].children[1].geometry.verticesNeedUpdate = true;
                     });
                 }
             })
@@ -113,15 +205,25 @@ export default class GraphicalHandLogger extends Vue {
 		this.controls.minDistance = 100;
 		this.controls.maxDistance = 500
 
+        var lights = [];
+		lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+		lights[ 1 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+		lights[ 2 ] = new THREE.PointLight( 0xffffff, 1, 0 );
 
-        this.renderer = new THREE.WebGLRenderer();
+		lights[ 0 ].position.set( 0, 200, 0 );
+		lights[ 1 ].position.set( 100, 200, 100 );
+		lights[ 2 ].position.set( - 100, - 200, - 100 );
+        this.scene.add(lights[0], lights[1], lights[2]);
+        this.scene.add(this.palmNormalVector)
+
+
+        this.renderer = new THREE.WebGLRenderer({ antialias: true });
         this.renderer.setSize(animation.clientWidth, animation.clientHeight);
         animation.appendChild(this.renderer.domElement);
 
-        this.scene.fog = new THREE.FogExp2( 0xcccccc, 0.002 );
-        this.scene.background = new THREE.Color( 0xcccccc );
+        this.scene.background = new THREE.Color( 0x0 );
 
-        let axisHelper = new THREE.AxesHelper(100);
+        let axisHelper = new THREE.AxesHelper(10000);
         this.scene.add(axisHelper);
     }
 
@@ -152,7 +254,7 @@ export default class GraphicalHandLogger extends Vue {
 <style lang="scss" scoped>
 .three-container {
     margin-top: 15px;
-    height: 50vh;
+    height: 80vh;
 }
 
 #bad-connection-warning {
