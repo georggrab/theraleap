@@ -8,6 +8,6 @@ import { Component } from 'vue-property-decorator';
 @Component({
   components: { }
 })
-export default class DeviceComponent extends Vue {
+export default class DeviceDebugRoot extends Vue {
 }
 </script>

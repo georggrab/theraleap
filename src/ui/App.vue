@@ -1,74 +1,93 @@
 <template>
-  <div class="page-container">
-    <md-app md-waterfall md-mode="fixed-last">
-      <md-app-toolbar class="md-large md-dense md-primary">
-        <div class="md-toolbar-row">
-          <div class="md-toolbar-section-start">
-            <span class="md-title">TheraLeap</span>
-            <div v-if="connectionHealthy" class="device-status device-status--good">
-              <md-icon>settings_remote
-                <md-tooltip md-direction="top">Connected to Leap Device.</md-tooltip>
-              </md-icon>
-            </div>
-            <div v-else class="device-status device-status--bad">
-              <md-icon>settings_remote
-                <md-tooltip md-direction="top">No connection to Leap Device. Check Status Tab.</md-tooltip>
-              </md-icon>
-              <md-progress-spinner class="md-accent" :md-stroke="2" :md-diameter="30" md-mode="indeterminate"></md-progress-spinner>
-            </div>
-            <div v-if="deviceDataTransferRate">{{ format(deviceDataTransferRate) }}/s</div>
-          </div>
+<md-app>
+  <md-app-toolbar class="md-primary" md-elevation="0">
+    <md-button class="md-icon-button" @click="toggleMenu" v-if="!menuVisible">
+      <md-icon>menu</md-icon>
+    </md-button>
+    <span class="md-title">TheraLeap</span>
+    <div v-if="connectionHealthy" class="device-status device-status--good">
+      <md-icon>settings_remote
+        <md-tooltip md-direction="top">Connected to Leap Device.</md-tooltip>
+      </md-icon>
+    </div>
+    <div v-else class="device-status device-status--bad">
+      <md-icon>settings_remote
+        <md-tooltip md-direction="top">No connection to Leap Device. Check Status Tab.</md-tooltip>
+      </md-icon>
+      <md-progress-spinner class="md-accent" :md-stroke="2" :md-diameter="30" md-mode="indeterminate"></md-progress-spinner>
+    </div>
+    <div v-if="deviceDataTransferRate">{{ format(deviceDataTransferRate) }}/s</div>
+    <div :class="{ 'menu-not-visible': !menuVisible }" class="md-toolbar-row">
+        <router-view name="tabs"></router-view>
+    </div>
+  </md-app-toolbar>
 
-          <div class="md-toolbar-section-end">
-            <md-button class="md-icon-button">
-              <md-icon>more_vert</md-icon>
-            </md-button>
-          </div>
-        </div>
+  <md-app-drawer :md-active.sync="menuVisible" md-persistent="mini">
+    <md-toolbar class="md-transparent" md-elevation="0">
+      <span>Navigation</span>
 
-        <div class="md-toolbar-row">
-            <router-view name="tabs"></router-view>
-        </div>
-      </md-app-toolbar>
+      <div class="md-toolbar-section-end">
+        <md-button class="md-icon-button md-dense" @click="toggleMenu">
+          <md-icon>keyboard_arrow_left</md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
 
-      <md-app-drawer md-permanent="full">
-        <md-toolbar class="md-transparent" md-elevation="0">Navigation</md-toolbar>
+    <md-list>
+      <md-list-item to="/debug" :class="{active: activeNavItem == 0}" @click="setActiveNavItem(0)">
+          <md-icon>bug_report</md-icon>
+          <span class="md-list-item-text">Debug</span>
+      </md-list-item>
 
-        <md-list>
-          <md-list-item>
-            <md-icon>build</md-icon>
-            <span class="md-list-item-text">Debug Interface</span>
-          </md-list-item>
-
-        </md-list>
-      </md-app-drawer>
-      <md-app-content>
-        <router-view name="main"></router-view>
-      </md-app-content>
-    </md-app>
-  </div>
+      <md-list-item to="/recorder" :class="{active: activeNavItem == 1}" @click="setActiveNavItem(1)">
+        <md-icon>mic</md-icon>
+        <span class="md-list-item-text">Device Recorder</span>
+      </md-list-item>
+    </md-list>
+  </md-app-drawer>
+  <md-app-content>
+    <router-view name="main"></router-view>
+  </md-app-content>
+</md-app>
 </template>
 <script lang="ts">
-import Vue from 'vue'
-import { Inject, Component } from 'vue-property-decorator';
+import Vue from "vue";
+import { Inject, Component } from "vue-property-decorator";
 
-import ConnectionState from '@/ui/ConnectionState.vue';
-import HandPlotter from '@/ui/HandPlotter.vue';
-import DIIdent from '@/dependencyinjection/symbols';
-import { AppContainer } from '@/dependencyinjection';
-import { DeviceConnectionState, InitialDeviceState, DeviceFacade, DeviceDriver } from '@/devices';
-import { inject } from 'inversify';
+import ConnectionState from "@/ui/ConnectionState.vue";
+import HandPlotter from "@/ui/HandPlotter.vue";
+import DIIdent from "@/dependencyinjection/symbols";
+import { AppContainer } from "@/dependencyinjection";
+import {
+  DeviceConnectionState,
+  InitialDeviceState,
+  DeviceFacade,
+  DeviceDriver
+} from "@/devices";
+import { inject } from "inversify";
 
-import * as device from '@/state/modules/device'
+import * as device from "@/state/modules/device";
 
 //@ts-ignore
-import { format } from 'sizeof';
+import { format } from "sizeof";
 
 @Component({
-  components: { }
+  components: {}
 })
 export default class App extends Vue {
+  public menuVisible: boolean = false;
+  public activeNavItem: number = 0;
+
   private format = format;
+
+  public toggleMenu() {
+    this.menuVisible = !this.menuVisible;
+  }
+
+  public setActiveNavItem(to: number) { 
+    this.activeNavItem = to; 
+  }
+
   get connectionHealthy(): boolean | undefined {
     return device.getConnectionHealthy(this.$store);
   }
@@ -79,19 +98,44 @@ export default class App extends Vue {
 }
 </script>
 <style lang="scss">
-@import '~styles/_globals.scss';
+@import "~styles/_globals.scss";
 </style>
 
 <style lang="scss" scoped>
-@import '~styles/_vars.scss';
+@import "~styles/_vars.scss";
 
 .md-app {
-  border: 1px solid rgba(#000, .12);
+  border: 1px solid rgba(#000, 0.12);
+  min-height: 50vh;
+}
+
+.md-app-drawer {
+  margin-top: 50px;
+}
+
+.md-toolbar {
+  padding-top: 10px;
+}
+
+.md-toolbar-row {
+  padding-left: 0px;
+}
+
+.md-toolbar-row.menu-not-visible {
+  padding-left:20px;
 }
 
 .md-drawer {
   width: 230px;
   max-width: calc(100vw - 125px);
+}
+
+.md-list-item.active span {
+  font-weight: 700;
+}
+
+.md-list-item.active .md-icon {
+  color: #303F9F;
 }
 
 .device-status {
