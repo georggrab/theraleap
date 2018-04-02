@@ -17,10 +17,10 @@
         <md-card-header-text>
           <div class="md-title">Connection to Native Device Driver</div>
           <div class="md-subhead">
-            The Native Device Driver is offline.
+            We are not connected to the native device driver.
           </div>
           <md-card-content>
-            Please make sure the native device driver for your machine is installed and running.
+            We are currently trying to connect to the native device driver, but we aren't connected yet.
           </md-card-content>
         </md-card-header-text>
       </md-card-header>
@@ -28,9 +28,9 @@
     <md-card v-else md-theme="card-success" md-with-hover>
       <md-card-header>
         <md-card-header-text>
-          <div class="md-title">Connection to Hardware Device</div>
+          <div class="md-title">Connection to Native Device Driver</div>
           <div class="md-subhead">
-            The native device driver is Online.
+            We are connected the the native device driver.
           </div>
           <md-card-content>
             We have a streaming connection to the native device driver. Everything works as expected.
@@ -56,10 +56,10 @@
         <md-card-header-text>
           <div class="md-title">State of the Native Device Driver</div>
           <div class="md-subhead">
-            This application is not connected to the native device driver.
+            The native device driver is offline.
           </div>
           <md-card-content>
-            We will automatically attempt to connect to the native device driver once it has come online. Please make sure the native device driver is running.
+            We determined that the native device driver is not running. Please make sure the device driver software is installed, running, and has the "Give access to Web Applications" option enabled.
           </md-card-content>
         </md-card-header-text>
       </md-card-header>
@@ -72,7 +72,7 @@
             The native device driver is Online.
           </div>
           <md-card-content>
-            We have a streaming connection to the native device driver, which is working as expected.
+            We determined that the native device  driver is online.
           </md-card-content>
         </md-card-header-text>
       </md-card-header>
@@ -137,5 +137,9 @@ export default class StatusLog extends Vue {
 <style lang="scss" scoped>
 section.device-status {
   margin-top: 20px;
+  .md-card {
+    margin: 20px auto;
+    max-width: 500px;
+  }
 }
 </style>
