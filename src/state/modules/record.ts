@@ -2,31 +2,41 @@ import { GenericHandTrackingData } from '../../devices/generic';
 import { getStoreAccessors } from 'vuex-typescript';
 import { DeviceState } from './device';
 import { RootState } from '../store';
+import Vue from 'vue';
 
 export interface RecordState {
-    recordings: HandTrackRecording[];
+    recordings: { [id: number]: HandTrackRecording };
+    totalRecordings: number;
 }
 
 export interface HandTrackRecording {
+    id: number;
     name: string;
     data: GenericHandTrackingData[];
-    creationDate: number | undefined;
-    duration: number | undefined;
-    size: number | undefined;
+    created: boolean;
+    creationDate?: number;
+    duration?: number;
+    size?: number;
 }
 
 export const record = {
     namespaced: true,
     state: {
-        recordings: []
+        recordings: {},
+        totalRecordings: 0
     },
     getters: {
-        getRecordings: (state: RecordState) => state.recordings
+        getRecordings: (state: RecordState) => state.recordings,
+        getTotalRecordings: (state: RecordState) => state.totalRecordings
     },
     mutations: {
-        clearRecordings: (state: RecordState) => { state.recordings = []; },
+        clearRecordings: (state: RecordState) => { state.recordings = {}; },
+        updateRecording: (state: RecordState, update: {id: number, update: Partial<HandTrackRecording>}) => {
+            state.recordings[update.id] = { ...state.recordings[update.id], ...update.update };
+        },
         addRecording: (state: RecordState, recording: HandTrackRecording) => { 
-            state.recordings.push(recording);
+            Vue.set(state.recordings as any, recording.id, recording);
+            state.totalRecordings++;
         }
     }
 }
@@ -35,6 +45,8 @@ const { commit, read, dispatch } =
     getStoreAccessors<RecordState, RootState>("record");
 
 export const getRecordings = read(record.getters.getRecordings);
+export const getTotalRecordings = read(record.getters.getTotalRecordings);
 
 export const clearRecordings = commit(record.mutations.clearRecordings);
 export const addRecording = commit(record.mutations.addRecording);
+export const updateRecording = commit(record.mutations.updateRecording);
