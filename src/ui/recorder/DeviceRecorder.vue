@@ -1,6 +1,6 @@
 <template>
 <section class="device-recorder">
-    <md-empty-state
+    <md-empty-state v-if="recordings.length == 0"
       md-icon="mic"
       md-label="Create your first recording"
       md-description="Create recordings of raw hand tracking data in order to develop and test games for the therapy platform without the physical need of a hand tracking device.">
@@ -12,6 +12,8 @@
 import Vue from 'vue'
 import { Component } from 'vue-property-decorator';
 
+import { getRecordings } from '@/state/modules/record';
+
 /** Device Recorder
  *  Component that makes it possible to record data sent from the device,
  *  save it locally, and play it back in an infinite loop. This is a convenience
@@ -22,5 +24,8 @@ import { Component } from 'vue-property-decorator';
   components: { }
 })
 export default class DeviceRecorder extends Vue {
+  get recordings() {
+    return getRecordings(this.$store);
+  }
 }
 </script>
