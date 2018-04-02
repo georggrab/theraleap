@@ -76,7 +76,7 @@ import { format } from "sizeof";
 })
 export default class App extends Vue {
   public menuVisible: boolean = false;
-  public activeNavItem: number = 0;
+  public activeNavItem: number = -1;
 
   private format = format;
 

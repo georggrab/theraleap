@@ -1,6 +1,11 @@
 <template>
 <section class="device-recorder">
-  Device Recorder
+    <md-empty-state
+      md-icon="mic"
+      md-label="Create your first recording"
+      md-description="Create recordings of raw hand tracking data in order to develop and test games for the therapy platform without the physical need of a hand tracking device.">
+    <md-button class="md-primary md-raised">Create first recording</md-button>
+  </md-empty-state>
 </section>
 </template>
 <script lang="ts">
@@ -16,6 +21,6 @@ import { Component } from 'vue-property-decorator';
 @Component({
   components: { }
 })
-export default class DeviceRecorderRoot extends Vue {
+export default class DeviceRecorder extends Vue {
 }
 </script>
