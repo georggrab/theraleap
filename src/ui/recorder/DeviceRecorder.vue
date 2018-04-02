@@ -13,6 +13,12 @@
       <md-card-header>
         <div class="md-title">{{recordings[id].name}}</div>
         <div class="md-subhead">Created {{recordings[id].creationDate}}</div>
+        <div class="use-recording-switch">
+          <md-switch 
+            @input="setActivatedId(id)"
+            :value="activatedId == id"
+            :disabled="!recordings[id].created"></md-switch>
+        </div>
       </md-card-header>
       <md-card-content v-if="recordings[id].created">
       </md-card-content> 
@@ -29,6 +35,10 @@
           <label>Duration</label>
           <md-input readonly :value="recordings[id].duration"></md-input>
         </md-field>
+        <section class="logger-display">
+          <graphical-hand-logger :height="250" :width="250">
+          </graphical-hand-logger>
+        </section>
       </md-card-content>
       <md-card-actions>
         <md-button v-if="!recordings[id].created">Save</md-button>
@@ -46,7 +56,8 @@ import { Component } from 'vue-property-decorator';
 //@ts-ignore
 import { format } from 'sizeof';
 
-import { getRecordings, getTotalRecordings, updateRecording, addRecording, HandTrackRecording } from '@/state/modules/record';
+import { getRecordings, setActivatedId, getActivatedId, getTotalRecordings, updateRecording, addRecording, HandTrackRecording } from '@/state/modules/record';
+import GraphicalHandLogger from '@/ui/debug/GraphicalHandLogger.vue';
 
 /** Device Recorder
  *  Component that makes it possible to record data sent from the device,
@@ -55,7 +66,7 @@ import { getRecordings, getTotalRecordings, updateRecording, addRecording, HandT
  *  the leap motion device attached and running permanently.
  */
 @Component({
-  components: { }
+  components: { GraphicalHandLogger }
 })
 export default class DeviceRecorder extends Vue {
   public formatFileSize = format;
@@ -71,11 +82,14 @@ export default class DeviceRecorder extends Vue {
     });
   }
 
+  public setActivated(id: number) { setActivatedId(this.$store, id) }
+
   public update(id: number, update: Partial<HandTrackRecording>) {
     updateRecording(this.$store, {id, update})
   }
 
   get recordings() { return getRecordings(this.$store); }
+  get activatedId() { return getActivatedId(this.$store); }
   get totalRecordings() { return getTotalRecordings(this.$store); }
 }
 </script>
