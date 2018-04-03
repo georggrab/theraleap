@@ -1,3 +1,10 @@
+import { GenericHandTrackingData } from "@/devices";
+
+export interface HandRenderer<T extends GenericHandTrackingData> {
+    initializeScene: () => GraphicalHandLoggerScene;
+    render: (data: T, scene: GraphicalHandLoggerScene) => void;
+}
+
 /**
  * Represents the whole Scene involving Hands
  */
@@ -18,7 +25,17 @@ export interface HandScene {
 export type MultiFingerScene = {[fingerType: number]: THREE.Object3D}
 
 /** Represents multiple Hand Objects */
-export type MultiHandScene = {[handType: string]: HandScene}
+export interface MultiHandScene {
+    hands: {[handType: string]: HandScene};
+    projectionFrom: Projection3;
+    projectionTo: Projection3;
+    nativeSceneRef: THREE.Scene;
+}
+
+export interface Projection3 {
+    min: number[];
+    max: number[];
+}
 
 export interface HandConfig {
     mainColor: number;

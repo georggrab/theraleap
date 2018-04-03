@@ -1,3 +1,9 @@
+import { GenericHandTrackingData } from "..";
+
+export interface LeapHandTrackingData extends GenericHandTrackingData {
+  data: LeapDeviceFrame;
+}
+
 export interface LeapDeviceFrame {
   currentFrameRate: number;
   devices: any[];
