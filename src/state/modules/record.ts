@@ -40,6 +40,8 @@ export const record = {
                 .reverse()
                 .map(k => state.recordings[k]),
         getActivatedId: (state: RecordState) => state.activatedId,
+        getActiveRecording: (state: RecordState): HandTrackRecording | undefined =>
+            state.activatedId? state.recordings[state.activatedId]: undefined,
         getTotalRecordings: (state: RecordState) => state.totalRecordings,
         hasRecordInCreation: (state: RecordState) => 
             Object.keys(state.recordings)
@@ -70,6 +72,7 @@ const { commit, read, dispatch } =
     getStoreAccessors<RecordState, RootState>("record");
 
 export const getRecordings = read(record.getters.getRecordings);
+export const getActiveRecording = read(record.getters.getActiveRecording);
 export const getRecordingsSortedDescending = read(record.getters.getRecordingsSortedDescending);
 export const getActivatedId = read(record.getters.getActivatedId);
 export const getTotalRecordings = read(record.getters.getTotalRecordings);
