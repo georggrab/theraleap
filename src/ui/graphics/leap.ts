@@ -143,13 +143,6 @@ export function renderFinger(type: string, pointable: LeapPointable, scene: Mult
 export function initializeFinger(finger: LeapPointable, scene: MultiHandScene): THREE.Object3D {
     const fingerMesh = new THREE.Object3D();
     const fingerTubeGeometry = getFingerTubeGeometry(finger, scene);
-    fingerMesh.add(new THREE.LineSegments(
-        new THREE.WireframeGeometry(fingerTubeGeometry), 
-        new THREE.LineBasicMaterial({
-            color: 0xffffff,
-            transparent: true,
-            opacity: 0.5
-        })))
     fingerMesh.add(new THREE.Mesh(
         fingerTubeGeometry,
         new THREE.MeshPhongMaterial( { 
@@ -159,6 +152,13 @@ export function initializeFinger(finger: LeapPointable, scene: MultiHandScene): 
             flatShading: true
         } )
     ));
+    fingerMesh.add(new THREE.LineSegments(
+        new THREE.WireframeGeometry(fingerTubeGeometry), 
+        new THREE.LineBasicMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.5
+        })))
     return fingerMesh;
 }
 
