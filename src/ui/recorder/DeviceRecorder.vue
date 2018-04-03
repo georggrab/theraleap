@@ -39,6 +39,8 @@
             <label>Duration</label>
             <md-input readonly :value="recordings[id].duration"></md-input>
           </md-field>
+          <md-button :disabled="!connectionHealthy">Record</md-button>
+          <md-button :disabled="!recordInProgress">Stop</md-button>
         </div>
         <div class="preview">
           <graphical-hand-logger :transparent="true">
@@ -64,6 +66,7 @@ import { format } from 'sizeof';
 
 import { getRecordings, setActivatedId, getActivatedId, getTotalRecordings, updateRecording, addRecording, HandTrackRecording } from '@/state/modules/record';
 import GraphicalHandLogger from '@/ui/graphics/GraphicalHandLogger.vue';
+import { getConnectionHealthy } from 'state/modules/device';
 
 /** Device Recorder
  *  Component that makes it possible to record data sent from the device,
@@ -76,6 +79,8 @@ import GraphicalHandLogger from '@/ui/graphics/GraphicalHandLogger.vue';
 })
 export default class DeviceRecorder extends Vue {
   public formatFileSize = format;
+  public recordInProgress: boolean = false;
+
   public createNewEmptyRecording() {
     return addRecording(this.$store, {
       name: `Recording #${this.totalRecordings + 1}`,
@@ -97,6 +102,7 @@ export default class DeviceRecorder extends Vue {
   get recordings() { return getRecordings(this.$store); }
   get activatedId() { return getActivatedId(this.$store); }
   get totalRecordings() { return getTotalRecordings(this.$store); }
+  get connectionHealthy() { return getConnectionHealthy(this.$store); }
 }
 </script>
 <style lang="scss" scoped>
