@@ -11,7 +11,7 @@ import * as THREE from 'three';
 import 'imports-loader?THREE=three!three/examples/js/controls/OrbitControls'
 import 'imports-loader?THREE=three!three/examples/js/controls/TrackballControls'
 
-import { Component } from 'vue-property-decorator';
+import { Component, Prop } from 'vue-property-decorator';
 
 import * as device from '@/state/modules/device'
 import { DeviceFacade, GenericHandTrackingData } from 'devices';
@@ -23,9 +23,18 @@ import { BufferGeometry, Geometry } from 'three';
 
 @Component
 export default class GraphicalHandLogger extends Vue {
+    @Prop({ default: false })
+    public transparent!: boolean;
+
+    @Prop({ default: 0x0 })
+    public background!: number;
+
+    @Prop({ default: true })
+    public grid!: boolean;
+
     private scene: THREE.Scene = new THREE.Scene();
     private camera: THREE.Camera | undefined;
-    private renderer: THREE.Renderer | undefined;
+    private renderer: THREE.WebGLRenderer | undefined;
     private animationHandle: number | undefined;
     private controls: THREE.OrbitControls | undefined;
 
@@ -216,15 +225,21 @@ export default class GraphicalHandLogger extends Vue {
         this.scene.add(lights[0], lights[1], lights[2]);
         this.scene.add(this.palmNormalVector)
 
-
-        this.renderer = new THREE.WebGLRenderer({ antialias: true });
+        this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: this.transparent });
+        this.renderer.setClearColor(0xffffff, 0);
         this.renderer.setSize(animation.clientWidth, animation.clientHeight);
         animation.appendChild(this.renderer.domElement);
 
-        this.scene.background = new THREE.Color( 0x0 );
+        if (this.transparent) {
+            this.scene.background = new THREE.Color(0xffffff); 
+        } else {
+            this.scene.background = new THREE.Color(this.background); 
+        }
 
-        let axisHelper = new THREE.AxesHelper(10000);
-        this.scene.add(axisHelper);
+        if (this.grid) {
+            let axisHelper = new THREE.GridHelper(100, 10);
+            this.scene.add(axisHelper);
+        }
     }
 
     private animate() {
@@ -252,15 +267,22 @@ export default class GraphicalHandLogger extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.three-container {
-    margin-top: 15px;
-    height: 80vh;
-}
-
 #bad-connection-warning {
     position: absolute;
     margin: 20px;
     font-family: monospace;
+    color: white;
+    background-color: black;
+}
+
+main {
+    width: 100%;
+    height: 100%;
+}
+
+section {
+    width: 100%;
+    height: 100%;
 }
 
 </style>

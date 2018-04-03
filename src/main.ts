@@ -12,6 +12,7 @@ Vue.use(Vuex)
 
 import DeviceLog from '@/ui/debug/DeviceLog.vue';
 import StatusLog from '@/ui/debug/StatusLog.vue';
+import DeviceGraphicalLog from '@/ui/debug/DeviceGraphicalLog.vue';
 import DeviceDebugRoot from '@/ui/debug/DeviceDebugRoot.vue';
 import DeviceDebugTabs from '@/ui/debug/DeviceDebugTabs.vue';
 
@@ -20,7 +21,6 @@ import DeviceRecorderTabs from '@/ui/recorder/DeviceRecorderTabs.vue';
 import DeviceRecorder from '@/ui/recorder/DeviceRecorder.vue';
 import DeviceRecorderSettings from '@/ui/recorder/DeviceRecorderSettings.vue';
 
-import GraphicalHandLogger from '@/ui/debug/GraphicalHandLogger.vue';
 import App from '@/ui/App.vue';
 
 import { DeviceDriver } from '@/devices';
@@ -43,7 +43,7 @@ new Vue({
                           path: 'devicelog'
                       },
                       {
-                          component: GraphicalHandLogger,
+                          component: DeviceGraphicalLog,
                           path: 'hand'
                       },
                       {

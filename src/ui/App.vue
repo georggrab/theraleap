@@ -71,6 +71,16 @@ import * as device from "@/state/modules/device";
 //@ts-ignore
 import { format } from "sizeof";
 
+/**
+ * Main Vue.JS App
+ * Creates a standard layout with a sidebar, header, and content area
+ *   using the vue-material component library.
+ * Displays the Status of the Device and the Transfer Rate in the Header
+ *   (if the data is available, so if the respective vuex store plugins are enabled)
+ * Expects two router-views for all children:
+ *   - main, which represents the content area
+ *   - tabs, which represents the tabs above the content area.
+ */
 @Component({
   components: {}
 })

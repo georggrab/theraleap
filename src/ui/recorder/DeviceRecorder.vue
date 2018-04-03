@@ -10,35 +10,41 @@
   </md-empty-state>
   <main v-else>
     <md-card v-for="id in Object.keys(recordings)" :key="id">
-      <md-card-header>
-        <div class="md-title">{{recordings[id].name}}</div>
-        <div class="md-subhead">Created {{recordings[id].creationDate}}</div>
-        <div class="use-recording-switch">
+      <md-card-header class="header-flex-container">
+        <section class="header-left">
+          <div class="md-title">{{recordings[id].name}}</div>
+          <div class="md-subhead">Created {{recordings[id].creationDate}}</div>
+        </section>
+        <section class="header-right">
           <md-switch 
             @input="setActivatedId(id)"
             :value="activatedId == id"
             :disabled="!recordings[id].created"></md-switch>
-        </div>
+        </section>
       </md-card-header>
       <md-card-content v-if="recordings[id].created">
       </md-card-content> 
       <md-card-content v-else>
-        <md-field>
-          <label>Name</label>
-          <md-input :value="recordings[id].name" @input="update(id, {name: $event})"></md-input>
-        </md-field>
-        <md-field>
-          <label>Size</label>
-          <md-input :value="recordings[id].size" readonly></md-input>
-        </md-field>
-        <md-field>
-          <label>Duration</label>
-          <md-input readonly :value="recordings[id].duration"></md-input>
-        </md-field>
-        <section class="logger-display">
-          <graphical-hand-logger :height="250" :width="250">
+        <div class="container">
+        <div class="form">
+          <md-field>
+            <label>Name</label>
+            <md-input :value="recordings[id].name" @input="update(id, {name: $event})"></md-input>
+          </md-field>
+          <md-field>
+            <label>Size</label>
+            <md-input :value="recordings[id].size" readonly></md-input>
+          </md-field>
+          <md-field>
+            <label>Duration</label>
+            <md-input readonly :value="recordings[id].duration"></md-input>
+          </md-field>
+        </div>
+        <div class="preview">
+          <graphical-hand-logger :transparent="true">
           </graphical-hand-logger>
-        </section>
+        </div>
+      </div>
       </md-card-content>
       <md-card-actions>
         <md-button v-if="!recordings[id].created">Save</md-button>
@@ -57,7 +63,7 @@ import { Component } from 'vue-property-decorator';
 import { format } from 'sizeof';
 
 import { getRecordings, setActivatedId, getActivatedId, getTotalRecordings, updateRecording, addRecording, HandTrackRecording } from '@/state/modules/record';
-import GraphicalHandLogger from '@/ui/debug/GraphicalHandLogger.vue';
+import GraphicalHandLogger from '@/ui/graphics/GraphicalHandLogger.vue';
 
 /** Device Recorder
  *  Component that makes it possible to record data sent from the device,
@@ -93,3 +99,29 @@ export default class DeviceRecorder extends Vue {
   get totalRecordings() { return getTotalRecordings(this.$store); }
 }
 </script>
+<style lang="scss" scoped>
+section.logger-display {
+}
+
+.header-flex-container {
+  display: flex;
+  .header-left {
+
+  }
+  .header-right {
+
+  }
+}
+
+.container {
+  display: flex;
+  .form{
+    flex: 2;
+  }
+  .preview {
+    flex: 3;
+    height: 250px;
+    width: 450px;
+  }
+}
+</style>
