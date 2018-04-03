@@ -5,42 +5,47 @@
       md-label="Create your first recording"
       md-description="Create recordings of raw hand tracking data in order to develop and test games for the therapy platform without the physical need of a hand tracking device.">
     <md-button 
-      @click="createNewEmptyRecording()"
+      @click="createNewEmptyRecording"
       class="md-primary md-raised">Create first recording</md-button>
   </md-empty-state>
   <main v-else>
-    <md-card v-for="id in Object.keys(recordings)" :key="id">
+    <md-button 
+      :disabled="recordInCreation" 
+      @click="createNewEmptyRecording" class="md-icon-button md-primary">
+      <md-icon>add</md-icon>
+    </md-button>
+    <md-card v-for="record of recordingsSortedDescending" :key="record.id" md-with-hover>
       <md-card-header class="header-flex-container">
         <section class="header-left">
-          <div class="md-title">{{recordings[id].name}}</div>
-          <div class="md-subhead">Created {{recordings[id].creationDate}}</div>
+          <div class="md-title">{{record.name}}</div>
+          <div class="md-subhead">Created {{record.creationDate}}</div>
         </section>
         <section class="header-right">
           <md-switch 
-            @input="setActivatedId(id)"
-            :value="activatedId == id"
-            :disabled="!recordings[id].created"></md-switch>
+            @input="setActivatedId(record.id)"
+            :value="activatedId == record.id"
+            :disabled="!record.created"></md-switch>
         </section>
       </md-card-header>
-      <md-card-content v-if="recordings[id].created">
+      <md-card-content v-if="record.created">
       </md-card-content> 
       <md-card-content v-else>
         <div class="container">
         <div class="form">
           <md-field>
             <label>Name</label>
-            <md-input :value="recordings[id].name" @input="update(id, {name: $event})"></md-input>
+            <md-input :value="record.name" @input="update(record.id, {name: $event})"></md-input>
           </md-field>
           <md-field>
             <label>Size</label>
-            <md-input :value="recordings[id].size | formatSize" readonly></md-input>
+            <md-input :value="record.size | formatSize" readonly></md-input>
           </md-field>
           <md-field>
             <label>Duration (milliseconds)</label>
-            <md-input readonly :value="recordings[id].duration"></md-input>
+            <md-input readonly :value="record.duration"></md-input>
           </md-field>
           <md-progress-bar md-mode="determinate" :md-value="bufferFullPercentage"></md-progress-bar>
-          <md-button @click="startRecord(id)" 
+          <md-button @click="startRecord(record.id)" 
             :disabled="!connectionHealthy || recordInProgress">Record</md-button>
           <md-button @click="stopRecord" :disabled="!recordInProgress">Stop</md-button>
         </div>
@@ -51,9 +56,9 @@
       </div>
       </md-card-content>
       <md-card-actions>
-        <md-button @click="saveRecord(id)" v-if="!recordings[id].created">Save</md-button>
-        <md-button @click="discardRecord(id)" v-if="!recordings[id].created">Discard</md-button>
-        <md-button @click="discardRecord(id)" v-if="recordings[id].created">Delete</md-button>
+        <md-button @click="saveRecord(record.id)" v-if="!record.created">Save</md-button>
+        <md-button @click="discardRecord(record.id)" v-if="!record.created">Discard</md-button>
+        <md-button @click="discardRecord(record.id)" v-if="record.created">Delete</md-button>
       </md-card-actions>
     </md-card>
   </main>
@@ -66,7 +71,7 @@ import { Component } from 'vue-property-decorator';
 //@ts-ignore
 import { format, sizeof } from 'sizeof';
 
-import { getRecordings, setActivatedId, getActivatedId, getTotalRecordings, updateRecording, addRecording, HandTrackRecording, deleteRecording, Record } from '@/state/modules/record';
+import { getRecordingsSortedDescending, getRecordings, setActivatedId, getActivatedId, getTotalRecordings, updateRecording, addRecording, HandTrackRecording, deleteRecording, Record, hasRecordInCreation } from '@/state/modules/record';
 import GraphicalHandLogger from '@/ui/graphics/GraphicalHandLogger.vue';
 import { getConnectionHealthy, getDeviceFacade } from 'state/modules/device';
 import { GenericHandTrackingData } from 'devices';
@@ -85,7 +90,6 @@ import { Subscription } from '@reactivex/rxjs/dist/package/Subscription';
   }
 })
 export default class DeviceRecorder extends Vue {
-  public formatFileSize = format;
   public recordInProgress: boolean = false;
   public bufferFullPercentage: number = 0;
 
@@ -174,6 +178,8 @@ export default class DeviceRecorder extends Vue {
   }
 
   get recordings() { return getRecordings(this.$store); }
+  get recordingsSortedDescending() { return getRecordingsSortedDescending(this.$store); }
+  get recordInCreation() { return hasRecordInCreation(this.$store); }
   get activatedId() { return getActivatedId(this.$store); }
   get totalRecordings() { return getTotalRecordings(this.$store); }
   get connectionHealthy() { return getConnectionHealthy(this.$store); }
