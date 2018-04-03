@@ -13,11 +13,16 @@ export interface RecordState {
 export interface HandTrackRecording {
     id: number;
     name: string;
-    data: GenericHandTrackingData[];
+    recording: Record[];
     created: boolean;
     creationDate?: number;
     duration?: number;
     size?: number;
+}
+
+export interface Record {
+    time: number;
+    data: any;
 }
 
 export const record = {
@@ -43,6 +48,7 @@ export const record = {
         },
         deleteRecording: (state: RecordState, id: number) => {
             delete state.recordings[id];
+            state.totalRecordings--;
         },
         setActivatedId: (state: RecordState, id: number) => {
             state.activatedId = id;

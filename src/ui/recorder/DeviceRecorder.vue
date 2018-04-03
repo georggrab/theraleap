@@ -42,7 +42,7 @@
           <md-progress-bar md-mode="determinate" :md-value="bufferFullPercentage"></md-progress-bar>
           <md-button @click="startRecord(id)" 
             :disabled="!connectionHealthy || recordInProgress">Record</md-button>
-          <md-button @click="stopRecord(id)" :disabled="!recordInProgress">Stop</md-button>
+          <md-button @click="stopRecord" :disabled="!recordInProgress">Stop</md-button>
         </div>
         <div class="preview">
           <graphical-hand-logger :transparent="true">
@@ -51,9 +51,9 @@
       </div>
       </md-card-content>
       <md-card-actions>
-        <md-button v-if="!recordings[id].created">Save</md-button>
-        <md-button v-if="!recordings[id].created">Discard</md-button>
-        <md-button v-if="recordings[id].created">Delete</md-button>
+        <md-button @click="saveRecord(id)" v-if="!recordings[id].created">Save</md-button>
+        <md-button @click="discardRecord(id)" v-if="!recordings[id].created">Discard</md-button>
+        <md-button @click="discardRecord(id)" v-if="recordings[id].created">Delete</md-button>
       </md-card-actions>
     </md-card>
   </main>
@@ -66,7 +66,7 @@ import { Component } from 'vue-property-decorator';
 //@ts-ignore
 import { format, sizeof } from 'sizeof';
 
-import { getRecordings, setActivatedId, getActivatedId, getTotalRecordings, updateRecording, addRecording, HandTrackRecording } from '@/state/modules/record';
+import { getRecordings, setActivatedId, getActivatedId, getTotalRecordings, updateRecording, addRecording, HandTrackRecording, deleteRecording, Record } from '@/state/modules/record';
 import GraphicalHandLogger from '@/ui/graphics/GraphicalHandLogger.vue';
 import { getConnectionHealthy, getDeviceFacade } from 'state/modules/device';
 import { GenericHandTrackingData } from 'devices';
@@ -89,7 +89,7 @@ export default class DeviceRecorder extends Vue {
   public recordInProgress: boolean = false;
   public bufferFullPercentage: number = 0;
 
-  private buffer: {time: number, data: any}[] = [];
+  private buffer: Record[] = [];
   private currentBufferSize: number = 0;
   private bufferMaxSize: number = 0.2e8;
 
@@ -99,7 +99,7 @@ export default class DeviceRecorder extends Vue {
     return addRecording(this.$store, {
       name: `Recording #${this.totalRecordings + 1}`,
       id: this.totalRecordings + 1,
-      data: [],
+      recording: [],
       created: false,
       creationDate: Date.now(),
       size: 0,
@@ -119,7 +119,7 @@ export default class DeviceRecorder extends Vue {
         const newBufferSize = this.updateBuffer(frame, Date.now());
         this.update(id, { size: newBufferSize, duration: this.getBufferDuration() });
         if (newBufferSize > this.bufferMaxSize) {
-          this.stopRecord(id);
+          this.stopRecord();
         }
       });
     }
@@ -142,13 +142,29 @@ export default class DeviceRecorder extends Vue {
 
   /**
    * Called by the Template when the Stop Button is pressed
-   * @argument id the Id for which to stop recording
    */
-  public stopRecord(id: number) {
+  public stopRecord() {
     if (this.deviceSubscription) {
       this.deviceSubscription.unsubscribe();
     }
     this.recordInProgress = false;
+  }
+
+  /**
+   * Called by the Template when the Save Button is pressed
+   * @argument id the Id for which to save
+   */
+  public saveRecord(id: number) {
+    this.stopRecord();
+    updateRecording(this.$store, {id, update: { created: true, recording: this.buffer }});
+  }
+
+  /**
+   * Called by the Template when the Discard Button is pressed
+   * @argument id the Id for which to discard
+   */
+  public discardRecord(id: number) {
+    deleteRecording(this.$store, id);
   }
 
   public setActivated(id: number) { setActivatedId(this.$store, id) }
