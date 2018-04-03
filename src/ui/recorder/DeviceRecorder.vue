@@ -22,8 +22,8 @@
         </section>
         <section class="header-right">
           <md-switch 
-            @input="setActivatedId(record.id)"
-            :value="activatedId == record.id"
+            @change="toggleActivated(record.id)"
+            :model="activatedId == record.id"
             :disabled="!record.created"></md-switch>
         </section>
       </md-card-header>
@@ -171,7 +171,9 @@ export default class DeviceRecorder extends Vue {
     deleteRecording(this.$store, id);
   }
 
-  public setActivated(id: number) { setActivatedId(this.$store, id) }
+  public toggleActivated(id: number) { 
+    this.activatedId == id? setActivatedId(this.$store, -1): setActivatedId(this.$store, id);
+  }
 
   public update(id: number, update: Partial<HandTrackRecording>) {
     updateRecording(this.$store, {id, update})
