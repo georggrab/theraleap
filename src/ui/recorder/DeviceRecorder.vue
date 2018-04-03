@@ -33,14 +33,16 @@
           </md-field>
           <md-field>
             <label>Size</label>
-            <md-input :value="recordings[id].size" readonly></md-input>
+            <md-input :value="recordings[id].size | formatSize" readonly></md-input>
           </md-field>
           <md-field>
-            <label>Duration</label>
+            <label>Duration (milliseconds)</label>
             <md-input readonly :value="recordings[id].duration"></md-input>
           </md-field>
-          <md-button :disabled="!connectionHealthy">Record</md-button>
-          <md-button :disabled="!recordInProgress">Stop</md-button>
+          <md-progress-bar md-mode="determinate" :md-value="bufferFullPercentage"></md-progress-bar>
+          <md-button @click="startRecord(id)" 
+            :disabled="!connectionHealthy || recordInProgress">Record</md-button>
+          <md-button @click="stopRecord(id)" :disabled="!recordInProgress">Stop</md-button>
         </div>
         <div class="preview">
           <graphical-hand-logger :transparent="true">
@@ -62,11 +64,13 @@ import Vue from 'vue'
 import { Component } from 'vue-property-decorator';
 
 //@ts-ignore
-import { format } from 'sizeof';
+import { format, sizeof } from 'sizeof';
 
 import { getRecordings, setActivatedId, getActivatedId, getTotalRecordings, updateRecording, addRecording, HandTrackRecording } from '@/state/modules/record';
 import GraphicalHandLogger from '@/ui/graphics/GraphicalHandLogger.vue';
-import { getConnectionHealthy } from 'state/modules/device';
+import { getConnectionHealthy, getDeviceFacade } from 'state/modules/device';
+import { GenericHandTrackingData } from 'devices';
+import { Subscription } from '@reactivex/rxjs/dist/package/Subscription';
 
 /** Device Recorder
  *  Component that makes it possible to record data sent from the device,
@@ -75,11 +79,21 @@ import { getConnectionHealthy } from 'state/modules/device';
  *  the leap motion device attached and running permanently.
  */
 @Component({
-  components: { GraphicalHandLogger }
+  components: { GraphicalHandLogger },
+  filters: {
+    formatSize: format
+  }
 })
 export default class DeviceRecorder extends Vue {
   public formatFileSize = format;
   public recordInProgress: boolean = false;
+  public bufferFullPercentage: number = 0;
+
+  private buffer: {time: number, data: any}[] = [];
+  private currentBufferSize: number = 0;
+  private bufferMaxSize: number = 0.2e8;
+
+  private deviceSubscription: Subscription | undefined;
 
   public createNewEmptyRecording() {
     return addRecording(this.$store, {
@@ -93,6 +107,50 @@ export default class DeviceRecorder extends Vue {
     });
   }
 
+  /**
+   * Called by the Template when the Record Button is pressed
+   * @argument id the Id for which to record
+   */
+  public startRecord(id: number) {
+    this.recordInProgress = true;
+    const data = this.deviceFacade.getHandTrackingData();
+    if (data) {
+      this.deviceSubscription = data.subscribe((frame) => {
+        const newBufferSize = this.updateBuffer(frame, Date.now());
+        this.update(id, { size: newBufferSize, duration: this.getBufferDuration() });
+        if (newBufferSize > this.bufferMaxSize) {
+          this.stopRecord(id);
+        }
+      });
+    }
+  }
+
+  private updateBuffer(frame: GenericHandTrackingData, recordedTime: number): number {
+    this.currentBufferSize += sizeof(frame.data);
+    this.bufferFullPercentage = this.currentBufferSize / this.bufferMaxSize * 100;
+    this.buffer.push({data: frame.data, time: recordedTime});
+    return this.currentBufferSize;
+  }
+
+  private getBufferDuration(): number | undefined {
+    if (this.buffer && this.buffer.length >= 2) {
+      return this.buffer[this.buffer.length - 1].time - this.buffer[0].time;
+    } else {
+      return undefined;
+    }
+  }
+
+  /**
+   * Called by the Template when the Stop Button is pressed
+   * @argument id the Id for which to stop recording
+   */
+  public stopRecord(id: number) {
+    if (this.deviceSubscription) {
+      this.deviceSubscription.unsubscribe();
+    }
+    this.recordInProgress = false;
+  }
+
   public setActivated(id: number) { setActivatedId(this.$store, id) }
 
   public update(id: number, update: Partial<HandTrackRecording>) {
@@ -103,6 +161,7 @@ export default class DeviceRecorder extends Vue {
   get activatedId() { return getActivatedId(this.$store); }
   get totalRecordings() { return getTotalRecordings(this.$store); }
   get connectionHealthy() { return getConnectionHealthy(this.$store); }
+  get deviceFacade() { return getDeviceFacade(this.$store); }
 }
 </script>
 <style lang="scss" scoped>
