@@ -21,6 +21,18 @@ import { project } from '@/ui/graphics/util';
 import { InteractionBox } from 'leapjs';
 import { BufferGeometry, Geometry } from 'three';
 
+export interface GraphicalHandLoggerScene {
+    multipleHandScene: MultiHandScene
+}
+
+export interface HandScene {
+    mesh: THREE.Object3D;
+    fingers: MultiFingerScene;
+}
+
+type MultiFingerScene = {[fingerType: number]: THREE.Object3D}
+type MultiHandScene = {[handType: string]: HandScene}
+
 @Component
 export default class GraphicalHandLogger extends Vue {
     @Prop({ default: false })
