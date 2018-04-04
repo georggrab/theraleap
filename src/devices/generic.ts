@@ -1,4 +1,6 @@
 import { Observable, Subscriber } from '@reactivex/rxjs';
+import { Store } from 'vuex';
+import { RootState } from 'state/store';
 
 /** 
  * Represents to current connection State of the
@@ -53,7 +55,7 @@ export interface DeviceFacade {
      * always be used instead of getDeviceTrackingData() unless there is a REALLY
      * good reason not to. 
      */
-    getHandTrackingData: () => Observable<GenericHandTrackingData> | undefined;
+    getHandTrackingData: (store: Store<RootState>) => Observable<GenericHandTrackingData> | undefined;
 
     /**
      * The Data coming from the real Hardware Device, or undefined if there

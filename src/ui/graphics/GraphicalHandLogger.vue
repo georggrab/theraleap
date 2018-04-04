@@ -54,7 +54,7 @@ export default class GraphicalHandLogger extends Vue {
 
     private setupDataStream() {
         const name = this.deviceFacade.getDeviceDriver().deviceName;
-        const data = this.deviceFacade.getHandTrackingData();
+        const data = this.deviceFacade.getHandTrackingData(this.$store);
         if (name == LEAP_MOTION_DEVICE_NAME) {
             if (data) {
                 if (!this.multiHandScene) {

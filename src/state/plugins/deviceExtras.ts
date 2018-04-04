@@ -6,16 +6,18 @@ import { setConnectionState, setDeviceFacade, setConnectionHealth, updateDeviceD
 
 //@ts-ignore
 import { sizeof } from 'sizeof'
+import { Store } from 'vuex';
+import { RootState } from '../store';
+import { getActiveRecording } from '../modules/record';
 
-export const deviceDataTransferRate = (store: any) => {
-    const facade = AppContainer.get<DeviceFacade>(DIIdent.SERVICE_MOTION_TRACKING_DEVICE_FACADE);
-    const data = facade.getHandTrackingData();
+export const deviceDataTransferRate = (facade: DeviceFacade) => (store: Store<RootState>) => {
+    const data = facade.getHandTrackingData(store);
 
     const transferRate = {
         currentRate: 0, timeCounter: 0, perSecondRate: 0, timestamp: Date.now(), frameAmount: 0 };
 
     if (data) {
-        data.subscribe((frame) => {
+        const subscription = data.subscribe((frame) => {
             transferRate.timeCounter += 
                 (Date.now() - transferRate.timestamp);
             transferRate.timestamp = Date.now();

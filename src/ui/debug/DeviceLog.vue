@@ -1,6 +1,6 @@
 <template>
 <section class="leap-debug-interface">
-  <raw-device-data-plotter :handtracking-data="deviceFacade.getHandTrackingData()"></raw-device-data-plotter>
+  <raw-device-data-plotter :handtracking-data="trackingData"></raw-device-data-plotter>
 </section>
 </template>
 <script lang="ts">
@@ -8,15 +8,27 @@ import Vue from 'vue'
 import DIIdent from '@/dependencyinjection/symbols';
 import { Inject, Component } from 'vue-property-decorator';
 import { AppContainer } from '@/dependencyinjection';
-import { DeviceConnectionState, InitialDeviceState, DeviceFacade, DeviceDriver } from '@/devices';
-import RawDeviceDataPlotter from '@/ui/RawDeviceDataPlotter.vue';
+import { DeviceConnectionState, InitialDeviceState, DeviceFacade, DeviceDriver, GenericHandTrackingData } from '@/devices';
+import RawDeviceDataPlotter from '@/ui/debug/RawDeviceDataPlotter.vue';
 
 import * as device from '@/state/modules/device'
+import { Observable } from '@reactivex/rxjs/dist/package/Observable';
 
 @Component({
-  components: { RawDeviceDataPlotter }
+  components: { RawDeviceDataPlotter },
 })
 export default class DeviceLog extends Vue {
+  public trackingData: GenericHandTrackingData = { data: {} };
+
+  public mounted() {
+    const data = this.deviceFacade.getHandTrackingData(this.$store);
+    if (data) {
+      data.subscribe((deviceFrame) => {
+        this.trackingData = deviceFrame;
+      });
+    }
+  }
+
   get deviceFacade(): DeviceFacade {
     return device.getDeviceFacade(this.$store);
   }

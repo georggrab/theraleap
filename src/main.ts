@@ -19,6 +19,6 @@ import { IStoreFactory } from 'state/store';
 export const RootVue = new Vue({
     el: '#app',
     router: RootRouter,
-    store: AppContainer.get<IStoreFactory>(DIInject.VUEX_STORE_FACTORY).create(),
+    store: AppContainer.get<IStoreFactory>(DIInject.VUEX_STORE_FACTORY).get(),
     render: (create) => create('router-view')
 });

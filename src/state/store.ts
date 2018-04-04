@@ -18,27 +18,40 @@ export interface RootState {
 }
 
 export interface IStoreFactory {
-    create(): Store<RootState>;
+    get(): Store<RootState>;
+}
+
+export interface IStoreHolder {
+    store: Store<RootState> | undefined;
+}
+
+@injectable()
+export class StoreHolder implements IStoreHolder {
+    public store: Store<RootState> | undefined;
 }
 
 @injectable()
 export class StoreFactory implements IStoreFactory {
     constructor(
         @inject(DIIdent.SERVICE_MOTION_TRACKING_DEVICE_FACADE) private facade: DeviceFacade,
-        @inject(DIIdent.SERVICE_MOTION_TRACKING_DEVICE_DRIVER) private driver: DeviceDriver) { }
+        @inject(DIIdent.SERVICE_MOTION_TRACKING_DEVICE_DRIVER) private driver: DeviceDriver,
+        @inject(DIIdent.VUEX_STORE) private storeHolder: IStoreHolder) { }
 
-    create(): Store<RootState> {
-        return new Vuex.Store<RootState>({
-            modules: {
-                device,
-                debug,
-                record
-            },
-            plugins: [
-                deviceConnector(this.driver), 
-                deviceFacadeConnector(this.facade), 
-                deviceDataTransferRate
-            ]
-        });
+    get(): Store<RootState> {
+        if (!this.storeHolder.store) {
+            this.storeHolder.store = new Vuex.Store<RootState>({
+                modules: {
+                    device,
+                    debug,
+                    record
+                },
+                plugins: [
+                    deviceConnector(this.driver), 
+                    deviceFacadeConnector(this.facade), 
+                    deviceDataTransferRate(this.facade)
+                ]
+            });
+        }
+        return this.storeHolder.store;
     }
 }

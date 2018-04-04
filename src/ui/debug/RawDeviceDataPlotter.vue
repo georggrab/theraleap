@@ -1,5 +1,5 @@
 <template>
-  <pre>{{JSON.stringify(currentFrame, null, 2)}}</pre>
+  <pre>{{JSON.stringify(handtrackingData.data, null, 2)}}</pre>
 </template>
 
 <script lang="ts">
@@ -12,15 +12,6 @@ import { DeviceConnectionState, InitialDeviceState, GenericHandTrackingData } fr
 @Component
 export default class RawDeviceDataPlotter extends Vue {
     @Prop()
-    public handtrackingData: Observable<GenericHandTrackingData> | undefined;
-    private currentFrame: Object = {};
-
-    public created() {
-      if (this.handtrackingData) {
-        this.handtrackingData.subscribe((data: any) => {
-          this.currentFrame = data.data
-          });
-      }
-    }
+    public handtrackingData!: GenericHandTrackingData;
 }
 </script>

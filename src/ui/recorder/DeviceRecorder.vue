@@ -117,7 +117,7 @@ export default class DeviceRecorder extends Vue {
    */
   public startRecord(id: number) {
     this.recordInProgress = true;
-    const data = this.deviceFacade.getHandTrackingData();
+    const data = this.deviceFacade.getHandTrackingData(this.$store);
     if (data) {
       this.deviceSubscription = data.subscribe((frame) => {
         const newBufferSize = this.updateBuffer(frame, Date.now());
@@ -132,7 +132,7 @@ export default class DeviceRecorder extends Vue {
   private updateBuffer(frame: GenericHandTrackingData, recordedTime: number): number {
     this.currentBufferSize += sizeof(frame.data);
     this.bufferFullPercentage = this.currentBufferSize / this.bufferMaxSize * 100;
-    this.buffer.push({data: frame.data, time: recordedTime});
+    this.buffer.push({data: frame, time: recordedTime});
     return this.currentBufferSize;
   }
 
