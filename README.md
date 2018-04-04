@@ -41,10 +41,16 @@ npm i
 
 ##### Running the project
 
+First make sure the Leap Motion Device driver is running:
+```bash
+sudo leapd
+```
+
 I recommend using `webpack-dev-server` as a local development server:
 
 ```
 npm i -g webpack-dev-server
+cd theraleap
 webpack-dev-server
 ```
 
