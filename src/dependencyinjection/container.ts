@@ -1,8 +1,10 @@
-import { Container } from 'inversify';
+import { Container, injectable } from 'inversify';
 
 import { DeviceDriver, DeviceFacade, HardwareDriverConnectionSettings } from '@/devices';
 import { LeapDriver, LeapFacade } from '@/devices/leapmotion';
 import DIIdent from '@/dependencyinjection/symbols';
+import { RootState, IStoreFactory, StoreFactory } from '@/state/store';
+import { Store } from 'vuex';
 
 const AppContainer = new Container();
 AppContainer.bind<DeviceDriver>(DIIdent.SERVICE_MOTION_TRACKING_DEVICE_DRIVER)
@@ -17,5 +19,7 @@ AppContainer.bind<HardwareDriverConnectionSettings>(DIIdent.SETTINGS_HARDWARE_DR
     });
 AppContainer.bind<DeviceFacade>(DIIdent.SERVICE_MOTION_TRACKING_DEVICE_FACADE)
     .to(LeapFacade).inSingletonScope();
+AppContainer.bind<IStoreFactory>(DIIdent.VUEX_STORE_FACTORY)
+    .to(StoreFactory).inSingletonScope();
 
 export { AppContainer };

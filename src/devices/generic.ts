@@ -1,4 +1,5 @@
-import { Observable } from '@reactivex/rxjs';
+import { Observable, Subscriber } from '@reactivex/rxjs';
+
 /** 
  * Represents to current connection State of the
  * Hand Tracking Device.
@@ -45,5 +46,19 @@ export interface DeviceDriver {
 
 export interface DeviceFacade {
     getDeviceDriver: () => DeviceDriver;
+
+    /**
+     * This may be simulated data OR the data coming from the real hardware device,
+     * depending on what is configured in the framework. This function should
+     * always be used instead of getDeviceTrackingData() unless there is a REALLY
+     * good reason not to. 
+     */
     getHandTrackingData: () => Observable<GenericHandTrackingData> | undefined;
+
+    /**
+     * The Data coming from the real Hardware Device, or undefined if there
+     * is a problem. You should probably use getHandTrackingData() instead, in order
+     * to include simulated data!
+     */
+    getDeviceTrackingData: () => Observable<GenericHandTrackingData> | undefined;
 }

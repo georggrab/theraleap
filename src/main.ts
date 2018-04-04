@@ -10,73 +10,15 @@ Vue.use(VueMaterial)
 Vue.use(VueRouter)
 Vue.use(Vuex)
 
-import DeviceLog from '@/ui/debug/DeviceLog.vue';
-import StatusLog from '@/ui/debug/StatusLog.vue';
-import DeviceGraphicalLog from '@/ui/debug/DeviceGraphicalLog.vue';
-import DeviceDebugRoot from '@/ui/debug/DeviceDebugRoot.vue';
-import DeviceDebugTabs from '@/ui/debug/DeviceDebugTabs.vue';
-
-import DeviceRecorderRoot from '@/ui/recorder/DeviceRecorderRoot.vue';
-import DeviceRecorderTabs from '@/ui/recorder/DeviceRecorderTabs.vue';
-import DeviceRecorder from '@/ui/recorder/DeviceRecorder.vue';
-import DeviceRecorderSettings from '@/ui/recorder/DeviceRecorderSettings.vue';
-
-import App from '@/ui/App.vue';
-
+import { RootRouter } from '@/router';
 import { DeviceDriver } from '@/devices';
-import { createStore } from '@/state/store';
+import { AppContainer } from '@/dependencyinjection';
+import DIInject from '@/dependencyinjection/symbols';
+import { IStoreFactory } from 'state/store';
 
-
-new Vue({
+export const RootVue = new Vue({
     el: '#app',
-    router: new VueRouter({ routes: [
-        {
-            path: '/',
-            component: App,
-            redirect: '/debug',
-            children: [
-                { path: 'debug', 
-                  redirect: '/debug/devicelog',
-                  children: [
-                      {
-                          component: DeviceLog,
-                          path: 'devicelog'
-                      },
-                      {
-                          component: DeviceGraphicalLog,
-                          path: 'hand'
-                      },
-                      {
-                          component: StatusLog,
-                          path: 'status'
-                      }
-                  ],
-                  components: {
-                    main: DeviceDebugRoot,
-                    tabs: DeviceDebugTabs
-                  }  
-                },
-                {
-                    path: 'recorder',
-                    redirect: '/recorder/main',
-                    children: [
-                        {
-                            component: DeviceRecorder,
-                            path: 'main'
-                        },
-                        {
-                            component: DeviceRecorderSettings,
-                            path: 'settings'
-                        }
-                    ],
-                    components: {
-                        main: DeviceRecorderRoot,
-                        tabs: DeviceRecorderTabs
-                    }
-                }
-            ]
-        }
-    ]}),
-    render: (create) => create('router-view'),
-    store: createStore()
+    router: RootRouter,
+    store: AppContainer.get<IStoreFactory>(DIInject.VUEX_STORE_FACTORY).create(),
+    render: (create) => create('router-view')
 });
