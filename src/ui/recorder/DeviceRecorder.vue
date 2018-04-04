@@ -50,7 +50,7 @@
           <md-button @click="stopRecord" :disabled="!recordInProgress">Stop</md-button>
         </div>
         <div class="preview">
-          <graphical-hand-logger :transparent="true">
+          <graphical-hand-logger :source="deviceTrackingData" :transparent="true">
           </graphical-hand-logger>
         </div>
       </div>
@@ -100,6 +100,7 @@ export default class DeviceRecorder extends Vue {
   private deviceSubscription: Subscription | undefined;
 
   public createNewEmptyRecording() {
+    this.clearLocalState();
     return addRecording(this.$store, {
       name: `Recording #${this.totalRecordings + 1}`,
       id: this.totalRecordings + 1,
@@ -117,9 +118,8 @@ export default class DeviceRecorder extends Vue {
    */
   public startRecord(id: number) {
     this.recordInProgress = true;
-    const data = this.deviceFacade.getHandTrackingData(this.$store);
-    if (data) {
-      this.deviceSubscription = data.subscribe((frame) => {
+    if (this.deviceTrackingData) {
+      this.deviceSubscription = this.deviceTrackingData.subscribe((frame) => {
         const newBufferSize = this.updateBuffer(frame, Date.now());
         this.update(id, { size: newBufferSize, duration: this.getBufferDuration() });
         if (newBufferSize > this.bufferMaxSize) {
@@ -127,6 +127,11 @@ export default class DeviceRecorder extends Vue {
         }
       });
     }
+  }
+
+  private clearLocalState() {
+    this.buffer = [];
+    this.bufferFullPercentage = 0;
   }
 
   private updateBuffer(frame: GenericHandTrackingData, recordedTime: number): number {
@@ -186,6 +191,9 @@ export default class DeviceRecorder extends Vue {
   get totalRecordings() { return getTotalRecordings(this.$store); }
   get connectionHealthy() { return getConnectionHealthy(this.$store); }
   get deviceFacade() { return getDeviceFacade(this.$store); }
+  get deviceTrackingData() {
+    return this.deviceFacade.getDeviceTrackingData();
+  }
 }
 </script>
 <style lang="scss" scoped>

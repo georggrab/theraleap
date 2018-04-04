@@ -18,6 +18,8 @@ export class LeapDriver implements DeviceDriver {
     private connectionActive: boolean = false;
     private deviceConnected: boolean | undefined;
 
+    private frameStream: Observable<GenericHandTrackingData>;
+
     constructor(
       @inject(DIIdent.SETTINGS_HARDWARE_DRIVER_CONNECTION) private controllerSettings: any) {
         this.controller = new leap.Controller(controllerSettings);
@@ -25,6 +27,7 @@ export class LeapDriver implements DeviceDriver {
         this.controller.on('disconnect', () => this.connectionActive = false);
         this.controller.on('deviceConnected', () => this.deviceConnected = true);
         this.controller.on('deviceDisconnected', () => this.deviceConnected = false);
+        this.frameStream = Observable.fromEvent(this.controller, 'frame');
     }
 
     public async isLeapServerRunning(maxWaitTimeInMs: number): Promise<boolean> {
@@ -79,10 +82,11 @@ export class LeapDriver implements DeviceDriver {
     }
 
     public setUpFrameStream(): Observable<GenericHandTrackingData> {
-        return Observable.create((observer: Observer<GenericHandTrackingData>) => {
-            this.controller.removeAllListeners('frame');
-            this.controller.on('frame', (frame: any) => observer.next(frame))
-        });
+        return this.frameStream;
+        //return Observable.create((observer: Observer<GenericHandTrackingData>) => {
+        //    this.controller.removeAllListeners('frame');
+        //    this.controller.on('frame', (frame: any) => observer.next(frame))
+        //});
     }
 
     public async connect(): Promise<boolean> {

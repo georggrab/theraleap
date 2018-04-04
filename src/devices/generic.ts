@@ -51,11 +51,17 @@ export interface DeviceFacade {
 
     /**
      * This may be simulated data OR the data coming from the real hardware device,
-     * depending on what is configured in the framework. This function should
-     * always be used instead of getDeviceTrackingData() unless there is a REALLY
-     * good reason not to. 
+     * depending on what is configured in the framework.
      */
     getHandTrackingData: (store: Store<RootState>) => Observable<GenericHandTrackingData> | undefined;
+
+    /**
+     * Notify the DeviceFacade that the Stream source should be updated (like for example,
+     * when switching from real data to a recording). This has to be done manually so the
+     * update check does not have to be performed inside the Observable's onNext(), which
+     * would be costly.
+     */
+    notifyStreamSourceShouldUpdate: (store: Store<RootState>) => void
 
     /**
      * The Data coming from the real Hardware Device, or undefined if there

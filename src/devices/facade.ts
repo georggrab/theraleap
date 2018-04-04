@@ -30,23 +30,36 @@ function createFakeDeviceStream(recordedData: HandTrackRecording): Observable<Ge
 
 @injectable()
 export abstract class AbstractDeviceFacade implements DeviceFacade {
-    private internalStream: ReplaySubject<GenericHandTrackingData> = new ReplaySubject(0);
+    private internalStream: Subject<GenericHandTrackingData> = new Subject();
     private fakeSubscription: Subscription | undefined;
     private realSubscription: Subscription | undefined;
 
     abstract getDeviceDriver(): DeviceDriver;
     abstract getDeviceTrackingData(): Observable<GenericHandTrackingData> | undefined;
 
+    public notifyStreamSourceShouldUpdate(store: Store<RootState>) {
+        this.updateStreamSources(store);
+    }
+
     public getHandTrackingData(store: Store<RootState>): Observable<GenericHandTrackingData> | undefined {
-        const recordedData = getActiveRecording(store);
+        this.updateStreamSources(store);
+        return this.internalStream;
+    }
+
+    private clearSubscriptions() {
         if (this.realSubscription) {
             this.realSubscription.unsubscribe();
             this.realSubscription = undefined;
         }
-            if (this.fakeSubscription) {
-                this.fakeSubscription.unsubscribe();
-                this.fakeSubscription = undefined;
-            }
+        if (this.fakeSubscription) {
+            this.fakeSubscription.unsubscribe();
+            this.fakeSubscription = undefined;
+        }
+    }
+
+    private updateStreamSources(store: Store<RootState>) {
+        const recordedData = getActiveRecording(store);
+        this.clearSubscriptions();
         if (recordedData) {
             if (!this.fakeSubscription) {
                 this.fakeSubscription = createFakeDeviceStream(recordedData)
@@ -59,6 +72,6 @@ export abstract class AbstractDeviceFacade implements DeviceFacade {
                     .subscribe(this.internalStream);
             }
         }
-        return this.internalStream;
+
     }
 }

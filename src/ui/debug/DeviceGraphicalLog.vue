@@ -1,6 +1,6 @@
 <template>
 <section class="leap-graphical-log">
-    <graphical-hand-logger :transparent="true"></graphical-hand-logger>
+    <graphical-hand-logger :source="trackingData" :transparent="true"></graphical-hand-logger>
 </section>
 </template>
 <script lang="ts">
@@ -8,6 +8,7 @@ import Vue from 'vue'
 import { Inject, Component } from 'vue-property-decorator';
 
 import GraphicalHandLogger from '@/ui/graphics/GraphicalHandLogger.vue';
+import * as device from '@/state/modules/device';
 
 /**
  * Displays a full screen Graphical Hand Logger, for debugging and
@@ -17,6 +18,7 @@ import GraphicalHandLogger from '@/ui/graphics/GraphicalHandLogger.vue';
   components: { GraphicalHandLogger }
 })
 export default class DeviceGraphicalLog extends Vue {
+    private trackingData = device.getDeviceFacade(this.$store).getHandTrackingData(this.$store);
 }
 </script>
 <style lang="scss" scoped>

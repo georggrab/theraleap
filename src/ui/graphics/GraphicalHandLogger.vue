@@ -18,8 +18,12 @@ import * as device from '@/state/modules/device'
 import { DeviceFacade, GenericHandTrackingData } from 'devices';
 import { LEAP_MOTION_DEVICE_NAME, LeapDeviceFrame } from 'devices/leapmotion';
 
+import * as graphics from 'state/modules/graphics';
+
 import { MultiHandScene } from './types';
 import * as leapRenderUtils from './leap';
+import { Observable } from '@reactivex/rxjs/dist/package/Observable';
+import { Subscription } from '@reactivex/rxjs/dist/package/Subscription';
 
 @Component
 export default class GraphicalHandLogger extends Vue {
@@ -32,13 +36,16 @@ export default class GraphicalHandLogger extends Vue {
     @Prop({ default: true })
     public grid!: boolean;
 
+    @Prop()
+    public source!: Observable<GenericHandTrackingData>;
+
     private scene: THREE.Scene = new THREE.Scene();
     private camera: THREE.Camera | undefined;
-    private renderer: THREE.WebGLRenderer | undefined;
     private animationHandle: number | undefined;
     private controls: THREE.OrbitControls | undefined;
 
     private multiHandScene: MultiHandScene | undefined;
+    private subscription: Subscription | undefined;
 
     private mounted() {
         this.initializeGraphics();
@@ -50,20 +57,21 @@ export default class GraphicalHandLogger extends Vue {
         if (this.animationHandle) {
             window.cancelAnimationFrame(this.animationHandle);
         }
+        this.subscription!.unsubscribe();
     }
 
     private setupDataStream() {
         const name = this.deviceFacade.getDeviceDriver().deviceName;
-        const data = this.deviceFacade.getHandTrackingData(this.$store);
         if (name == LEAP_MOTION_DEVICE_NAME) {
-            if (data) {
-                if (!this.multiHandScene) {
-                    this.multiHandScene = leapRenderUtils.initializeScene(this.scene);
-                }
-                data.subscribe((frame) => {
-                    leapRenderUtils.render(frame, this.multiHandScene!);
-                });
+            if (!this.multiHandScene) {
+                this.multiHandScene = leapRenderUtils.initializeScene(this.scene);
             }
+            if (this.subscription) {
+                this.subscription.unsubscribe();
+            }
+            this.subscription = this.source.subscribe((frame) => {
+                leapRenderUtils.render(frame, this.multiHandScene!);
+            });
         } else {
             console.warn('Can\'t plot hand tracking data from unsupported device:', name);
         }
@@ -89,7 +97,6 @@ export default class GraphicalHandLogger extends Vue {
 		lights[ 2 ].position.set( - 100, - 200, - 100 );
         this.scene.add(lights[0], lights[1], lights[2]);
 
-        this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: this.transparent });
         this.renderer.setClearColor(0xffffff, 0);
         this.renderer.setSize(animation.clientWidth, animation.clientHeight);
         animation.appendChild(this.renderer.domElement);
@@ -119,6 +126,10 @@ export default class GraphicalHandLogger extends Vue {
             window.cancelAnimationFrame(this.animationHandle);
         }
     }
+
+  get renderer(): THREE.WebGLRenderer {
+      return graphics.getRenderer(this.$store);
+  }
 
   get connectionHealthy(): boolean | undefined {
     return device.getConnectionHealthy(this.$store);

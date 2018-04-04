@@ -13,19 +13,27 @@ import RawDeviceDataPlotter from '@/ui/debug/RawDeviceDataPlotter.vue';
 
 import * as device from '@/state/modules/device'
 import { Observable } from '@reactivex/rxjs/dist/package/Observable';
+import { Subscription } from '@reactivex/rxjs/dist/package/Subscription';
 
 @Component({
   components: { RawDeviceDataPlotter },
 })
 export default class DeviceLog extends Vue {
   public trackingData: GenericHandTrackingData = { data: {} };
+  private subscription: Subscription | undefined;
 
   public mounted() {
     const data = this.deviceFacade.getHandTrackingData(this.$store);
     if (data) {
-      data.subscribe((deviceFrame) => {
+      this.subscription = data.subscribe((deviceFrame) => {
         this.trackingData = deviceFrame;
       });
+    }
+  }
+
+  public beforeDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
     }
   }
 

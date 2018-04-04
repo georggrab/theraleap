@@ -6,6 +6,7 @@ import DIIdent from '@/dependencyinjection/symbols';
 import { DeviceState, device } from '@/state/modules/device';
 import { DebugState, debug } from '@/state/modules/debug';
 import { RecordState, record } from '@/state/modules/record';
+import { GraphicsState, graphics } from '@/state/modules/graphics';
 
 import { deviceConnector, deviceFacadeConnector } from './plugins/deviceConnector';
 import { deviceDataTransferRate } from './plugins/deviceExtras';
@@ -14,7 +15,8 @@ import { DeviceFacade, DeviceDriver } from 'devices';
 export interface RootState {
     device: DeviceState,
     debug: DebugState,
-    record: RecordState
+    record: RecordState,
+    graphics: GraphicsState
 }
 
 export interface IStoreFactory {
@@ -43,6 +45,7 @@ export class StoreFactory implements IStoreFactory {
                 modules: {
                     device,
                     debug,
+                    graphics,
                     record
                 },
                 plugins: [

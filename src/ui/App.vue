@@ -5,6 +5,10 @@
       <md-icon>menu</md-icon>
     </md-button>
     <span class="md-title">TheraLeap</span>
+    <div v-if="simulationRunning" class="simulated">
+      <span>SIMULATED</span>
+      <span @click="deactivateRecording" class="md-accent clickable">(STOP)</span>
+    </div>
     <div v-if="connectionHealthy" class="device-status device-status--good">
       <md-icon>settings_remote
         <md-tooltip md-direction="top">Connected to Leap Device.</md-tooltip>
@@ -16,7 +20,7 @@
       </md-icon>
       <md-progress-spinner class="md-accent" :md-stroke="2" :md-diameter="30" md-mode="indeterminate"></md-progress-spinner>
     </div>
-    <div v-if="deviceDataTransferRate">{{ format(deviceDataTransferRate) }}/s</div>
+    <div class="transfer-rate" v-if="deviceDataTransferRate">{{ format(deviceDataTransferRate) }}/s</div>
     <div :class="{ 'menu-not-visible': !menuVisible }" class="md-toolbar-row">
         <router-view name="tabs"></router-view>
     </div>
@@ -67,6 +71,7 @@ import {
 import { inject } from "inversify";
 
 import * as device from "@/state/modules/device";
+import * as record from "@/state/modules/record";
 
 //@ts-ignore
 import { format } from "sizeof";
@@ -96,6 +101,15 @@ export default class App extends Vue {
 
   public setActiveNavItem(to: number) { 
     this.activeNavItem = to; 
+  }
+
+  public deactivateRecording() {
+    record.setActivatedId(this.$store, -1);
+    device.getDeviceFacade(this.$store).notifyStreamSourceShouldUpdate(this.$store);
+  }
+
+  get simulationRunning(): boolean {
+    return record.getActiveRecording(this.$store) !== undefined;
   }
 
   get connectionHealthy(): boolean | undefined {
@@ -170,6 +184,21 @@ export default class App extends Vue {
     left: 2px;
     top: 3px;
     position: absolute;
+  }
+}
+
+.transfer-rate {
+  font-family: monospace;
+}
+
+.simulated {
+  display:flex;
+  align-items: baseline;
+  font-family: monospace;
+  margin-left: 10px;
+  .clickable {
+    text-decoration: underline;
+    cursor: pointer;
   }
 }
 </style>
