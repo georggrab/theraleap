@@ -8,6 +8,7 @@ export interface RecordState {
     recordings: { [id: string]: HandTrackRecording };
     totalRecordings: number;
     activatedId: number | undefined;
+    persist: boolean;
 }
 
 export interface HandTrackRecording {
@@ -30,7 +31,8 @@ export const record = {
     state: {
         recordings: {},
         totalRecordings: 0,
-        activatedId: undefined
+        activatedId: undefined,
+        persist: false
     },
     getters: {
         getRecordings: (state: RecordState) => state.recordings,
@@ -46,7 +48,8 @@ export const record = {
         hasRecordInCreation: (state: RecordState) => 
             Object.keys(state.recordings)
                 .map(k => state.recordings[k])
-                .filter(rec => !rec.created).length >= 1
+                .filter(rec => !rec.created).length >= 1,
+        getPersist: (state: RecordState) => state.persist,
     },
     mutations: {
         clearRecordings: (state: RecordState) => { state.recordings = {}; },
@@ -63,8 +66,10 @@ export const record = {
         },
         setActivatedId: (state: RecordState, id: number) => {
             state.activatedId = id;
+        },
+        setPersist: (state: RecordState, persist: boolean) => {
+            state.persist = persist;
         }
-
     }
 }
 
@@ -76,6 +81,7 @@ export const getActiveRecording = read(record.getters.getActiveRecording);
 export const getRecordingsSortedDescending = read(record.getters.getRecordingsSortedDescending);
 export const getActivatedId = read(record.getters.getActivatedId);
 export const getTotalRecordings = read(record.getters.getTotalRecordings);
+export const getPersist = read(record.getters.getPersist);
 export const hasRecordInCreation = read(record.getters.hasRecordInCreation);
 
 export const clearRecordings = commit(record.mutations.clearRecordings);
@@ -83,3 +89,4 @@ export const addRecording = commit(record.mutations.addRecording);
 export const updateRecording = commit(record.mutations.updateRecording);
 export const deleteRecording = commit(record.mutations.deleteRecording);
 export const setActivatedId = commit(record.mutations.setActivatedId);
+export const setPersist = commit(record.mutations.setPersist);
