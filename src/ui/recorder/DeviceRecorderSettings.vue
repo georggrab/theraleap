@@ -8,6 +8,11 @@
           <md-subheader>Persistence</md-subheader>
           <md-divider></md-divider>
           <md-checkbox v-model="persist">Persist Recordings</md-checkbox>
+          <md-subheader>Actions</md-subheader>
+          <md-divider></md-divider>
+          <md-button 
+            @click="deleteAllRecordings"
+            class="md-raised md-accent">Delete all Recordings</md-button>
         </md-card-content>
       </md-card>
 </section>
@@ -26,6 +31,9 @@ import * as record from '@/state/modules/record';
   components: { }
 })
 export default class DeviceRecorderSettings extends Vue {
+  public deleteAllRecordings() {
+    record.clearRecordings(this.$store);
+  }
   set persist(value: boolean) {
     record.setPersist(this.$store, value);
   }

@@ -52,7 +52,10 @@ export const record = {
         getPersist: (state: RecordState) => state.persist,
     },
     mutations: {
-        clearRecordings: (state: RecordState) => { state.recordings = {}; },
+        clearRecordings: (state: RecordState) => { 
+            state.recordings = {}; 
+            state.totalRecordings = 0;
+        },
         updateRecording: (state: RecordState, update: {id: number, update: Partial<HandTrackRecording>}) => {
             state.recordings[update.id] = { ...state.recordings[update.id], ...update.update };
         },
