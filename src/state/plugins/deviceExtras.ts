@@ -26,7 +26,8 @@ export const deviceDataTransferRate = (facade: DeviceFacade) => (store: Store<Ro
             if (transferRate.timeCounter >= 1000) {
                 transferRate.timeCounter = 0;
                 transferRate.perSecondRate = 
-                    transferRate.currentRate / transferRate.frameAmount;
+                    transferRate.currentRate;
+
                 transferRate.frameAmount = 0;
                 transferRate.currentRate = 0;
                 updateDeviceDataTransferRate(store, transferRate.perSecondRate);
