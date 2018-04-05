@@ -7,12 +7,12 @@
         <md-card-content>
           <md-subheader>Persistence</md-subheader>
           <md-divider></md-divider>
-          <md-checkbox v-model="persist">Persist Recordings</md-checkbox>
+          <md-checkbox class="md-primary" v-model="persist">Persist Recordings</md-checkbox>
           <md-subheader>Actions</md-subheader>
           <md-divider></md-divider>
           <md-button 
             @click="deleteAllRecordings"
-            class="md-raised md-accent">Delete all Recordings</md-button>
+            class="md-raised md-accent md-dense">Delete all Recordings</md-button>
         </md-card-content>
       </md-card>
 </section>
