@@ -83,10 +83,6 @@ export class LeapDriver implements DeviceDriver {
 
     public setUpFrameStream(): Observable<GenericHandTrackingData> {
         return this.frameStream;
-        //return Observable.create((observer: Observer<GenericHandTrackingData>) => {
-        //    this.controller.removeAllListeners('frame');
-        //    this.controller.on('frame', (frame: any) => observer.next(frame))
-        //});
     }
 
     public async connect(): Promise<boolean> {
