@@ -7,7 +7,10 @@
         <md-card-content>
           <md-subheader>Persistence</md-subheader>
           <md-divider></md-divider>
-          <md-checkbox class="md-primary" v-model="persist">Persist Recordings</md-checkbox>
+          <div class="small-info">Persistence Provider: <span>{{ persistenceProviderName }}</span></div>
+          <md-checkbox class="md-primary" 
+            :disabled="persistor === undefined"
+            v-model="persist">Persist Recordings</md-checkbox>
           <md-subheader>Actions</md-subheader>
           <md-divider></md-divider>
           <md-button 
@@ -22,6 +25,7 @@ import Vue from 'vue'
 import { Component } from 'vue-property-decorator';
 
 import * as record from '@/state/modules/record';
+import * as persistor from '@/state/modules/persistor';
 
 /** Device Recorder Settings
  *  Manages Settings (primarily on/off) for the Device Recorder.
@@ -40,5 +44,19 @@ export default class DeviceRecorderSettings extends Vue {
   get persist() {
     return record.getPersist(this.$store);
   }
+  get persistor() {
+    return persistor.getPersistor(this.$store);
+  }
+  get persistenceProviderName() {
+    return this.persistor !== undefined? this.persistor.getName() : "not available";
+  }
 }
 </script>
+<style lang="scss" scoped>
+.small-info {
+  font-weight: 100;
+  span {
+    font-weight: 300;
+  }
+}
+</style>

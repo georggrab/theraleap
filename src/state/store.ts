@@ -7,16 +7,20 @@ import { DeviceState, device } from '@/state/modules/device';
 import { DebugState, debug } from '@/state/modules/debug';
 import { RecordState, record } from '@/state/modules/record';
 import { GraphicsState, graphics } from '@/state/modules/graphics';
+import { PersistorState, persist } from './modules/persistor';
 
 import { deviceConnector, deviceFacadeConnector } from './plugins/deviceConnector';
 import { deviceDataTransferRate } from './plugins/deviceExtras';
 import { DeviceFacade, DeviceDriver } from 'devices';
+import { KVPersistenceProvider } from './persistence';
+import { initializePersistence } from './plugins/persistor';
 
 export interface RootState {
     device: DeviceState,
     debug: DebugState,
     record: RecordState,
-    graphics: GraphicsState
+    graphics: GraphicsState,
+    persist: PersistorState,
 }
 
 export interface IStoreFactory {
@@ -37,7 +41,8 @@ export class StoreFactory implements IStoreFactory {
     constructor(
         @inject(DIIdent.SERVICE_MOTION_TRACKING_DEVICE_FACADE) private facade: DeviceFacade,
         @inject(DIIdent.SERVICE_MOTION_TRACKING_DEVICE_DRIVER) private driver: DeviceDriver,
-        @inject(DIIdent.VUEX_STORE) private storeHolder: IStoreHolder) { }
+        @inject(DIIdent.VUEX_STORE) private storeHolder: IStoreHolder,
+        @inject(DIIdent.PERSISTENCE_PROVIDER) private persistor: KVPersistenceProvider<string, any>) { }
 
     get(): Store<RootState> {
         if (!this.storeHolder.store) {
@@ -46,12 +51,14 @@ export class StoreFactory implements IStoreFactory {
                     device,
                     debug,
                     graphics,
-                    record
+                    record,
+                    persist,
                 },
                 plugins: [
                     deviceConnector(this.driver), 
                     deviceFacadeConnector(this.facade), 
-                    deviceDataTransferRate(this.facade)
+                    deviceDataTransferRate(this.facade),
+                    initializePersistence(this.persistor),
                 ]
             });
         }
