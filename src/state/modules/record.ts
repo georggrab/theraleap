@@ -3,6 +3,7 @@ import { getStoreAccessors } from 'vuex-typescript';
 import { DeviceState } from './device';
 import { RootState } from '../store';
 import Vue from 'vue';
+import { KVPersistenceProvider } from '../persistence';
 
 export interface RecordState {
     recordings: { [id: string]: HandTrackRecording };
@@ -59,13 +60,19 @@ export const record = {
         updateRecording: (state: RecordState, update: {id: number, update: Partial<HandTrackRecording>}) => {
             state.recordings[update.id] = { ...state.recordings[update.id], ...update.update };
         },
-        addRecording: (state: RecordState, recording: HandTrackRecording) => { 
+        addRecording: (state: RecordState, {recording, persistor}: { recording: HandTrackRecording, persistor: KVPersistenceProvider<string, any> | undefined }) => { 
             Vue.set(state.recordings as any, recording.id, recording);
             state.totalRecordings++;
+            if (state.persist && persistor) {
+                persistor.put(recording.id.toString(), recording);
+            }
         },
-        deleteRecording: (state: RecordState, id: number) => {
+        deleteRecording: (state: RecordState, {id, persistor}: { id: number, persistor: KVPersistenceProvider<string, any> | undefined }) => {
             Vue.delete(state.recordings as any, id);
             state.totalRecordings--;
+            if (state.persist && persistor) {
+                persistor.delete(id.toString());
+            }
         },
         setActivatedId: (state: RecordState, id: number) => {
             state.activatedId = id;

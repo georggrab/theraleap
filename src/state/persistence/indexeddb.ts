@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
 
-import { KVPersistenceProvider } from ".";
+import { KVPersistenceProvider } from "@/state/persistence";
 
 @injectable()
 export class IndexedDBPersistenceProvider<K, V> implements KVPersistenceProvider<K, V> {
@@ -19,7 +19,15 @@ export class IndexedDBPersistenceProvider<K, V> implements KVPersistenceProvider
         return undefined;
     }
 
+    public getAll(): V[] | undefined {
+        return undefined;
+    }
+
     public put(key: K, val: V): boolean {
+        return false;
+    }
+
+    public delete(key: K): boolean {
         return false;
     }
 

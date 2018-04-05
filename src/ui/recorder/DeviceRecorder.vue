@@ -76,6 +76,7 @@ import GraphicalHandLogger from '@/ui/graphics/GraphicalHandLogger.vue';
 import { getConnectionHealthy, getDeviceFacade } from 'state/modules/device';
 import { GenericHandTrackingData } from 'devices';
 import { Subscription } from '@reactivex/rxjs/dist/package/Subscription';
+import { getPersistor } from 'state/modules/persistor';
 
 /** Device Recorder
  *  Component that makes it possible to record data sent from the device,
@@ -101,14 +102,17 @@ export default class DeviceRecorder extends Vue {
 
   public createNewEmptyRecording() {
     this.clearLocalState();
-    return addRecording(this.$store, {
-      name: `Recording #${this.totalRecordings + 1}`,
-      id: this.totalRecordings + 1,
-      recording: [],
-      created: false,
-      creationDate: Date.now(),
-      size: 0,
-      duration: 0
+    return addRecording(this.$store, { 
+      recording: {
+        name: `Recording #${this.totalRecordings + 1}`,
+        id: this.totalRecordings + 1,
+        recording: [],
+        created: false,
+        creationDate: Date.now(),
+        size: 0,
+        duration: 0
+      },
+      persistor: this.persistor
     });
   }
 
@@ -173,7 +177,7 @@ export default class DeviceRecorder extends Vue {
    * @argument id the Id for which to discard
    */
   public discardRecord(id: number) {
-    deleteRecording(this.$store, id);
+    deleteRecording(this.$store, { id, persistor: this.persistor });
   }
 
   public toggleActivated(id: number) { 
@@ -184,6 +188,7 @@ export default class DeviceRecorder extends Vue {
     updateRecording(this.$store, {id, update})
   }
 
+  get persistor() { return getPersistor(this.$store); }
   get recordings() { return getRecordings(this.$store); }
   get recordingsSortedDescending() { return getRecordingsSortedDescending(this.$store); }
   get recordInCreation() { return hasRecordInCreation(this.$store); }
