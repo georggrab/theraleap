@@ -40,7 +40,7 @@ export default class GraphicalHandLogger extends Vue {
     public source!: Observable<GenericHandTrackingData>;
 
     private scene: THREE.Scene = new THREE.Scene();
-    private camera: THREE.Camera | undefined;
+    private camera: THREE.PerspectiveCamera | undefined;
     private animationHandle: number | undefined;
     private controls: THREE.OrbitControls | undefined;
 
@@ -49,14 +49,34 @@ export default class GraphicalHandLogger extends Vue {
 
     private mounted() {
         this.initializeGraphics();
+        this.setupWindowResizeListener();
         this.setupDataStream();
         this.animate();
+    }
+
+    private setupWindowResizeListener() {
+        window.addEventListener('resize', this.fixAspectRatioOnResize, false);
+    }
+
+    private removeWindowResizeListener() {
+        window.removeEventListener('resize', this.fixAspectRatioOnResize);
+    }
+
+    private fixAspectRatioOnResize() {
+        const animation = this.$refs.animation as HTMLMainElement;
+        if (this.camera && animation) {
+            this.camera.aspect =
+                animation.clientWidth / animation.clientHeight;
+            this.camera.updateProjectionMatrix();
+            this.renderer.setSize(animation.clientWidth, animation.clientHeight);
+        }
     }
 
     private beforeDestroy() {
         if (this.animationHandle) {
             window.cancelAnimationFrame(this.animationHandle);
         }
+        this.removeWindowResizeListener();
         this.subscription!.unsubscribe();
     }
 
@@ -79,13 +99,14 @@ export default class GraphicalHandLogger extends Vue {
 
     private initializeGraphics() {
         let animation = this.$refs.animation as HTMLMainElement
+
         this.camera = new THREE.PerspectiveCamera(75, animation.clientWidth / animation.clientHeight, 0.1, 1000)
 
         this.controls = new THREE.OrbitControls(this.camera, animation);
         this.controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
         this.controls.dampingFactor = 0.25;
 		this.controls.minDistance = 100;
-		this.controls.maxDistance = 500
+        this.controls.maxDistance = 500
 
         var lights = [];
 		lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0 );
