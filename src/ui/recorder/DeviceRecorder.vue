@@ -56,9 +56,15 @@
       </div>
       </md-card-content>
       <md-card-actions>
-        <md-button @click="saveRecord(record.id)" v-if="!record.created">Save</md-button>
-        <md-button @click="discardRecord(record.id)" v-if="!record.created">Discard</md-button>
-        <md-button @click="discardRecord(record.id)" v-if="record.created">Delete</md-button>
+        <md-button 
+          @click="saveRecord(record.id)" 
+          :disabled="buffer.length === 0"
+          v-if="!record.created"
+          class="md-raised md-primary">Save</md-button>
+        <md-button @click="discardRecord(record.id)" v-if="!record.created"
+          class="md-accent md-raised">Discard</md-button>
+        <md-button @click="discardRecord(record.id)" v-if="record.created"
+          class="md-accent md-raised">Delete</md-button>
       </md-card-actions>
     </md-card>
   </main>
@@ -177,6 +183,8 @@ export default class DeviceRecorder extends Vue {
    * @argument id the Id for which to discard
    */
   public discardRecord(id: number) {
+    this.stopRecord();
+    this.clearLocalState();
     deleteRecording(this.$store, { id, persistor: this.persistor });
   }
 
