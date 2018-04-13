@@ -122,6 +122,13 @@ export default class DeviceRecorder extends Vue {
     });
   }
 
+  public async created() {
+    if (this.persistor) {
+      const recordings = await this.persistor.getAll();
+      recordings.forEach((cyka) => addRecording(this.$store, { recording: cyka, persistor: undefined }))
+    }
+  }
+
   /**
    * Called by the Template when the Record Button is pressed
    * @argument id the Id for which to record
@@ -147,7 +154,7 @@ export default class DeviceRecorder extends Vue {
   private updateBuffer(frame: GenericHandTrackingData, recordedTime: number): number {
     this.currentBufferSize += sizeof(frame.data);
     this.bufferFullPercentage = this.currentBufferSize / this.bufferMaxSize * 100;
-    this.buffer.push({data: frame, time: recordedTime});
+    this.buffer.push({data: { data: frame.data }, time: recordedTime});
     return this.currentBufferSize;
   }
 
@@ -175,7 +182,7 @@ export default class DeviceRecorder extends Vue {
    */
   public saveRecord(id: number) {
     this.stopRecord();
-    updateRecording(this.$store, {id, update: { created: true, recording: this.buffer }});
+    updateRecording(this.$store, {id, update: { created: true, recording: this.buffer}, persistor: this.persistor });
   }
 
   /**

@@ -3,7 +3,7 @@ import { getStoreAccessors } from 'vuex-typescript';
 import { DeviceState } from './device';
 import { RootState } from '../store';
 import Vue from 'vue';
-import { KVPersistenceProvider } from '../persistence';
+import { KVPersistenceProvider } from '@/state/persistence';
 
 export interface RecordState {
     recordings: { [id: string]: HandTrackRecording };
@@ -53,12 +53,20 @@ export const record = {
         getPersist: (state: RecordState) => state.persist,
     },
     mutations: {
-        clearRecordings: (state: RecordState) => { 
+        clearRecordings: (state: RecordState, payload: {persistor?: KVPersistenceProvider<string, any>}) => { 
             state.recordings = {}; 
             state.totalRecordings = 0;
+            if (state.persist && payload.persistor) {
+                payload.persistor.clear();
+            }
         },
-        updateRecording: (state: RecordState, update: {id: number, update: Partial<HandTrackRecording>}) => {
-            state.recordings[update.id] = { ...state.recordings[update.id], ...update.update };
+        updateRecording: (state: RecordState, update: { id: number, update: Partial<HandTrackRecording>
+                          persistor?: KVPersistenceProvider<string, any>}) => {
+            const updatedObject = { ...state.recordings[update.id], ...update.update };
+            state.recordings[update.id] = updatedObject;
+            if (state.persist && update.persistor) {
+                update.persistor.update(update.id.toString(), updatedObject);
+            }
         },
         addRecording: (state: RecordState, {recording, persistor}: { recording: HandTrackRecording, persistor: KVPersistenceProvider<string, any> | undefined }) => { 
             Vue.set(state.recordings as any, recording.id, recording);

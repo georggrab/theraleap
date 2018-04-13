@@ -36,7 +36,7 @@ import * as persistor from '@/state/modules/persistor';
 })
 export default class DeviceRecorderSettings extends Vue {
   public deleteAllRecordings() {
-    record.clearRecordings(this.$store);
+    record.clearRecordings(this.$store, { persistor: this.persistor });
   }
   set persist(value: boolean) {
     record.setPersist(this.$store, value);
