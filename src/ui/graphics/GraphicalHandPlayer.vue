@@ -4,17 +4,17 @@
 </section>
 </template>
 <script lang="ts">
-import Vue from 'vue'
-import { Inject, Component } from 'vue-property-decorator';
+import Vue from "vue";
+import { Inject, Component } from "vue-property-decorator";
 
-import * as device from '@/state/modules/device'
-import { DeviceFacade, DeviceConnectionState } from 'devices';
+import * as device from "@/state/modules/device";
+import { DeviceFacade, DeviceConnectionState } from "devices";
 
 @Component({
-  components: { },
+  components: {}
 })
 export default class StatusLog extends Vue {
-  get connectionState(): DeviceConnectionState { 
+  get connectionState(): DeviceConnectionState {
     return device.getConnectionState(this.$store);
   }
 }

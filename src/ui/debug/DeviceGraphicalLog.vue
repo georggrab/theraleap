@@ -4,11 +4,11 @@
 </section>
 </template>
 <script lang="ts">
-import Vue from 'vue'
-import { Inject, Component } from 'vue-property-decorator';
+import Vue from "vue";
+import { Inject, Component } from "vue-property-decorator";
 
-import GraphicalHandLogger from '@/ui/graphics/GraphicalHandLogger.vue';
-import * as device from '@/state/modules/device';
+import GraphicalHandLogger from "@/ui/graphics/GraphicalHandLogger.vue";
+import * as device from "@/state/modules/device";
 
 /**
  * Displays a full screen Graphical Hand Logger, for debugging and
@@ -18,12 +18,14 @@ import * as device from '@/state/modules/device';
   components: { GraphicalHandLogger }
 })
 export default class DeviceGraphicalLog extends Vue {
-    private trackingData = device.getDeviceFacade(this.$store).getHandTrackingData(this.$store);
+  private trackingData = device
+    .getDeviceFacade(this.$store)
+    .getHandTrackingData(this.$store);
 }
 </script>
 <style lang="scss" scoped>
 section {
-    // The available total height, sans header, sans 20px worth of margins.
-    height: calc(100vh - 150px);
+  // The available total height, sans header, sans 20px worth of margins.
+  height: calc(100vh - 150px);
 }
 </style>

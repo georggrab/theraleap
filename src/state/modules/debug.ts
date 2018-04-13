@@ -1,7 +1,5 @@
-export interface DebugState {
-
-}
+export interface DebugState {}
 
 export const debug = {
-    namespaced: true
-}
+  namespaced: true
+};

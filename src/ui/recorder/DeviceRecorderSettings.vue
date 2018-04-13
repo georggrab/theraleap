@@ -21,18 +21,18 @@
 </section>
 </template>
 <script lang="ts">
-import Vue from 'vue'
-import { Component } from 'vue-property-decorator';
+import Vue from "vue";
+import { Component } from "vue-property-decorator";
 
-import * as record from '@/state/modules/record';
-import * as persistor from '@/state/modules/persistor';
+import * as record from "@/state/modules/record";
+import * as persistor from "@/state/modules/persistor";
 
 /** Device Recorder Settings
  *  Manages Settings (primarily on/off) for the Device Recorder.
  *  Displays debug Information, like space used / available
  */
 @Component({
-  components: { }
+  components: {}
 })
 export default class DeviceRecorderSettings extends Vue {
   public deleteAllRecordings() {
@@ -48,7 +48,9 @@ export default class DeviceRecorderSettings extends Vue {
     return persistor.getPersistor(this.$store);
   }
   get persistenceProviderName() {
-    return this.persistor !== undefined? this.persistor.getName() : "not available";
+    return this.persistor !== undefined
+      ? this.persistor.getName()
+      : "not available";
   }
 }
 </script>

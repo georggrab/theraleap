@@ -6,7 +6,11 @@
   "author": "Georg Grab",
   "license": "MIT",
   "scripts": {
-    "test": "karma start karma.config.js"
+    "test": "karma start karma.config.js",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,json,css,md,vue}": ["prettier --write", "git add"]
   },
   "devDependencies": {
     "@types/chai": "^4.1.2",

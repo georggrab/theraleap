@@ -7,19 +7,18 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import { Prop, Component } from 'vue-property-decorator';
+import Vue from "vue";
+import { Prop, Component } from "vue-property-decorator";
 
-import { DeviceConnectionState, InitialDeviceState } from '@/devices';
+import { DeviceConnectionState, InitialDeviceState } from "@/devices";
 
 @Component
 export default class ConnectionState extends Vue {
-    @Prop()
-    public deviceState: DeviceConnectionState = InitialDeviceState;
+  @Prop() public deviceState: DeviceConnectionState = InitialDeviceState;
 }
 </script>
 <style lang="scss" scoped>
 ul {
-    list-style: none;
+  list-style: none;
 }
 </style>

@@ -6,15 +6,13 @@
     </md-tabs>
 </template>
 <script lang="ts">
-import Vue from 'vue'
-import { Inject, Component } from 'vue-property-decorator';
+import Vue from "vue";
+import { Inject, Component } from "vue-property-decorator";
 
 @Component({
-  components: { }
+  components: {}
 })
-export default class DeviceDebugTabs extends Vue {
-
-}
+export default class DeviceDebugTabs extends Vue {}
 </script>
 <style lang="scss">
 </style>

@@ -71,18 +71,30 @@
 </section>
 </template>
 <script lang="ts">
-import Vue from 'vue'
-import { Component } from 'vue-property-decorator';
+import Vue from "vue";
+import { Component } from "vue-property-decorator";
 
 //@ts-ignore
-import { format, sizeof } from 'sizeof';
+import { format, sizeof } from "sizeof";
 
-import { getRecordingsSortedDescending, getRecordings, setActivatedId, getActivatedId, getTotalRecordings, updateRecording, addRecording, HandTrackRecording, deleteRecording, Record, hasRecordInCreation } from '@/state/modules/record';
-import GraphicalHandLogger from '@/ui/graphics/GraphicalHandLogger.vue';
-import { getConnectionHealthy, getDeviceFacade } from 'state/modules/device';
-import { GenericHandTrackingData } from 'devices';
-import { Subscription } from '@reactivex/rxjs/dist/package/Subscription';
-import { getPersistor } from 'state/modules/persistor';
+import {
+  getRecordingsSortedDescending,
+  getRecordings,
+  setActivatedId,
+  getActivatedId,
+  getTotalRecordings,
+  updateRecording,
+  addRecording,
+  HandTrackRecording,
+  deleteRecording,
+  Record,
+  hasRecordInCreation
+} from "@/state/modules/record";
+import GraphicalHandLogger from "@/ui/graphics/GraphicalHandLogger.vue";
+import { getConnectionHealthy, getDeviceFacade } from "state/modules/device";
+import { GenericHandTrackingData } from "devices";
+import { Subscription } from "@reactivex/rxjs/dist/package/Subscription";
+import { getPersistor } from "state/modules/persistor";
 
 /** Device Recorder
  *  Component that makes it possible to record data sent from the device,
@@ -108,7 +120,7 @@ export default class DeviceRecorder extends Vue {
 
   public createNewEmptyRecording() {
     this.clearLocalState();
-    return addRecording(this.$store, { 
+    return addRecording(this.$store, {
       recording: {
         name: `Recording #${this.totalRecordings + 1}`,
         id: this.totalRecordings + 1,
@@ -125,7 +137,9 @@ export default class DeviceRecorder extends Vue {
   public async created() {
     if (this.persistor) {
       const recordings = await this.persistor.getAll();
-      recordings.forEach((cyka) => addRecording(this.$store, { recording: cyka, persistor: undefined }))
+      recordings.forEach(cyka =>
+        addRecording(this.$store, { recording: cyka, persistor: undefined })
+      );
     }
   }
 
@@ -136,9 +150,12 @@ export default class DeviceRecorder extends Vue {
   public startRecord(id: number) {
     this.recordInProgress = true;
     if (this.deviceTrackingData) {
-      this.deviceSubscription = this.deviceTrackingData.subscribe((frame) => {
+      this.deviceSubscription = this.deviceTrackingData.subscribe(frame => {
         const newBufferSize = this.updateBuffer(frame, Date.now());
-        this.update(id, { size: newBufferSize, duration: this.getBufferDuration() });
+        this.update(id, {
+          size: newBufferSize,
+          duration: this.getBufferDuration()
+        });
         if (newBufferSize > this.bufferMaxSize) {
           this.stopRecord();
         }
@@ -151,10 +168,14 @@ export default class DeviceRecorder extends Vue {
     this.bufferFullPercentage = 0;
   }
 
-  private updateBuffer(frame: GenericHandTrackingData, recordedTime: number): number {
+  private updateBuffer(
+    frame: GenericHandTrackingData,
+    recordedTime: number
+  ): number {
     this.currentBufferSize += sizeof(frame.data);
-    this.bufferFullPercentage = this.currentBufferSize / this.bufferMaxSize * 100;
-    this.buffer.push({data: { data: frame.data }, time: recordedTime});
+    this.bufferFullPercentage =
+      this.currentBufferSize / this.bufferMaxSize * 100;
+    this.buffer.push({ data: { data: frame.data }, time: recordedTime });
     return this.currentBufferSize;
   }
 
@@ -182,7 +203,11 @@ export default class DeviceRecorder extends Vue {
    */
   public saveRecord(id: number) {
     this.stopRecord();
-    updateRecording(this.$store, {id, update: { created: true, recording: this.buffer}, persistor: this.persistor });
+    updateRecording(this.$store, {
+      id,
+      update: { created: true, recording: this.buffer },
+      persistor: this.persistor
+    });
   }
 
   /**
@@ -195,22 +220,40 @@ export default class DeviceRecorder extends Vue {
     deleteRecording(this.$store, { id, persistor: this.persistor });
   }
 
-  public toggleActivated(id: number) { 
-    this.activatedId == id? setActivatedId(this.$store, -1): setActivatedId(this.$store, id);
+  public toggleActivated(id: number) {
+    this.activatedId == id
+      ? setActivatedId(this.$store, -1)
+      : setActivatedId(this.$store, id);
   }
 
   public update(id: number, update: Partial<HandTrackRecording>) {
-    updateRecording(this.$store, {id, update})
+    updateRecording(this.$store, { id, update });
   }
 
-  get persistor() { return getPersistor(this.$store); }
-  get recordings() { return getRecordings(this.$store); }
-  get recordingsSortedDescending() { return getRecordingsSortedDescending(this.$store); }
-  get recordInCreation() { return hasRecordInCreation(this.$store); }
-  get activatedId() { return getActivatedId(this.$store); }
-  get totalRecordings() { return getTotalRecordings(this.$store); }
-  get connectionHealthy() { return getConnectionHealthy(this.$store); }
-  get deviceFacade() { return getDeviceFacade(this.$store); }
+  get persistor() {
+    return getPersistor(this.$store);
+  }
+  get recordings() {
+    return getRecordings(this.$store);
+  }
+  get recordingsSortedDescending() {
+    return getRecordingsSortedDescending(this.$store);
+  }
+  get recordInCreation() {
+    return hasRecordInCreation(this.$store);
+  }
+  get activatedId() {
+    return getActivatedId(this.$store);
+  }
+  get totalRecordings() {
+    return getTotalRecordings(this.$store);
+  }
+  get connectionHealthy() {
+    return getConnectionHealthy(this.$store);
+  }
+  get deviceFacade() {
+    return getDeviceFacade(this.$store);
+  }
   get deviceTrackingData() {
     return this.deviceFacade.getDeviceTrackingData();
   }
@@ -223,16 +266,14 @@ section.logger-display {
 .header-flex-container {
   display: flex;
   .header-left {
-
   }
   .header-right {
-
   }
 }
 
 .container {
   display: flex;
-  .form{
+  .form {
     flex: 2;
   }
   .preview {

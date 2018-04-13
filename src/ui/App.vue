@@ -99,13 +99,15 @@ export default class App extends Vue {
     this.menuVisible = !this.menuVisible;
   }
 
-  public setActiveNavItem(to: number) { 
-    this.activeNavItem = to; 
+  public setActiveNavItem(to: number) {
+    this.activeNavItem = to;
   }
 
   public deactivateRecording() {
     record.setActivatedId(this.$store, -1);
-    device.getDeviceFacade(this.$store).notifyStreamSourceShouldUpdate(this.$store);
+    device
+      .getDeviceFacade(this.$store)
+      .notifyStreamSourceShouldUpdate(this.$store);
   }
 
   get simulationRunning(): boolean {
@@ -146,7 +148,7 @@ export default class App extends Vue {
 }
 
 .md-toolbar-row.menu-not-visible {
-  padding-left:20px;
+  padding-left: 20px;
 }
 
 .md-drawer {
@@ -159,7 +161,7 @@ export default class App extends Vue {
 }
 
 .md-list-item.active .md-icon {
-  color: #303F9F;
+  color: #303f9f;
 }
 
 .device-status {
@@ -192,7 +194,7 @@ export default class App extends Vue {
 }
 
 .simulated {
-  display:flex;
+  display: flex;
   align-items: baseline;
   font-family: monospace;
   margin-left: 10px;

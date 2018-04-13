@@ -2,12 +2,11 @@
   <router-view></router-view>
 </template>
 <script lang="ts">
-import Vue from 'vue'
-import { Component } from 'vue-property-decorator';
+import Vue from "vue";
+import { Component } from "vue-property-decorator";
 
 @Component({
-  components: { }
+  components: {}
 })
-export default class DeviceDebugRoot extends Vue {
-}
+export default class DeviceDebugRoot extends Vue {}
 </script>

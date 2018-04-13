@@ -4,19 +4,25 @@
 </section>
 </template>
 <script lang="ts">
-import Vue from 'vue'
-import DIIdent from '@/dependencyinjection/symbols';
-import { Inject, Component } from 'vue-property-decorator';
-import { AppContainer } from '@/dependencyinjection';
-import { DeviceConnectionState, InitialDeviceState, DeviceFacade, DeviceDriver, GenericHandTrackingData } from '@/devices';
-import RawDeviceDataPlotter from '@/ui/debug/RawDeviceDataPlotter.vue';
+import Vue from "vue";
+import DIIdent from "@/dependencyinjection/symbols";
+import { Inject, Component } from "vue-property-decorator";
+import { AppContainer } from "@/dependencyinjection";
+import {
+  DeviceConnectionState,
+  InitialDeviceState,
+  DeviceFacade,
+  DeviceDriver,
+  GenericHandTrackingData
+} from "@/devices";
+import RawDeviceDataPlotter from "@/ui/debug/RawDeviceDataPlotter.vue";
 
-import * as device from '@/state/modules/device'
-import { Observable } from '@reactivex/rxjs/dist/package/Observable';
-import { Subscription } from '@reactivex/rxjs/dist/package/Subscription';
+import * as device from "@/state/modules/device";
+import { Observable } from "@reactivex/rxjs/dist/package/Observable";
+import { Subscription } from "@reactivex/rxjs/dist/package/Subscription";
 
 @Component({
-  components: { RawDeviceDataPlotter },
+  components: { RawDeviceDataPlotter }
 })
 export default class DeviceLog extends Vue {
   public trackingData: GenericHandTrackingData = { data: {} };
@@ -25,7 +31,7 @@ export default class DeviceLog extends Vue {
   public mounted() {
     const data = this.deviceFacade.getHandTrackingData(this.$store);
     if (data) {
-      this.subscription = data.subscribe((deviceFrame) => {
+      this.subscription = data.subscribe(deviceFrame => {
         this.trackingData = deviceFrame;
       });
     }

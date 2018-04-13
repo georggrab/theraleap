@@ -1,2 +1,2 @@
-export * from './generic';
-export * from './facade';
+export * from "./generic";
+export * from "./facade";
