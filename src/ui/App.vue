@@ -9,7 +9,12 @@
       <span>SIMULATED</span>
       <span @click="deactivateRecording" class="md-accent clickable">(STOP)</span>
     </div>
-    <div v-if="connectionHealthy" class="device-status device-status--good">
+    <div v-if="simulationRunning">
+      <md-icon>mic
+        <md-tooltip md-direction="top">Data is coming from a simulation.</md-tooltip>
+      </md-icon>
+    </div>
+    <div v-else-if="connectionHealthy" class="device-status device-status--good">
       <md-icon>settings_remote
         <md-tooltip md-direction="top">Connected to Leap Device.</md-tooltip>
       </md-icon>

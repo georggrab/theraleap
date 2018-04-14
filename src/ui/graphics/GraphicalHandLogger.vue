@@ -1,6 +1,6 @@
 <template>
 <section>
-  <div id="bad-connection-warning" v-show="!connectionHealthy">No connection to the Device. Check the Status Tab!</div>
+  <div id="bad-connection-warning" v-show="!hasSalvagableStream">No connection to the Device. Check the Status Tab!</div>
   <main class="three-container" ref="animation"></main>
 </section>
 </template>
@@ -15,6 +15,7 @@ import "imports-loader?THREE=three!three/examples/js/controls/TrackballControls"
 import { Component, Prop } from "vue-property-decorator";
 
 import * as device from "@/state/modules/device";
+import * as record from "@/state/modules/record";
 import { DeviceFacade, GenericHandTrackingData } from "devices";
 import { LEAP_MOTION_DEVICE_NAME, LeapDeviceFrame } from "devices/leapmotion";
 
@@ -24,6 +25,7 @@ import { MultiHandScene } from "./types";
 import * as leapRenderUtils from "./leap";
 import { Observable } from "@reactivex/rxjs/dist/package/Observable";
 import { Subscription } from "@reactivex/rxjs/dist/package/Subscription";
+import { hasSalvagableStream } from "state/utils";
 
 @Component
 export default class GraphicalHandLogger extends Vue {
@@ -143,7 +145,7 @@ export default class GraphicalHandLogger extends Vue {
   private animate() {
     this.animationHandle = window.requestAnimationFrame(this.animate);
     if (this.renderer && this.camera) {
-      if (!device.getConnectionHealthy(this.$store)) {
+      if (!this.hasSalvagableStream) {
       } else {
         if (this.controls) {
           this.controls.update();
@@ -160,8 +162,8 @@ export default class GraphicalHandLogger extends Vue {
     return graphics.getRenderer(this.$store);
   }
 
-  get connectionHealthy(): boolean | undefined {
-    return device.getConnectionHealthy(this.$store);
+  get hasSalvagableStream(): boolean | undefined {
+    return hasSalvagableStream(this.$store);
   }
 
   get deviceFacade(): DeviceFacade {
