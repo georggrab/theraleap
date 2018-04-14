@@ -1,5 +1,10 @@
 import { GenericHandTrackingData } from "..";
 
+export interface LeapStatusWord {
+  serviceVersion: string;
+  version: number;
+}
+
 export interface LeapHandTrackingData extends GenericHandTrackingData {
   data: LeapDeviceFrame;
 }

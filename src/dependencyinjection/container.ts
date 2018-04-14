@@ -6,7 +6,7 @@ import {
   DeviceFacade,
   HardwareDriverConnectionSettings
 } from "@/devices";
-import { LeapDriver, LeapFacade } from "@/devices/leapmotion";
+import { LeapDriver } from "@/devices/leapmotion";
 import DIIdent from "@/dependencyinjection/symbols";
 import {
   RootState,
@@ -20,10 +20,12 @@ import {
   KVPersistenceProvider,
   IndexedDBPersistenceProvider
 } from "@/state/persistence";
+import { ThreadedLeap2Driver } from "devices/threadedleap2/threadedleap2driver";
+import { AllPurposeRecordingFacade } from 'devices/allpurposefacade';
 
 const AppContainer = new Container();
 AppContainer.bind<DeviceDriver>(DIIdent.SERVICE_MOTION_TRACKING_DEVICE_DRIVER)
-  .to(LeapDriver)
+  .to(ThreadedLeap2Driver)
   .inSingletonScope();
 AppContainer.bind<HardwareDriverConnectionSettings>(
   DIIdent.SETTINGS_HARDWARE_DRIVER_CONNECTION
@@ -35,7 +37,7 @@ AppContainer.bind<HardwareDriverConnectionSettings>(
   enableGestures: false
 });
 AppContainer.bind<DeviceFacade>(DIIdent.SERVICE_MOTION_TRACKING_DEVICE_FACADE)
-  .to(LeapFacade)
+  .to(AllPurposeRecordingFacade)
   .inSingletonScope();
 AppContainer.bind<IStoreFactory>(DIIdent.VUEX_STORE_FACTORY)
   .to(StoreFactory)

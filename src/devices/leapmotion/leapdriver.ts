@@ -98,7 +98,7 @@ export class LeapDriver implements DeviceDriver {
     return this.monitor;
   }
 
-  public setUpFrameStream(): Observable<GenericHandTrackingData> {
+  public getTrackingData(): Observable<GenericHandTrackingData> {
     return this.frameStream;
   }
 
