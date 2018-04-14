@@ -15,6 +15,7 @@ import { sizeof } from "sizeof";
 import { Store } from "vuex";
 import { RootState } from "../store";
 import { getActiveRecording } from "../modules/record";
+import { hasSalvagableStream } from '../utils';
 
 export const deviceDataTransferRate = (facade: DeviceFacade) => (
   store: Store<RootState>
@@ -31,6 +32,9 @@ export const deviceDataTransferRate = (facade: DeviceFacade) => (
 
   if (data) {
     const subscription = data.subscribe(frame => {
+      if (!hasSalvagableStream(store)) {
+        return;
+      }
       transferRate.timeCounter += Date.now() - transferRate.timestamp;
       transferRate.timestamp = Date.now();
       transferRate.currentRate += sizeof(frame.data);

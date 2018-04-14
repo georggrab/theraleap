@@ -137,8 +137,8 @@ export default class DeviceRecorder extends Vue {
   public async created() {
     if (this.persistor) {
       const recordings = await this.persistor.getAll();
-      recordings.forEach(cyka =>
-        addRecording(this.$store, { recording: cyka, persistor: undefined })
+      recordings.forEach(recording =>
+        addRecording(this.$store, { recording, persistor: undefined })
       );
     }
   }
@@ -165,6 +165,7 @@ export default class DeviceRecorder extends Vue {
 
   private clearLocalState() {
     this.buffer = [];
+    this.currentBufferSize = 0;
     this.bufferFullPercentage = 0;
   }
 
@@ -208,6 +209,7 @@ export default class DeviceRecorder extends Vue {
       update: { created: true, recording: this.buffer },
       persistor: this.persistor
     });
+    this.clearLocalState();
   }
 
   /**
@@ -260,7 +262,8 @@ export default class DeviceRecorder extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-section.logger-display {
+.md-card {
+  margin-bottom: 20px;
 }
 
 .header-flex-container {
