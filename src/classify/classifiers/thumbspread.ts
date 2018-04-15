@@ -4,6 +4,11 @@ import { GenericHandTrackingData } from '@/devices';
 
 
 export class ThumbSpreadClassifier implements Classifier {
+    static metadata = {
+        name: "ThumbSpreadClassifier",
+        desc: "Detects extension of Thumb"
+    }
+
     public classify(source: Observable<GenericHandTrackingData>): Observable<ClassificationData> {
         return source
             .bufferTime(300)
@@ -14,4 +19,3 @@ export class ThumbSpreadClassifier implements Classifier {
 }
 
 export const ThumbSpreadClassifierId = ThumbSpreadClassifier.name;
-
