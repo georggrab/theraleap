@@ -140,7 +140,7 @@ export default class App extends Vue {
 }
 </script>
 <style lang="scss">
-@import "~styles/_globals";
+@import "~assets/_globals";
 </style>
 <style lang="scss" scoped>
 .md-app {

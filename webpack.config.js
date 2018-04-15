@@ -4,13 +4,14 @@ const path = require("path");
 module.exports = {
   entry: "./src/main.ts",
   output: {
-    filename: "dist/bundle.js",
+    filename: "bundle.js",
+    path: path.resolve(__dirname, "dist")
   },
   resolve: {
     extensions: [".webpack.js", ".web.js", ".ts", ".tsx", ".js", ".vue"],
     plugins: [new TsconfigPathsPlugin({})],
     alias: {
-      styles: path.resolve(__dirname, "./assets/")
+      assets: path.resolve(__dirname, "./assets/")
     }
   },
   module: {

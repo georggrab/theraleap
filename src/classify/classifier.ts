@@ -1,5 +1,6 @@
 import { GenericHandTrackingData } from '@/devices';
 import { Observable } from 'rxjs';
+import { HandTrackRecording } from '@/state/modules/record';
 
 export interface ClassificationData {
     actionName: string;
@@ -13,6 +14,7 @@ export interface ClassificationMetrics {
 export interface ClassifierMetadata {
     name: string;
     desc: string;
+    examplePath?: string;
 }
 
 export enum SettingType {

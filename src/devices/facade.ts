@@ -37,7 +37,7 @@ async function replayInfinite(
   }
 }
 
-function createFakeDeviceStream(
+export function createFakeDeviceStream(
   recordedData: HandTrackRecording
 ): Observable<GenericHandTrackingData> {
   return Observable.create(

@@ -1,10 +1,10 @@
-import { Classifier } from "./classifier";
+import { Classifier, ClassifierMetadata } from "./classifier";
 import {
   ThumbSpreadClassifierId,
   ThumbSpreadClassifier
 } from "./classifiers/thumbspread";
 
-export const ClassifierRegistry: { [k: string]: { new(...args: any[]): Classifier } } = {
+export const ClassifierRegistry: { [k: string]: { new(...args: any[]): Classifier, metadata: ClassifierMetadata } } = {
   [ThumbSpreadClassifierId]: ThumbSpreadClassifier
 }
 
