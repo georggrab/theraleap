@@ -6,7 +6,8 @@ import {
   WORKER_CMD_ESTABLISH_CONNECTION,
   WORKER_EVT_CONNECTION_STATE_CHANGED,
   WORKER_EVT_FINALIZED_FRAME_RECEIVED,
-  WORKER_CMD_UPDATE_CONFIGURATION
+  WORKER_CMD_UPDATE_CONFIGURATION,
+  WORKER_CMD_ENABLE_CLASSIFICATION,
 } from "./messages";
 import DIIdent from "@/dependencyinjection/symbols";
 import { GenericHandTrackingData, DeviceDriver, DeviceConnectionState, InitialDeviceState } from "@/devices/generic";
@@ -51,6 +52,10 @@ export class ThreadedLeap2Driver implements DeviceDriver {
 
   public getTrackingData(): Observable<GenericHandTrackingData> {
     return this.deviceTrackingData;
+  }
+
+  public enableClassification(classifierIds: string[]) {
+      this.worker.postMessage({ cmd: WORKER_CMD_ENABLE_CLASSIFICATION, payload: classifierIds });
   }
 
   private handleWorkerMessage(event: MessageEvent) {

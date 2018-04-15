@@ -1,6 +1,7 @@
 import {
   WORKER_CMD_ESTABLISH_CONNECTION,
   WORKER_CMD_UPDATE_CONFIGURATION,
+  WORKER_CMD_ENABLE_CLASSIFICATION,
   WorkerCommand,
   WORKER_EVT_CONNECTION_STATE_CHANGED,
   WORKER_EVT_FINALIZED_FRAME_RECEIVED
@@ -8,14 +9,21 @@ import {
 import {
   HardwareDriverConnectionSettings,
   InitialDeviceState,
-  DeviceConnectionState
+  DeviceConnectionState,
+  GenericHandTrackingData
 } from "@/devices/generic";
 import {
   LeapStatusWord,
   LeapDeviceFrame
 } from "../leapmotion/leaptrackingdata";
+import { Subject } from "@reactivex/rxjs";
+import { ThreadedEngine } from "classify/engines/ThreadedEngine";
+import { ThumbSpreadClassifier } from "classify/classifiers/thumbspread";
+import { resolveClassifier } from "classify/resolver";
 
 const ctx: Worker = self as any;
+let deviceFrameSubject: Subject<GenericHandTrackingData> | undefined;
+let engine: ThreadedEngine | undefined;
 let configuration: any | undefined = undefined;
 let lastFrameTime = 0;
 let deviceStreamingCheckIntervalId: number | undefined;
@@ -29,8 +37,24 @@ ctx.onmessage = (event: MessageEvent) => {
       return establishConnection();
     case WORKER_CMD_UPDATE_CONFIGURATION:
       return updateConfiguration(message.payload);
+    case WORKER_CMD_ENABLE_CLASSIFICATION:
+      return startClassificationEngine(message.payload);
   }
 };
+
+const startClassificationEngine = (classifierIds: string[]) => {
+    deviceFrameSubject = new Subject();
+    engine = new ThreadedEngine(self as any);
+    classifierIds.forEach((id) => {
+        const classifier = resolveClassifier(id);
+        if (classifier) {
+            engine!.addClassifier(classifier);
+        } else {
+            console.warn('Unknown Classifier', id);
+        }
+    });
+    engine.process(deviceFrameSubject);
+}
 
 const updateConfiguration = (data: any) => {
   console.log("Set Configuration:", data);
@@ -84,6 +108,9 @@ const processDeviceMessage = (message: string, socket: WebSocket) => {
       type: WORKER_EVT_FINALIZED_FRAME_RECEIVED,
       payload: frame
     });
+    if (deviceFrameSubject) {
+        deviceFrameSubject.next({ data: frame });
+    }
   }
 };
 

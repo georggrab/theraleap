@@ -61,6 +61,11 @@ export class LeapDriver implements DeviceDriver {
     });
   }
 
+  public enableClassification(classifiers: string[]) {
+    // TODO implement non threaded classification
+    throw "Not Implemented"
+  }
+
   public async getDeviceConnectionState(): Promise<DeviceConnectionState> {
     return {
       nativeDeviceDriverOnline: await this.isLeapServerRunning(1000),

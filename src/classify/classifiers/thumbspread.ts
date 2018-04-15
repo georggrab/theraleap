@@ -2,6 +2,7 @@ import { Classifier, ClassificationData } from '../classifier';
 import { Observable } from '@reactivex/rxjs';
 import { GenericHandTrackingData } from '@/devices';
 
+
 export class ThumbSpreadClassifier implements Classifier {
     public classify(source: Observable<GenericHandTrackingData>): Observable<ClassificationData> {
         return source
@@ -11,4 +12,6 @@ export class ThumbSpreadClassifier implements Classifier {
             })
     }
 }
+
+export const ThumbSpreadClassifierId = ThumbSpreadClassifier.name;
 

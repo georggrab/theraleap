@@ -45,6 +45,7 @@ export interface DeviceDriver {
   streamConnectionState: () => Observable<DeviceConnectionState> | undefined;
   establishConnection: () => Observable<DeviceConnectionState>;
   getTrackingData: () => Observable<GenericHandTrackingData>;
+  enableClassification: (classifiers: string[]) => void;
 }
 
 export interface DeviceFacade {

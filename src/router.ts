@@ -11,6 +11,11 @@ import DeviceRecorderTabs from "@/ui/recorder/DeviceRecorderTabs.vue";
 import DeviceRecorder from "@/ui/recorder/DeviceRecorder.vue";
 import DeviceRecorderSettings from "@/ui/recorder/DeviceRecorderSettings.vue";
 
+import Classifiers from '@/ui/classify/Classifiers.vue';
+import ClassifyRoot from '@/ui/classify/ClassifyRoot.vue';
+import ClassifySettings from '@/ui/classify/ClassifySettings.vue';
+import ClassifyTabs from '@/ui/classify/ClassifyTabs.vue';
+
 import App from "@/ui/App.vue";
 
 export const RootRouter = new VueRouter({
@@ -58,6 +63,24 @@ export const RootRouter = new VueRouter({
           components: {
             main: DeviceRecorderRoot,
             tabs: DeviceRecorderTabs
+          }
+        },
+        {
+          path: 'classify',
+          redirect: '/classify/classifiers',
+          children: [
+            {
+              component: Classifiers,
+              path: 'classifiers'
+            },
+            {
+              component: ClassifySettings,
+              path: 'settings'
+            }
+          ],
+          components: {
+            main: ClassifyRoot,
+            tabs: ClassifyTabs
           }
         }
       ]

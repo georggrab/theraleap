@@ -44,13 +44,24 @@
 
     <md-list>
       <md-list-item to="/debug" :class="{active: activeNavItem == 0}" @click="setActiveNavItem(0)">
-          <md-icon>bug_report</md-icon>
+          <md-icon>bug_report
+            <md-tooltip md-direction="right">Debugger</md-tooltip>
+          </md-icon>
           <span class="md-list-item-text">Debug</span>
       </md-list-item>
 
       <md-list-item to="/recorder" :class="{active: activeNavItem == 1}" @click="setActiveNavItem(1)">
-        <md-icon>mic</md-icon>
+        <md-icon>mic
+          <md-tooltip md-direction="right">Device Recorder</md-tooltip>
+        </md-icon>
         <span class="md-list-item-text">Device Recorder</span>
+      </md-list-item>
+
+      <md-list-item to="/classify" :class="{active: activeNavItem == 2}" @click="setActiveNavItem(2)">
+        <md-icon>blur_on
+          <md-tooltip md-direction="right">Classifier</md-tooltip>
+        </md-icon>
+        <span class="md-list-item-text">Classifier</span>
       </md-list-item>
     </md-list>
   </md-app-drawer>
