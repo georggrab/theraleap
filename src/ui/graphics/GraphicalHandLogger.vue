@@ -77,7 +77,9 @@ export default class GraphicalHandLogger extends Vue {
       window.cancelAnimationFrame(this.animationHandle);
     }
     this.removeWindowResizeListener();
-    this.subscription!.unsubscribe();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
   private setupDataStream() {

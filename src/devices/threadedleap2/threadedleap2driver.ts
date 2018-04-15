@@ -10,10 +10,11 @@ import {
 } from "./messages";
 import DIIdent from "@/dependencyinjection/symbols";
 import { GenericHandTrackingData, DeviceDriver, DeviceConnectionState, InitialDeviceState } from "@/devices/generic";
+import { LEAP_MOTION_DEVICE_NAME } from '@/devices/leapmotion/leapdriver';
 
 @injectable()
 export class ThreadedLeap2Driver implements DeviceDriver {
-  public deviceName = "Threaded Leap Motion Driver for V2";
+  public deviceName = LEAP_MOTION_DEVICE_NAME;
   private worker: Worker;
 
   private deviceTrackingData: BehaviorSubject<GenericHandTrackingData> = new BehaviorSubject({
@@ -66,6 +67,6 @@ export class ThreadedLeap2Driver implements DeviceDriver {
   }
 
   private onFinalizedFrameReceived(data: any) {
-    console.log("On Finalized Frame", event);
+    this.deviceTrackingData.next({ data })
   }
 }
