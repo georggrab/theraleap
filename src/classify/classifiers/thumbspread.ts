@@ -1,5 +1,6 @@
 import { Classifier, ClassificationData, ClassifierMetadata, ClassifierSetting, SettingType, Slider, String } from '../classifier';
-import { Observable } from '@reactivex/rxjs';
+import { Observable } from 'rxjs';
+import { bufferTime, map } from 'rxjs/operators'
 import { GenericHandTrackingData } from '@/devices';
 
 
@@ -35,10 +36,9 @@ export class ThumbSpreadClassifier implements Classifier {
 
     public classify(source: Observable<GenericHandTrackingData>): Observable<ClassificationData> {
         return source
-            .bufferTime(300)
-            .map((bufferedFrames) => {
+            .pipe(bufferTime(300), map((bufferedFrames) => {
                 return { } as ClassificationData
-            })
+            }))
     }
 }
 

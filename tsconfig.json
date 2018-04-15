@@ -12,6 +12,7 @@
       "strict": true,
       "baseUrl": "src/",
       "target": "es2017",
+      "module": "esnext",
       "paths": {
         "@/*": [ "./*" ]
       },

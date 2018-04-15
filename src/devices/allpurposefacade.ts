@@ -1,5 +1,5 @@
 import { injectable, inject, LazyServiceIdentifer } from "inversify";
-import { Observable } from "@reactivex/rxjs";
+import { Observable } from "rxjs";
 
 import {
   DeviceDriver,

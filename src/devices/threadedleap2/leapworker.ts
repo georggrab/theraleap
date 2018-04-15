@@ -1,3 +1,5 @@
+import { Subject } from "rxjs";
+
 import {
   WORKER_CMD_ESTABLISH_CONNECTION,
   WORKER_CMD_UPDATE_CONFIGURATION,
@@ -16,7 +18,6 @@ import {
   LeapStatusWord,
   LeapDeviceFrame
 } from "../leapmotion/leaptrackingdata";
-import { Subject } from "@reactivex/rxjs";
 import { ThreadedEngine } from "classify/engines/ThreadedEngine";
 import { ThumbSpreadClassifier } from "classify/classifiers/thumbspread";
 import { resolveClassifier } from "classify/resolver";

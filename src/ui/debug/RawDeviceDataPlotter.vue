@@ -5,7 +5,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Prop, Component } from "vue-property-decorator";
-import { Observable } from "@reactivex/rxjs";
+import { Observable } from "rxjs";
 
 import {
   DeviceConnectionState,

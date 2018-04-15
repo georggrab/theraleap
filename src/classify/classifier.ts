@@ -1,5 +1,5 @@
 import { GenericHandTrackingData } from '@/devices';
-import { Observable } from '@reactivex/rxjs';
+import { Observable } from 'rxjs';
 
 export interface ClassificationData {
     actionName: string;

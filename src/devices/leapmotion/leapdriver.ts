@@ -1,5 +1,5 @@
 import { EventEmitter, Controller } from "leapjs";
-import { Observable, Observer } from "@reactivex/rxjs";
+import { Observable, Observer, fromEvent } from "rxjs";
 import { injectable, inject } from "inversify";
 import { isEqual } from "underscore";
 import * as leap from "leapjs";
@@ -36,7 +36,7 @@ export class LeapDriver implements DeviceDriver {
       "deviceDisconnected",
       () => (this.deviceConnected = false)
     );
-    this.frameStream = Observable.fromEvent(this.controller, "frame");
+    this.frameStream = fromEvent(this.controller, "frame");
   }
 
   public async isLeapServerRunning(maxWaitTimeInMs: number): Promise<boolean> {

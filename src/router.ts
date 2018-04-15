@@ -1,20 +1,33 @@
 import VueRouter from "vue-router";
 
-import DeviceLog from "@/ui/debug/DeviceLog.vue";
-import StatusLog from "@/ui/debug/StatusLog.vue";
-import DeviceGraphicalLog from "@/ui/debug/DeviceGraphicalLog.vue";
-import DeviceDebugRoot from "@/ui/debug/DeviceDebugRoot.vue";
-import DeviceDebugTabs from "@/ui/debug/DeviceDebugTabs.vue";
+const DeviceLog = () =>
+  import(/* webpackChunkName: "group-debug" */ "@/ui/debug/DeviceLog.vue");
+const StatusLog = () =>
+  import(/* webpackChunkName: "group-debug" */ "@/ui/debug/StatusLog.vue");
+const DeviceGraphicalLog = () =>
+  import(/* webpackChunkName: "group-debug" */ "@/ui/debug/DeviceGraphicalLog.vue");
+const DeviceDebugRoot = () =>
+  import(/* webpackChunkName: "group-debug" */ "@/ui/debug/DeviceDebugRoot.vue");
+const DeviceDebugTabs = () =>
+  import(/* webpackChunkName: "group-debug" */ "@/ui/debug/DeviceDebugTabs.vue");
 
-import DeviceRecorderRoot from "@/ui/recorder/DeviceRecorderRoot.vue";
-import DeviceRecorderTabs from "@/ui/recorder/DeviceRecorderTabs.vue";
-import DeviceRecorder from "@/ui/recorder/DeviceRecorder.vue";
-import DeviceRecorderSettings from "@/ui/recorder/DeviceRecorderSettings.vue";
+const DeviceRecorderRoot = () =>
+  import(/* webpackChunkName: "group-recorder" */ "@/ui/recorder/DeviceRecorderRoot.vue");
+const DeviceRecorderTabs = () =>
+  import(/* webpackChunkName: "group-recorder" */ "@/ui/recorder/DeviceRecorderTabs.vue");
+const DeviceRecorder = () =>
+  import(/* webpackChunkName: "group-recorder" */ "@/ui/recorder/DeviceRecorder.vue");
+const DeviceRecorderSettings = () =>
+  import(/* webpackChunkName: "group-recorder" */ "@/ui/recorder/DeviceRecorderSettings.vue");
 
-import Classifiers from '@/ui/classify/Classifiers.vue';
-import ClassifyRoot from '@/ui/classify/ClassifyRoot.vue';
-import ClassifySettings from '@/ui/classify/ClassifySettings.vue';
-import ClassifyTabs from '@/ui/classify/ClassifyTabs.vue';
+const Classifiers = () =>
+  import(/* webpackChunkName: "group-classifiers" */ "@/ui/classify/Classifiers.vue");
+const ClassifyRoot = () =>
+  import(/* webpackChunkName: "group-classifiers" */ "@/ui/classify/ClassifyRoot.vue");
+const ClassifySettings = () =>
+  import(/* webpackChunkName: "group-classifiers" */ "@/ui/classify/ClassifySettings.vue");
+const ClassifyTabs = () =>
+  import(/* webpackChunkName: "group-classifiers" */ "@/ui/classify/ClassifyTabs.vue");
 
 import App from "@/ui/App.vue";
 
@@ -66,16 +79,16 @@ export const RootRouter = new VueRouter({
           }
         },
         {
-          path: 'classify',
-          redirect: '/classify/classifiers',
+          path: "classify",
+          redirect: "/classify/classifiers",
           children: [
             {
               component: Classifiers,
-              path: 'classifiers'
+              path: "classifiers"
             },
             {
               component: ClassifySettings,
-              path: 'settings'
+              path: "settings"
             }
           ],
           components: {

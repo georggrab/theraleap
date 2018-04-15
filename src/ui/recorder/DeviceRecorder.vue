@@ -104,7 +104,7 @@ import {
 import GraphicalHandLogger from "@/ui/graphics/GraphicalHandLogger.vue";
 import { getConnectionHealthy, getDeviceFacade } from "state/modules/device";
 import { GenericHandTrackingData } from "devices";
-import { Subscription } from "@reactivex/rxjs/dist/package/Subscription";
+import { Subscription } from "rxjs";
 import { getPersistor } from "state/modules/persistor";
 
 /** Device Recorder

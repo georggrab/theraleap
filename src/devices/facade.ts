@@ -4,7 +4,7 @@ import {
   Subject,
   Subscription,
   ReplaySubject
-} from "@reactivex/rxjs";
+} from "rxjs";
 import { injectable, inject } from "inversify";
 
 import {

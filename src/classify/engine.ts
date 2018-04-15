@@ -1,4 +1,4 @@
-import { Observable, Subscription } from "@reactivex/rxjs";
+import { Observable, Subscription } from "rxjs";
 
 import { Classifier, ClassificationData } from "./classifier";
 import { GenericHandTrackingData } from "@/devices/generic";

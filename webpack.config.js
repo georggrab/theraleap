@@ -3,10 +3,8 @@ const path = require("path");
 
 module.exports = {
   entry: "./src/main.ts",
-  mode: "development",
-  devtool: "cheap-module-eval-source-map",
   output: {
-    filename: "./dist/bundle.js"
+    filename: "dist/bundle.js",
   },
   resolve: {
     extensions: [".webpack.js", ".web.js", ".ts", ".tsx", ".js", ".vue"],
@@ -34,5 +32,5 @@ module.exports = {
         }
       }
     ]
-  }
+  },
 };

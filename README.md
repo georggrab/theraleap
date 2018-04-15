@@ -41,18 +41,29 @@ npm i
 
 ##### Running the project
 
-First make sure the Leap Motion Device driver is running:
+The application will automatically try to detect if the device driver is running or not, and connect once it becomes available. If you want to start using a motion tracking device with the platform, make sure it is running:
 ```bash
 sudo leapd
 ```
 
-I recommend using `webpack-dev-server` as a local development server:
+Now, to run the project in development mode, run:
 
 ```
-npm i -g webpack-dev-server
-cd theraleap
-webpack-dev-server
+npm run dev
+// or
+yarn run dev
 ```
+
+##### Building the project
+
+To build the project in production mode, do:
+
+```
+npm run build
+// or
+yarn run build
+```
+
 
 ##### Testing the project
 

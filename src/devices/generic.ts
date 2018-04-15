@@ -1,4 +1,4 @@
-import { Observable, Subscriber } from "@reactivex/rxjs";
+import { Observable, Subscriber } from "rxjs";
 import { Store } from "vuex";
 import { RootState } from "state/store";
 

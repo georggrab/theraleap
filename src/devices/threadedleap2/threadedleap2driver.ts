@@ -1,5 +1,5 @@
 import { injectable, inject } from "inversify";
-import { Observable, Subject, BehaviorSubject } from "@reactivex/rxjs";
+import { Observable, Subject, BehaviorSubject } from "rxjs";
 
 import LeapWorker from "worker-loader!./leapworker";
 import {

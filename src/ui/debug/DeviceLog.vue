@@ -5,6 +5,8 @@
 </template>
 <script lang="ts">
 import Vue from "vue";
+import { Observable, Subscription } from "rxjs";
+
 import DIIdent from "@/dependencyinjection/symbols";
 import { Inject, Component } from "vue-property-decorator";
 import { AppContainer } from "@/dependencyinjection";
@@ -18,9 +20,6 @@ import {
 import RawDeviceDataPlotter from "@/ui/debug/RawDeviceDataPlotter.vue";
 
 import * as device from "@/state/modules/device";
-import { Observable } from "@reactivex/rxjs/dist/package/Observable";
-import { Subscription } from "@reactivex/rxjs/dist/package/Subscription";
-
 @Component({
   components: { RawDeviceDataPlotter }
 })

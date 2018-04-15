@@ -10,6 +10,7 @@ import Vue from "vue";
 import "imports-loader?THREE=three!three/examples/js/controls/OrbitControls"
 import * as THREE from "three";
 import { BufferGeometry, Geometry } from "three";
+import { Observable, Subscription } from "rxjs";
 
 import { Component, Prop } from "vue-property-decorator";
 
@@ -22,8 +23,6 @@ import * as graphics from "state/modules/graphics";
 
 import { MultiHandScene } from "./types";
 import * as leapRenderUtils from "./leap";
-import { Observable } from "@reactivex/rxjs/dist/package/Observable";
-import { Subscription } from "@reactivex/rxjs/dist/package/Subscription";
 import { hasSalvagableStream } from "state/utils";
 
 @Component
