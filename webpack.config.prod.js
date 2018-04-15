@@ -1,5 +1,4 @@
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const common = require('./webpack.config');
 const webpack = require('webpack');
 
@@ -14,7 +13,8 @@ module.exports = {
         }
     },
     plugins: [
-        new HardSourceWebpackPlugin(),
-        new HtmlWebpackPlugin()
+        new HardSourceWebpackPlugin()
     ]
 }
+
+module.exports.output.publicPath = "/theraleap/"

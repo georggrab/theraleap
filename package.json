@@ -8,8 +8,9 @@
   "sideEffects": false,
   "scripts": {
     "test": "karma start karma.config.js",
-    "dev": "webpack-dev-server --config webpack.config.dev.js",
+    "dev": "webpack-dev-server --content-base dist --config webpack.config.dev.js",
     "build": "webpack -p --config webpack.config.prod.js",
+    "deploy": "npx gh-pages --dist dist/",
     "precommit": "lint-staged"
   },
   "lint-staged": {
