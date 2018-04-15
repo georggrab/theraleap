@@ -1,0 +1,5 @@
+*.bundle.js
+*.worker.js
+bundle.js
+node_modules/
+.vscode/
