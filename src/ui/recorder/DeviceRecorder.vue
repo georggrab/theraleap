@@ -1,6 +1,10 @@
 <template>
 <section class="device-recorder">
-    <md-empty-state v-if="totalRecordings == 0"
+  <div v-if="restoreInProgress">
+    <span>Restoring data from persistence layer...</span>
+    <md-progress-bar md-mode="indeterminate"></md-progress-bar>
+  </div>
+  <md-empty-state v-if="totalRecordings == 0"
       md-icon="mic"
       md-label="Create your first recording"
       md-description="Create recordings of raw hand tracking data in order to develop and test games for the therapy platform without the physical need of a hand tracking device.">
@@ -63,11 +67,18 @@
           class="md-raised md-primary">Save</md-button>
         <md-button @click="discardRecord(record.id)" v-if="!record.created"
           class="md-accent md-raised">Discard</md-button>
+        <md-button @click="downloadRecord(record.id)" v-if="record.created"
+          >Download</md-button>
         <md-button @click="discardRecord(record.id)" v-if="record.created"
-          class="md-accent md-raised">Delete</md-button>
+          class="md-accent">Delete</md-button>
       </md-card-actions>
     </md-card>
   </main>
+  <md-snackbar md-position="center" :md-duration="Infinity" :md-active.sync="showRestore" md-persistent>
+    <span>The Persistence Provider is holding {{ persistedRecordings }} recordings.</span>
+    <md-button class="md-primary md-raised" @click="restoreRecordings">Restore</md-button>
+    <md-button class="md-raised" @click="showRestore = false">Dismiss</md-button>
+  </md-snackbar>
 </section>
 </template>
 <script lang="ts">
@@ -111,6 +122,9 @@ import { getPersistor } from "state/modules/persistor";
 export default class DeviceRecorder extends Vue {
   public recordInProgress: boolean = false;
   public bufferFullPercentage: number = 0;
+  public showRestore: boolean = false;
+  public persistedRecordings: number = 0;
+  public restoreInProgress: boolean = false;
 
   private buffer: Record[] = [];
   private currentBufferSize: number = 0;
@@ -135,11 +149,24 @@ export default class DeviceRecorder extends Vue {
   }
 
   public async created() {
+    if (this.persistor && this.totalRecordings === 0) {
+      const count = await this.persistor.count();
+      if (count > 0) {
+        this.persistedRecordings = count;
+        this.showRestore = true;
+      }
+    }
+  }
+
+  public async restoreRecordings() {
     if (this.persistor) {
+      this.restoreInProgress = true;
       const recordings = await this.persistor.getAll();
-      recordings.forEach(recording =>
+      recordings.forEach(recording => {
         addRecording(this.$store, { recording, persistor: undefined })
-      );
+      });
+      this.restoreInProgress = false;
+      this.showRestore = false;
     }
   }
 
@@ -161,6 +188,19 @@ export default class DeviceRecorder extends Vue {
         }
       });
     }
+  }
+
+  public downloadRecord(id: number) {
+    const obj = this.recordings[id]
+    const data = new Blob([JSON.stringify(obj)], {type: 'octet/stream'});
+    const url = URL.createObjectURL(data);
+    const anchor = document.createElement('a');
+    anchor.download = `thera-rec--${obj.name.replace(/\s/g, '-')}.json`;
+    anchor.href = url;
+    anchor.target = '_blank';
+    anchor.setAttribute('display', 'none;');
+    document.body.appendChild(anchor);
+    anchor.click();
   }
 
   private clearLocalState() {
@@ -264,6 +304,7 @@ export default class DeviceRecorder extends Vue {
 <style lang="scss" scoped>
 .md-card {
   margin-bottom: 20px;
+  max-width: 800px;
 }
 
 .header-flex-container {

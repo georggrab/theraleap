@@ -13,8 +13,8 @@ export class IndexedDBPersistenceProvider<K, V extends Object>
     this.context = ctx;
   }
 
-  public getTotalSize(): number {
-    return 0;
+  public getTotalSize(): number | undefined {
+    return undefined;
   }
 
   public async get(key: K): Promise<V> {
@@ -25,6 +25,11 @@ export class IndexedDBPersistenceProvider<K, V extends Object>
   public async getAll(): Promise<V[]> {
     const store = await this.getObjectStore("readonly");
     return await store.getAll();
+  }
+
+  public async count(): Promise<number> {
+    const store = await this.getObjectStore("readonly");
+    return await store.count();
   }
 
   public async put(key: K, val: V): Promise<void> {

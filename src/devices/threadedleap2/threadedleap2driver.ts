@@ -1,5 +1,5 @@
 import { injectable, inject } from "inversify";
-import { Observable, BehaviorSubject } from "@reactivex/rxjs";
+import { Observable, Subject, BehaviorSubject } from "@reactivex/rxjs";
 
 import LeapWorker from "worker-loader!./leapworker";
 import {
@@ -18,9 +18,7 @@ export class ThreadedLeap2Driver implements DeviceDriver {
   public deviceName = LEAP_MOTION_DEVICE_NAME;
   private worker: Worker;
 
-  private deviceTrackingData: BehaviorSubject<GenericHandTrackingData> = new BehaviorSubject({
-    data: {}
-  } as GenericHandTrackingData);
+  private deviceTrackingData: Subject<GenericHandTrackingData> = new Subject();
   private deviceConnectionState: BehaviorSubject<DeviceConnectionState> =  new BehaviorSubject(
     InitialDeviceState as DeviceConnectionState
   );

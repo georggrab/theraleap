@@ -17,7 +17,6 @@ import { IStoreFactory, IStoreHolder, RootState } from "state/store";
 
 import { getActiveRecording, HandTrackRecording } from "@/state/modules/record";
 import { Store } from "vuex";
-import { multicast } from "@reactivex/rxjs/dist/package/operator/multicast";
 
 async function replayInfinite(
   subscriber: Subscriber<GenericHandTrackingData>,
