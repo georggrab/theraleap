@@ -14,8 +14,9 @@ import { GenericHandTrackingData } from "@/devices";
 export class ThumbSpreadClassifier implements Classifier {
   static metadata: ClassifierMetadata = {
     name: "ThumbSpreadClassifier",
-    desc: "Detects extension of Thumb",
-    examplePath: "assets/thera-rec-slow-thumb-spread.json"
+    shortDesc: "Detects extension of the Thumb",
+    longDesc: `This classifier is used in order to aid recovery from x/y syndrome. I have no actual idea what I am talking about, just implementing this stuff and writing some blindtext. In the future, here could be a well-written description of this classifier, including pointers on which types of patients it should be used. Even <strong>HTML</strong> is possible here! (Don't <code>&lt;script&gt;</code> in here please lol)`,
+    examplePath: "json/thera-rec-slow-thumb-spread.json"
   };
 
   static settings: ClassifierSetting[] = [

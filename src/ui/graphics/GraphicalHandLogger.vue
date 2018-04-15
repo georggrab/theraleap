@@ -1,6 +1,5 @@
 <template>
 <section>
-  <div id="bad-connection-warning" v-show="!hasSalvagableStream">No connection to the Device. Check the Status Tab!</div>
   <main class="three-container" ref="animation"></main>
 </section>
 </template>
@@ -35,6 +34,12 @@ export default class GraphicalHandLogger extends Vue {
 
   @Prop({ default: true })
   public grid!: boolean;
+
+  @Prop({ default: false })
+  public rotate!: boolean;
+
+  @Prop({ default: [0, 0, 0] })
+  public cameraPosition!: number[];
 
   @Prop() public source!: Observable<GenericHandTrackingData>;
 
@@ -110,7 +115,11 @@ export default class GraphicalHandLogger extends Vue {
       1000
     );
 
+    this.camera.position.set.apply(this.camera.position, this.cameraPosition);
+
     this.controls = new THREE.OrbitControls(this.camera, animation);
+    this.controls.autoRotateSpeed = 0.5;
+    this.controls.autoRotate = this.rotate;
     this.controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
     this.controls.dampingFactor = 0.25;
     this.controls.minDistance = 100;
@@ -145,13 +154,10 @@ export default class GraphicalHandLogger extends Vue {
   private animate() {
     this.animationHandle = window.requestAnimationFrame(this.animate);
     if (this.renderer && this.camera) {
-      if (!this.hasSalvagableStream) {
-      } else {
         if (this.controls) {
           this.controls.update();
         }
         this.renderer.render(this.scene, this.camera);
-      }
     } else {
       console.warn("THREE.js not initialized properly");
       window.cancelAnimationFrame(this.animationHandle);
@@ -162,10 +168,6 @@ export default class GraphicalHandLogger extends Vue {
     return graphics.getRenderer(this.$store);
   }
 
-  get hasSalvagableStream(): boolean | undefined {
-    return hasSalvagableStream(this.$store);
-  }
-
   get deviceFacade(): DeviceFacade {
     return device.getDeviceFacade(this.$store);
   }
@@ -173,14 +175,6 @@ export default class GraphicalHandLogger extends Vue {
 </script>
 
 <style lang="scss" scoped>
-#bad-connection-warning {
-  position: absolute;
-  margin: 20px;
-  font-family: monospace;
-  color: white;
-  background-color: black;
-}
-
 main {
   width: 100%;
   height: 100%;

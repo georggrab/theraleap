@@ -13,7 +13,8 @@ export interface ClassificationMetrics {
 
 export interface ClassifierMetadata {
     name: string;
-    desc: string;
+    shortDesc: string;
+    longDesc: string;
     examplePath?: string;
 }
 

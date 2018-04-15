@@ -2,12 +2,16 @@
   <section>
     <md-card v-for="[key, value] in classifiers" :key="key">
       <md-card-media>
-        <graphical-hand-logger v-if="value.metadata.examplePath" />
+        <graphical-hand-logger :camera-position="[10, 10, 10]"
+        :rotate="true" :source="examples[key]" v-if="examples[key] !== undefined" />
+        <div v-else class="loading">
+          <md-progress-spinner :md-diameter="100" :md-stroke="10" md-mode="indeterminate"></md-progress-spinner>
+        </div>
       </md-card-media>
 
       <md-card-header>
         <div class="md-title">{{value.metadata.name}}</div>
-        <div class="md-subhead">{{key}}</div>
+        <div class="md-subhead">{{value.metadata.shortDesc}}</div>
       </md-card-header>
 
       <md-card-actions>
@@ -17,7 +21,7 @@
 
       <md-card-content>
         <md-subheader>Classifier Description</md-subheader>
-        <section v-html="value.metadata.desc"></section>
+        <section v-html="value.metadata.longDesc"></section>
         <md-subheader>Classifier Settings</md-subheader>
         <md-divider></md-divider>
         <section v-for="(s, index) in value.settings" :key="index">
@@ -43,11 +47,13 @@
 </template>
 <script lang="ts">
 import Vue from "vue";
+import { Observable } from 'rxjs';
 import { Inject, Component } from "vue-property-decorator";
 import { Classifier, ClassifierRegistry, SettingType } from "@/classify";
 
 import GraphicalHandLogger from '@/ui/graphics/GraphicalHandLogger.vue';
-import { HandTrackRecording } from "state/modules/record";
+import { HandTrackRecording, record } from "@/state/modules/record";
+import { createFakeDeviceStream, GenericHandTrackingData } from "@/devices";
 
 @Component({
   components: {
@@ -57,23 +63,17 @@ import { HandTrackRecording } from "state/modules/record";
 export default class Classifiers extends Vue {
   public SettingType = SettingType;
 
-  private examples: {[key: string]: any} = {};
+  public examples: {[key: string]: Observable<GenericHandTrackingData>} = {};
 
   public async created() {
-    await Object.entries(ClassifierRegistry).forEach(async([key, classifier]) => {
+    await this.classifiers.forEach(async([key, classifier]) => {
       const path = classifier.metadata.examplePath;
        if (path) {
-         this.examples[key] = await new Promise((r) => require([path], r.bind(this)));
+          const response = await fetch(path);
+          const recording = (await response.json()) as HandTrackRecording;
+          Vue.set(this.examples, key, createFakeDeviceStream(recording));
        }
     });
-  }
-
-  public async getExampleSource(key: number) {
-    const path = ClassifierRegistry[key].metadata.examplePath
-    if (path) {
-      const data = await new Promise((resolve) => require([path], resolve.bind(this)));
-      console.log(data);
-    }
   }
 
   get classifiers() {
@@ -85,7 +85,19 @@ export default class Classifiers extends Vue {
 .md-card {
   max-width: 800px;
 }
+.md-card-media {
+  height: 400px;
+}
 .md-field input[type="range"] {
   margin-top: 25px;
+}
+
+.loading {
+  background: black;
+  height: 400px;
+  display: flex;
+  .md-progress-spinner {
+    margin: auto;
+  }
 }
 </style>
