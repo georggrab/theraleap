@@ -140,12 +140,9 @@ export default class App extends Vue {
 }
 </script>
 <style lang="scss">
-@import "~styles/_globals.scss";
+@import "~styles/_globals";
 </style>
-
 <style lang="scss" scoped>
-@import "~styles/_vars.scss";
-
 .md-app {
   border: 1px solid rgba(#000, 0.12);
   min-height: 50vh;

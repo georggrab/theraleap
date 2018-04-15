@@ -7,10 +7,9 @@
 
 <script lang="ts">
 import Vue from "vue";
+import "imports-loader?THREE=three!three/examples/js/controls/OrbitControls"
 import * as THREE from "three";
 import { BufferGeometry, Geometry } from "three";
-import "imports-loader?THREE=three!three/examples/js/controls/OrbitControls";
-import "imports-loader?THREE=three!three/examples/js/controls/TrackballControls";
 
 import { Component, Prop } from "vue-property-decorator";
 

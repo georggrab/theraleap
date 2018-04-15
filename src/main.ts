@@ -1,5 +1,4 @@
 import Vue from "vue";
-import "es6-promise/auto";
 
 //@ts-ignore
 import VueMaterial from "vue-material";
