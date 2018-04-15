@@ -1,6 +1,8 @@
 # theraleap
 Help patients recover from hand operations by allowing them to do recovery excercises at home by utilizing state of the art hand tracking technology &amp; the modern web.
 
+[See it live!](https://talkdirty.github.io/theraleap)
+
 ## 10000 foot view
 
 After carrying out a surgery on the hand, the patient almost always has to undergo some kind of recovery period in order to get the hand mobility back to the original, healthy state. Up until now, the recovery is done in multiple lengthy therapy sessions, requiring both the physical presence of the patient and an ergo therapist.
