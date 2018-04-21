@@ -1,5 +1,4 @@
 import Vue from "vue";
-
 // @ts-ignore
 import VueMaterial from 'vue-material';
 import VueRouter from "vue-router";

@@ -1,4 +1,4 @@
-const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const HardSourceWebpackPlugin = require("hard-source-webpack-plugin");
 const path = require("path");
 
@@ -15,7 +15,9 @@ module.exports = {
   ],
   resolve: {
     extensions: [".webpack.js", ".web.js", ".ts", ".tsx", ".js", ".vue"],
-    plugins: [new TsconfigPathsPlugin({})],
+    plugins: [
+      new TsconfigPathsPlugin({})
+    ],
     alias: {
       assets: path.resolve(__dirname, "./assets/")
     }
@@ -27,7 +29,12 @@ module.exports = {
         loader: "vue-loader",
         options: {
           loaders: {
-            ts: "ts-loader"
+            ts: {
+              loader: "ts-loader",
+              options: {
+                appendTsSuffixTo: [/\.vue$/]
+              }
+            }
           },
         }
       },

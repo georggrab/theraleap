@@ -57,7 +57,14 @@
         <span class="md-list-item-text">Device Recorder</span>
       </md-list-item>
 
-      <md-list-item to="/classify" :class="{active: activeNavItem == 2}" @click="setActiveNavItem(2)">
+      <md-list-item to="/data-processing" :class="{active: activeNavItem == 2}" @click="setActiveNavItem(2)">
+        <md-icon>memory
+          <md-tooltip md-direction="right">Data Processing</md-tooltip>
+        </md-icon>
+        <span class="md-list-item-text">Data Processing</span>
+      </md-list-item>
+
+      <md-list-item to="/classify" :class="{active: activeNavItem == 3}" @click="setActiveNavItem(3)">
         <md-icon>blur_on
           <md-tooltip md-direction="right">Classifier</md-tooltip>
         </md-icon>
@@ -141,6 +148,9 @@ export default class App extends Vue {
 </script>
 <style lang="scss">
 @import "~assets/_globals";
+body {
+  font-family: 'Montserrat', sans-serif;
+}
 </style>
 <style lang="scss" scoped>
 .md-app {

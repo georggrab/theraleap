@@ -29,6 +29,13 @@ const ClassifySettings = () =>
 const ClassifyTabs = () =>
   import(/* webpackChunkName: "group-classifiers" */ "@/ui/classify/ClassifyTabs.vue");
 
+const PreProcessing = () =>
+  import(/* webpackChunkName: "group-data-processing" */ "@/ui/data-processing/PreProcessing.vue");
+const ProcessingRoot = () =>
+  import(/* webpackChunkName: "group-data-processing" */ "@/ui/data-processing/ProcessingRoot.vue");
+const ProcessingTabs = () =>
+  import(/* webpackChunkName: "group-data-processing" */ "@/ui/data-processing/ProcessingTabs.vue");
+
 import App from "@/ui/App.vue";
 
 export const RootRouter = new VueRouter({
@@ -94,6 +101,20 @@ export const RootRouter = new VueRouter({
           components: {
             main: ClassifyRoot,
             tabs: ClassifyTabs
+          }
+        },
+        {
+          path: "data-processing",
+          redirect: "/data-processing/preprocessing",
+          children: [
+            {
+              component: PreProcessing,
+              path: "preprocessing"
+            },
+          ],
+          components: {
+            main: ProcessingRoot,
+            tabs: ProcessingTabs
           }
         }
       ]

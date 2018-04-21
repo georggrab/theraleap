@@ -1,5 +1,5 @@
-import { GenericHandTrackingData } from '@/devices';
 import { Observable } from 'rxjs';
+import { GenericHandTrackingData } from '@/devices';
 import { HandTrackRecording } from '@/state/modules/record';
 
 export interface ClassificationData {
