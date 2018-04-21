@@ -102,7 +102,12 @@ const processDeviceMessage = (message: string, socket: WebSocket) => {
     ].forEach(setting => {
       socket.send(JSON.stringify(setting));
     });
+  } else if (data.hasOwnProperty("event")) {
+    /** The Device sends events through the same Data Stream. They are
+     *  indicated by the "event" key.
+     */
   } else {
+    /** The rest of the Data is the thing we're interested in: Device Frames. */
     const frame = data as LeapDeviceFrame;
     lastFrameTime = Date.now();
     ctx.postMessage({

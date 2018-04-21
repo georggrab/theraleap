@@ -106,8 +106,31 @@ export function project3(
   return projected;
 }
 
+function deleteStaleHands(frame: LeapHandTrackingData, scene: MultiHandScene): {[_: string]: HandScene} {
+  const shownHands = frame.data.hands.map(hand => hand.type);
+  const validHands: {[s: string]: HandScene} = {};
+
+  /** Delete the Hand Objects that are not in this frame from the native THREE scene */
+  Object.entries(scene.hands).forEach(([type, sceneHand]) => {
+    if (!shownHands.includes(type)) {
+      scene.nativeSceneRef.remove(sceneHand.palm, ...Object.values(sceneHand.fingers))
+    }
+  })
+
+  /** Build and return new HandScenes containing only the valid (i.e., contained in this frame) Scenes */
+  shownHands.forEach((shownHand) => {
+    if (scene.hands.hasOwnProperty(shownHand)) {
+      validHands[shownHand] = scene.hands[shownHand];
+    }
+  })
+
+  return validHands
+}
+
 export function render(frame: LeapHandTrackingData, scene: MultiHandScene) {
   setProjection(frame.data.interactionBox, scene);
+  scene.hands = deleteStaleHands(frame, scene)
+
   frame.data.hands.forEach(hand => {
     renderHand(hand, scene);
 

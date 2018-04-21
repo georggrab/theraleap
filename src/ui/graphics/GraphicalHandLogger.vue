@@ -38,7 +38,7 @@ export default class GraphicalHandLogger extends Vue {
   @Prop({ default: false })
   public rotate!: boolean;
 
-  @Prop({ default: [0, 0, 0] })
+  @Prop({ default: () => [0, 0, 0] })
   public cameraPosition!: number[];
 
   @Prop() public source!: Observable<GenericHandTrackingData>;
