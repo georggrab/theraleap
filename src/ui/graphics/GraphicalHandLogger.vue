@@ -18,11 +18,11 @@ import * as record from "@/state/modules/record";
 import { DeviceFacade, GenericHandTrackingData } from "devices";
 import { LEAP_MOTION_DEVICE_NAME, LeapDeviceFrame } from "devices/leapmotion";
 
-import * as graphics from "state/modules/graphics";
+import * as graphics from "@/state/modules/graphics";
+import { hasSalvagableStream } from "@/state/utils";
 
-import { MultiHandScene } from "./types";
-import * as leapRenderUtils from "./leap";
-import { hasSalvagableStream } from "state/utils";
+import { MultiHandScene, HandConfig } from "./types";
+import * as leapRenderUtils from "./leap-render-utils";
 
 @Component
 export default class GraphicalHandLogger extends Vue {
@@ -40,6 +40,9 @@ export default class GraphicalHandLogger extends Vue {
 
   @Prop({ default: () => [0, 0, 0] })
   public cameraPosition!: number[];
+
+  @Prop({ default: () => {} })
+  public handConfig!: Partial<HandConfig>;
 
   @Prop() public source!: Observable<GenericHandTrackingData>;
 
@@ -95,7 +98,7 @@ export default class GraphicalHandLogger extends Vue {
         this.subscription.unsubscribe();
       }
       this.subscription = this.source.subscribe(frame => {
-        leapRenderUtils.render(frame, this.multiHandScene!);
+        leapRenderUtils.render(frame, this.multiHandScene!, this.handConfig);
       });
     } else {
       console.warn(

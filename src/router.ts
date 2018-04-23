@@ -1,40 +1,47 @@
 import VueRouter from "vue-router";
 
 const DeviceLog = () =>
-  import(/* webpackChunkName: "group-debug" */ "@/ui/debug/DeviceLog.vue");
+  import("@/ui/debug/DeviceLog.vue");
 const StatusLog = () =>
-  import(/* webpackChunkName: "group-debug" */ "@/ui/debug/StatusLog.vue");
+  import("@/ui/debug/StatusLog.vue");
 const DeviceGraphicalLog = () =>
-  import(/* webpackChunkName: "group-debug" */ "@/ui/debug/DeviceGraphicalLog.vue");
+  import("@/ui/debug/DeviceGraphicalLog.vue");
 const DeviceDebugRoot = () =>
-  import(/* webpackChunkName: "group-debug" */ "@/ui/debug/DeviceDebugRoot.vue");
+  import("@/ui/debug/DeviceDebugRoot.vue");
 const DeviceDebugTabs = () =>
-  import(/* webpackChunkName: "group-debug" */ "@/ui/debug/DeviceDebugTabs.vue");
+  import("@/ui/debug/DeviceDebugTabs.vue");
 
 const DeviceRecorderRoot = () =>
-  import(/* webpackChunkName: "group-recorder" */ "@/ui/recorder/DeviceRecorderRoot.vue");
+  import("@/ui/recorder/DeviceRecorderRoot.vue");
 const DeviceRecorderTabs = () =>
-  import(/* webpackChunkName: "group-recorder" */ "@/ui/recorder/DeviceRecorderTabs.vue");
+  import("@/ui/recorder/DeviceRecorderTabs.vue");
 const DeviceRecorder = () =>
-  import(/* webpackChunkName: "group-recorder" */ "@/ui/recorder/DeviceRecorder.vue");
+  import("@/ui/recorder/DeviceRecorder.vue");
 const DeviceRecorderSettings = () =>
-  import(/* webpackChunkName: "group-recorder" */ "@/ui/recorder/DeviceRecorderSettings.vue");
+  import("@/ui/recorder/DeviceRecorderSettings.vue");
 
 const Classifiers = () =>
-  import(/* webpackChunkName: "group-classifiers" */ "@/ui/classify/Classifiers.vue");
+  import("@/ui/classify/Classifiers.vue");
 const ClassifyRoot = () =>
-  import(/* webpackChunkName: "group-classifiers" */ "@/ui/classify/ClassifyRoot.vue");
+  import("@/ui/classify/ClassifyRoot.vue");
 const ClassifySettings = () =>
-  import(/* webpackChunkName: "group-classifiers" */ "@/ui/classify/ClassifySettings.vue");
+  import("@/ui/classify/ClassifySettings.vue");
 const ClassifyTabs = () =>
-  import(/* webpackChunkName: "group-classifiers" */ "@/ui/classify/ClassifyTabs.vue");
+  import("@/ui/classify/ClassifyTabs.vue");
 
 const PreProcessing = () =>
-  import(/* webpackChunkName: "group-data-processing" */ "@/ui/data-processing/PreProcessing.vue");
+  import("@/ui/data-processing/PreProcessing.vue");
 const ProcessingRoot = () =>
-  import(/* webpackChunkName: "group-data-processing" */ "@/ui/data-processing/ProcessingRoot.vue");
+  import("@/ui/data-processing/ProcessingRoot.vue");
 const ProcessingTabs = () =>
-  import(/* webpackChunkName: "group-data-processing" */ "@/ui/data-processing/ProcessingTabs.vue");
+  import("@/ui/data-processing/ProcessingTabs.vue");
+
+const HandMeasurement = () =>
+  import("@/ui/measure/HandMeasurement.vue");
+const HandMeasurementRoot = () =>
+  import("@/ui/measure/HandMeasurementRoot.vue");
+const HandMeasurementTabs = () =>
+  import("@/ui/measure/HandMeasurementTabs.vue");
 
 import App from "@/ui/App.vue";
 
@@ -115,6 +122,20 @@ export const RootRouter = new VueRouter({
           components: {
             main: ProcessingRoot,
             tabs: ProcessingTabs
+          }
+        },
+        {
+          path: "measurement",
+          redirect: "/measurement/display",
+          children: [
+            {
+              component: HandMeasurement,
+              path: "display"
+            },
+          ],
+          components: {
+            main: HandMeasurementRoot,
+            tabs: HandMeasurementTabs,
           }
         }
       ]
