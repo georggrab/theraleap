@@ -1,19 +1,24 @@
 import { injectable, inject } from "inversify";
 import { Observable, Subject, BehaviorSubject } from "rxjs";
 
-import LeapWorker from "worker-loader!./leapworker";
+import LeapWorker from "worker-loader!./leapworker/index.ts";
 import {
   WORKER_CMD_ESTABLISH_CONNECTION,
   WORKER_EVT_CONNECTION_STATE_CHANGED,
   WORKER_EVT_FINALIZED_FRAME_RECEIVED,
   WORKER_CMD_UPDATE_CONFIGURATION,
   WORKER_CMD_UPDATE_PREPROCESS,
-  WORKER_CMD_ENABLE_CLASSIFICATION,
+  WORKER_CMD_ENABLE_CLASSIFICATION
 } from "./messages";
 import DIIdent from "@/dependencyinjection/symbols";
-import { GenericHandTrackingData, DeviceDriver, DeviceConnectionState, InitialDeviceState } from "@/devices/generic";
-import { LEAP_MOTION_DEVICE_NAME } from '@/devices/leapmotion/leapdriver';
-import { PreProcessorConfig } from '@/processing/types';
+import {
+  GenericHandTrackingData,
+  DeviceDriver,
+  DeviceConnectionState,
+  InitialDeviceState
+} from "@/devices/generic";
+import { LEAP_MOTION_DEVICE_NAME } from "@/devices/leapmotion/leapdriver";
+import { PreProcessorConfig } from "@/processing/types";
 
 @injectable()
 export class ThreadedLeap2Driver implements DeviceDriver {
@@ -21,9 +26,9 @@ export class ThreadedLeap2Driver implements DeviceDriver {
   private worker: Worker;
 
   private deviceTrackingData: Subject<GenericHandTrackingData> = new Subject();
-  private deviceConnectionState: BehaviorSubject<DeviceConnectionState> =  new BehaviorSubject(
-    InitialDeviceState as DeviceConnectionState
-  );
+  private deviceConnectionState: BehaviorSubject<
+    DeviceConnectionState
+  > = new BehaviorSubject(InitialDeviceState as DeviceConnectionState);
 
   constructor(
     @inject(DIIdent.SETTINGS_HARDWARE_DRIVER_CONNECTION)
@@ -38,7 +43,7 @@ export class ThreadedLeap2Driver implements DeviceDriver {
   }
 
   public getDeviceConnectionState(): Promise<DeviceConnectionState> {
-    return Promise.resolve(this.deviceConnectionState.getValue())
+    return Promise.resolve(this.deviceConnectionState.getValue());
   }
 
   public streamConnectionState(): Observable<DeviceConnectionState> {
@@ -46,7 +51,7 @@ export class ThreadedLeap2Driver implements DeviceDriver {
   }
 
   public establishConnection(): Observable<DeviceConnectionState> {
-    this.worker.postMessage({cmd: WORKER_CMD_ESTABLISH_CONNECTION});
+    this.worker.postMessage({ cmd: WORKER_CMD_ESTABLISH_CONNECTION });
     return this.deviceConnectionState.asObservable();
   }
 
@@ -55,12 +60,18 @@ export class ThreadedLeap2Driver implements DeviceDriver {
   }
 
   public enableClassification(classifierIds: string[]) {
-      this.worker.postMessage({ cmd: WORKER_CMD_ENABLE_CLASSIFICATION, payload: classifierIds });
+    this.worker.postMessage({
+      cmd: WORKER_CMD_ENABLE_CLASSIFICATION,
+      payload: classifierIds
+    });
   }
 
   public updatePreProcessors(configs: PreProcessorConfig[]) {
-      this.worker.postMessage({ cmd: WORKER_CMD_UPDATE_PREPROCESS, payload: configs })
-      return true;
+    this.worker.postMessage({
+      cmd: WORKER_CMD_UPDATE_PREPROCESS,
+      payload: configs
+    });
+    return true;
   }
 
   private handleWorkerMessage(event: MessageEvent) {
@@ -73,10 +84,10 @@ export class ThreadedLeap2Driver implements DeviceDriver {
   }
 
   private onConnectionStateChanged(data: any) {
-      this.deviceConnectionState.next(data);
+    this.deviceConnectionState.next(data);
   }
 
   private onFinalizedFrameReceived(data: any) {
-    this.deviceTrackingData.next(data)
+    this.deviceTrackingData.next(data);
   }
 }

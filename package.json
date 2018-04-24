@@ -1,6 +1,6 @@
 {
   "name": "theraleap",
-  "version": "0.0.1-prealpha",
+  "version": "0.1.0",
   "description": "Online Assisted Ergotherapy",
   "main": "index.js",
   "author": "Georg Grab",
@@ -11,13 +11,7 @@
     "dev": "webpack-dev-server --content-base dist --config webpack.config.js",
     "build": "webpack -p --config webpack.config.js",
     "deploy": "npx gh-pages --dist dist/",
-    "precommit": "lint-staged"
-  },
-  "lint-staged": {
-    "*.{js,json,css,md,vue}": [
-      "prettier --write",
-      "git add"
-    ]
+    "precommit": "pretty-quick --staged"
   },
   "devDependencies": {
     "@types/chai": "^4.1.2",
@@ -29,6 +23,7 @@
     "css-loader": "^0.28.11",
     "hard-source-webpack-plugin": "^0.6.4",
     "html-webpack-plugin": "^3.2.0",
+    "husky": "^0.14.3",
     "imports-loader": "^0.8.0",
     "jasmine-core": "^3.1.0",
     "karma": "^2.0.0",
@@ -40,6 +35,8 @@
     "node-sass": "4.7.2",
     "postcss-autoreset": "^2.0.2",
     "postcss-loader": "^2.1.3",
+    "prettier": "^1.12.1",
+    "pretty-quick": "^1.4.1",
     "sass-loader": "^7.0.1",
     "style-loader": "^0.20.3",
     "ts-loader": "^4.2.0",
