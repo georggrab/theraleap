@@ -1,3 +1,4 @@
+import Vue from "vue";
 import { ActionContext, Store } from "vuex";
 import { getStoreAccessors } from "vuex-typescript";
 
@@ -8,7 +9,7 @@ import {
 } from "processing/types";
 import { DropNFramesPreProcessorId } from "processing/generic/dropnframes";
 import { PreProcessorConfig } from "@/processing/types";
-import Vue from "vue";
+import { DestroyUselessFramesId } from "processing/generic/destroyuselessframes";
 
 export interface PreProcessorsState {
   preprocessors: PreProcessorConfigMap;
@@ -27,6 +28,15 @@ export const preprocessors = {
           return {
             identifier: DropNFramesPreProcessorId,
             args: [preprocessors.state.preprocessors.naiveThrottler.n]
+          };
+        }
+      },
+      uselessFrames: {
+        enabled: false,
+        constructConfig: () => {
+          return {
+            identifier: DestroyUselessFramesId,
+            args: []
           };
         }
       }

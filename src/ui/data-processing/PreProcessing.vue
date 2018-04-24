@@ -15,7 +15,7 @@
             </section>
         </transition>
     </div>
-    <md-card>
+    <md-card md-with-hover>
       <md-card-header>
         <md-card-header-text>
           <div class="md-title"><md-icon>content_cut</md-icon>Naive Throttler</div>
@@ -47,6 +47,28 @@
       </md-card-actions>
       <div class="type">
           <span>GENERIC</span>
+      </div>
+    </md-card>
+    <md-card md-with-hover>
+      <md-card-header>
+        <md-card-header-text>
+          <div class="md-title"><md-icon>whatshot</md-icon>Destroy Useless Frames</div>
+          <div class="md-subhead">Destroy Frames that don't contain relevant data immediately.</div>
+        </md-card-header-text>
+          <div class="enabled">
+              <md-switch v-model="uselessFrameSwitch"
+                @change="preprocessorSelectionUpdated"
+                class="md-accent">Enable</md-switch>
+          </div>
+      </md-card-header>
+
+      <md-card-content>
+          This Leap Motion specific preprocessor is based on a very simple assumption: if device
+          frames contain no actual hand tracking data, they are of no use to us! Thus, this preprocessor
+          will filter tracking data containing no useful information.
+      </md-card-content>
+      <div class="type">
+          <span>LEAP MOTION SPECIFIC</span>
       </div>
     </md-card>
     </section>
@@ -110,7 +132,6 @@ export default class PreProcessing extends Vue {
       name: "naiveThrottler",
       newState: { enabled: change }
     });
-    this.preprocessorSelectionUpdated();
   }
 
   public get naiveThrottlerN() {
@@ -122,15 +143,31 @@ export default class PreProcessing extends Vue {
       name: "naiveThrottler",
       newState: { n: change }
     });
-    this.preprocessorSelectionUpdated();
+  }
+
+  public get uselessFrameSwitch() {
+    return this.preprocessors.uselessFrames.enabled;
+  }
+
+  public set uselessFrameSwitch(change: boolean) {
+    preprocessors.modifyPreProcessor(this.$store, {
+      name: "uselessFrames",
+      newState: { enabled: change }
+    });
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .md-card {
   max-width: 700px;
   margin-top: 20px;
+  transition: background-color 0.45s ease-in-out;
 }
+
+.md-card:hover {
+  background-color: #efffef;
+}
+
 .md-card-header-text {
 }
 .source {
