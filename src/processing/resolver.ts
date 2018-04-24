@@ -8,7 +8,8 @@ import {
 import {
   DestroyUselessFramesId,
   DestroyUselessFramesOperator
-} from "./generic/destroyuselessframes";
+} from "./leap/destroyuselessframes";
+import { FPSThrottlerId, FPSThrottler } from "./generic/fpsthrottler";
 
 /**
  * All Preprocessors ought to be registered here, so that device drivers or facades
@@ -21,7 +22,8 @@ export const ResolverRegistry: {
   [_: string]: { new (...args: any[]): Operator<any, any> };
 } = {
   [DropNFramesPreProcessorId]: DropNFramesOperator,
-  [DestroyUselessFramesId]: DestroyUselessFramesOperator
+  [DestroyUselessFramesId]: DestroyUselessFramesOperator,
+  [FPSThrottlerId]: FPSThrottler
 };
 
 export const PreProcessingResolver = (

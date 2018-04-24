@@ -9,7 +9,8 @@ import {
 } from "processing/types";
 import { DropNFramesPreProcessorId } from "processing/generic/dropnframes";
 import { PreProcessorConfig } from "@/processing/types";
-import { DestroyUselessFramesId } from "processing/generic/destroyuselessframes";
+import { DestroyUselessFramesId } from "processing/leap/destroyuselessframes";
+import { FPSThrottlerId } from "processing/generic/fpsthrottler";
 
 export interface PreProcessorsState {
   preprocessors: PreProcessorConfigMap;
@@ -21,6 +22,15 @@ export const preprocessors = {
 
   state: {
     preprocessors: {
+      uselessFrames: {
+        enabled: false,
+        constructConfig: () => {
+          return {
+            identifier: DestroyUselessFramesId,
+            args: []
+          };
+        }
+      },
       naiveThrottler: {
         enabled: false,
         n: 0,
@@ -31,12 +41,13 @@ export const preprocessors = {
           };
         }
       },
-      uselessFrames: {
+      fpsThrottler: {
         enabled: false,
+        frameRate: 28,
         constructConfig: () => {
           return {
-            identifier: DestroyUselessFramesId,
-            args: []
+            identifier: FPSThrottlerId,
+            args: [preprocessors.state.preprocessors.fpsThrottler.frameRate]
           };
         }
       }
