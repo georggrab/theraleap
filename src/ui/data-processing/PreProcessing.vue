@@ -110,6 +110,7 @@ export default class PreProcessing extends Vue {
       name: "naiveThrottler",
       newState: { enabled: change }
     });
+    this.preprocessorSelectionUpdated();
   }
 
   public get naiveThrottlerN() {
@@ -121,6 +122,7 @@ export default class PreProcessing extends Vue {
       name: "naiveThrottler",
       newState: { n: change }
     });
+    this.preprocessorSelectionUpdated();
   }
 }
 </script>
