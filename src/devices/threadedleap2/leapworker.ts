@@ -1,8 +1,9 @@
-import { Subject } from "rxjs";
+import { Subject, Observable } from "rxjs";
 
 import {
   WORKER_CMD_ESTABLISH_CONNECTION,
   WORKER_CMD_UPDATE_CONFIGURATION,
+  WORKER_CMD_UPDATE_PREPROCESS,
   WORKER_CMD_ENABLE_CLASSIFICATION,
   WorkerCommand,
   WORKER_EVT_CONNECTION_STATE_CHANGED,
@@ -21,9 +22,21 @@ import {
 import { ThreadedEngine } from "classify/engines/ThreadedEngine";
 import { ThumbSpreadClassifier } from "classify/classifiers/thumbspread";
 import { resolveClassifier } from "classify/resolver";
+import { PreProcessorConfig, PreProcessingEngine } from '@/processing/types';
+import { PreProcessingResolver } from "processing/resolver";
+import { DropNFramesOperator } from "processing/generic/dropnframes";
 
 const ctx: Worker = self as any;
-let deviceFrameSubject: Subject<GenericHandTrackingData> | undefined;
+
+const withPreProcessorEngine = (e: PreProcessingEngine) => (source: Observable<GenericHandTrackingData>) =>
+    e.applyPreProcessors(source);
+
+const deviceFrameSubject: Subject<GenericHandTrackingData> = new Subject();
+const outputSubject = new Subject();
+let preprocessSubject: Subject<GenericHandTrackingData> = new Subject();
+let deviceFrameSubscription = deviceFrameSubject.subscribe(preprocessSubject);
+let preprocessSubscription = preprocessSubject.subscribe(outputSubject);
+  
 let engine: ThreadedEngine | undefined;
 let configuration: any | undefined = undefined;
 let lastFrameTime = 0;
@@ -40,11 +53,25 @@ ctx.onmessage = (event: MessageEvent) => {
       return updateConfiguration(message.payload);
     case WORKER_CMD_ENABLE_CLASSIFICATION:
       return startClassificationEngine(message.payload);
+    case WORKER_CMD_UPDATE_PREPROCESS:
+      return updatePreprocessors(message.payload);
   }
 };
 
+const updatePreprocessors = (config: PreProcessorConfig[]) => {
+  console.log('updating preprocessors')
+  preprocessSubscription.unsubscribe();
+  deviceFrameSubscription.unsubscribe();
+  // @ts-ignore
+  preprocessSubject = new Subject<GenericHandTrackingData>()
+    .pipe(...config.map(x => 
+        (source: Observable<GenericHandTrackingData>) => 
+          source.lift(PreProcessingResolver(x))));
+  preprocessSubscription = preprocessSubject.subscribe(outputSubject);
+  deviceFrameSubscription = deviceFrameSubject.subscribe(preprocessSubject);
+}
+
 const startClassificationEngine = (classifierIds: string[]) => {
-    deviceFrameSubject = new Subject();
     engine = new ThreadedEngine(self as any);
     classifierIds.forEach((id) => {
         const classifier = resolveClassifier(id);
@@ -110,10 +137,6 @@ const processDeviceMessage = (message: string, socket: WebSocket) => {
     /** The rest of the Data is the thing we're interested in: Device Frames. */
     const frame = data as LeapDeviceFrame;
     lastFrameTime = Date.now();
-    ctx.postMessage({
-      type: WORKER_EVT_FINALIZED_FRAME_RECEIVED,
-      payload: frame
-    });
     if (deviceFrameSubject) {
         deviceFrameSubject.next({ data: frame });
     }
@@ -159,6 +182,12 @@ const enterConnectLoop = (timeout: number) => {
 };
 
 const establishConnection = () => {
+  outputSubject.subscribe((next) => {
+    ctx.postMessage({
+      type: WORKER_EVT_FINALIZED_FRAME_RECEIVED,
+      payload: next
+    });
+  })
   if (configuration === undefined) {
     console.warn(
       "Can't establish Connection. Worker Thread has no Configuration."

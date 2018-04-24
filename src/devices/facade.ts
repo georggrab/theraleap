@@ -17,6 +17,7 @@ import { IStoreFactory, IStoreHolder, RootState } from "state/store";
 
 import { getActiveRecording, HandTrackRecording } from "@/state/modules/record";
 import { Store } from "vuex";
+import { PreProcessorConfig } from 'processing/types';
 
 async function replayInfinite(
   subscriber: Subscriber<GenericHandTrackingData>,
@@ -95,5 +96,9 @@ export abstract class AbstractDeviceFacade implements DeviceFacade {
         this.realSubscription = trackingData.subscribe(this.internalStream);
       }
     }
+  }
+
+  public updatePreProcessors(configs: PreProcessorConfig[]) {
+    this.getDeviceDriver().updatePreProcessors(configs);
   }
 }

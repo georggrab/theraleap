@@ -1,6 +1,8 @@
 import { Observable, Subscriber } from "rxjs";
 import { Store } from "vuex";
+
 import { RootState } from "state/store";
+import { PreProcessorConfig } from "@/processing/types";
 
 /**
  * Represents to current connection State of the
@@ -46,6 +48,13 @@ export interface DeviceDriver {
   establishConnection: () => Observable<DeviceConnectionState>;
   getTrackingData: () => Observable<GenericHandTrackingData>;
   enableClassification: (classifiers: string[]) => void;
+
+  /**
+   * Apply the Preprocessors as specified by the Configuration Map.
+   * Returns false if Preprocessors are not supported by the device
+   * driver.
+   */
+  updatePreProcessors: (configs: PreProcessorConfig[]) => boolean;
 }
 
 export interface DeviceFacade {
@@ -73,4 +82,9 @@ export interface DeviceFacade {
    * to include simulated data!
    */
   getDeviceTrackingData: () => Observable<GenericHandTrackingData> | undefined;
+
+  /**
+   * The Frame PreProcessors selected by the user.
+   */
+  updatePreProcessors: (x: PreProcessorConfig[]) => void;
 }

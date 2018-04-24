@@ -7,11 +7,13 @@ import {
   WORKER_EVT_CONNECTION_STATE_CHANGED,
   WORKER_EVT_FINALIZED_FRAME_RECEIVED,
   WORKER_CMD_UPDATE_CONFIGURATION,
+  WORKER_CMD_UPDATE_PREPROCESS,
   WORKER_CMD_ENABLE_CLASSIFICATION,
 } from "./messages";
 import DIIdent from "@/dependencyinjection/symbols";
 import { GenericHandTrackingData, DeviceDriver, DeviceConnectionState, InitialDeviceState } from "@/devices/generic";
 import { LEAP_MOTION_DEVICE_NAME } from '@/devices/leapmotion/leapdriver';
+import { PreProcessorConfig } from '@/processing/types';
 
 @injectable()
 export class ThreadedLeap2Driver implements DeviceDriver {
@@ -56,6 +58,11 @@ export class ThreadedLeap2Driver implements DeviceDriver {
       this.worker.postMessage({ cmd: WORKER_CMD_ENABLE_CLASSIFICATION, payload: classifierIds });
   }
 
+  public updatePreProcessors(configs: PreProcessorConfig[]) {
+      this.worker.postMessage({ cmd: WORKER_CMD_UPDATE_PREPROCESS, payload: configs })
+      return true;
+  }
+
   private handleWorkerMessage(event: MessageEvent) {
     switch (event.data.type) {
       case WORKER_EVT_CONNECTION_STATE_CHANGED:
@@ -70,6 +77,6 @@ export class ThreadedLeap2Driver implements DeviceDriver {
   }
 
   private onFinalizedFrameReceived(data: any) {
-    this.deviceTrackingData.next({ data })
+    this.deviceTrackingData.next(data)
   }
 }

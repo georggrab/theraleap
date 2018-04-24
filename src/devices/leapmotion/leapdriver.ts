@@ -5,6 +5,7 @@ import { isEqual } from "underscore";
 import * as leap from "leapjs";
 
 import DIIdent from "@/dependencyinjection/symbols";
+import { PreProcessorConfig } from '@/processing/types';
 import {
   DeviceDriver,
   DeviceConnectionState,
@@ -116,5 +117,9 @@ export class LeapDriver implements DeviceDriver {
       });
       this.controller.connect();
     });
+  }
+
+  public updatePreProcessors(configs: PreProcessorConfig[]) {
+    return false;
   }
 }

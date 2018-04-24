@@ -23,6 +23,7 @@
         </md-card-header-text>
           <div class="enabled">
               <md-switch v-model="preprocessors.naiveThrottler.enabled"
+                @change="preprocessorSelectionUpdated"
                 class="md-accent">Enable</md-switch>
           </div>
       </md-card-header>
@@ -54,25 +55,45 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 
-import { DropNFramesPreProcessor } from '@/processing/generic/dropnframes'
+import { DropNFramesPreProcessorId } from '@/processing/generic/dropnframes'
+import * as device from "@/state/modules/device";
+import { PreProcessor, PreProcessorConfigMap, PreProcessorConfig } from "processing/types";
+
 
 @Component({
   components: {}
 })
 export default class PreProcessing extends Vue {
     public showIntro = false;
-    public preprocessors = {
+    public preprocessors: PreProcessorConfigMap = {
         naiveThrottler: {
             enabled: false,
             n: 0,
-            construct: () => {
-                new DropNFramesPreProcessor(this.preprocessors.naiveThrottler.n)
+            constructConfig: () => {
+                return {
+                    identifier: DropNFramesPreProcessorId,
+                    args: [this.preprocessors.naiveThrottler.n],
+                }
             }
         }
     }
 
     public mounted() {
         this.showIntro = true;
+    }
+
+    public preprocessorSelectionUpdated() {
+        const preprocessorSelection: PreProcessorConfig[] = [];
+        Object.keys(this.preprocessors).forEach((name) => {
+            if (this.preprocessors[name].enabled) {
+                preprocessorSelection.push(this.preprocessors[name].constructConfig())
+            }
+        });
+        this.deviceFacade.updatePreProcessors(preprocessorSelection);
+    }
+
+    public get deviceFacade() {
+        return device.getDeviceFacade(this.$store);
     }
 }
 </script>

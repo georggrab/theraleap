@@ -1,12 +1,16 @@
-import { PreProcessor } from "@/processing/types";
-import { Observable } from 'rxjs';
-import { GenericHandTrackingData } from '@/devices/generic';
+import { Observable, Operator, Subscriber } from 'rxjs';
 import { filter } from "rxjs/operators";
 
-export class DropNFramesPreProcessor implements PreProcessor {
+import { PreProcessor } from "@/processing/types";
+import { GenericHandTrackingData } from '@/devices';
+
+export const DropNFramesPreProcessorId = "DropNFrames-Preprocessor-v0.01";
+
+export class DropNFramesOperator implements Operator<GenericHandTrackingData, GenericHandTrackingData> {
     constructor(private dropEvery: number) { }
 
-    public process(inp: Observable<GenericHandTrackingData>): Observable<GenericHandTrackingData> {
-        return inp.pipe(filter((value, index) => index % this.dropEvery === 0));
+    public call(subscriber: Subscriber<GenericHandTrackingData>, source: Observable<GenericHandTrackingData>) {
+        return source.pipe(filter((value, index) => index % this.dropEvery === 0))
+            .subscribe(subscriber);
     }
 }

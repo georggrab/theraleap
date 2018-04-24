@@ -1,6 +1,9 @@
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const HardSourceWebpackPlugin = require("hard-source-webpack-plugin");
 const path = require("path");
+const rxPaths = require('rxjs/_esm5/path-mapping');
+const webpack = require('webpack')
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = {
   entry: "./src/main.ts",
@@ -19,7 +22,8 @@ module.exports = {
       new TsconfigPathsPlugin({})
     ],
     alias: {
-      assets: path.resolve(__dirname, "./assets/")
+      assets: path.resolve(__dirname, "./assets/"),
+      ...rxPaths()
     }
   },
   module: {
