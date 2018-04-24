@@ -8,6 +8,8 @@ import { DebugState, debug } from "@/state/modules/debug";
 import { RecordState, record } from "@/state/modules/record";
 import { GraphicsState, graphics } from "@/state/modules/graphics";
 import { PersistorState, persist } from "./modules/persistor";
+import { ClassifierState, classifier } from "./modules/classifiers";
+import { PreProcessorsState, preprocessors } from "./modules/preprocessors";
 
 import {
   deviceConnector,
@@ -24,6 +26,8 @@ export interface RootState {
   record: RecordState;
   graphics: GraphicsState;
   persist: PersistorState;
+  classifiers: ClassifierState;
+  preprocessors: PreProcessorsState;
 }
 
 export interface IStoreFactory {
@@ -59,7 +63,9 @@ export class StoreFactory implements IStoreFactory {
           debug,
           graphics,
           record,
-          persist
+          persist,
+          preprocessors,
+          classifier
         },
         plugins: [
           deviceConnector(this.driver),

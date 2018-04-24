@@ -1,9 +1,10 @@
-const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const HardSourceWebpackPlugin = require("hard-source-webpack-plugin");
 const path = require("path");
-const rxPaths = require('rxjs/_esm5/path-mapping');
-const webpack = require('webpack')
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const rxPaths = require("rxjs/_esm5/path-mapping");
+const webpack = require("webpack");
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+  .BundleAnalyzerPlugin;
 
 module.exports = {
   entry: "./src/main.ts",
@@ -13,14 +14,10 @@ module.exports = {
   },
   mode: "development",
   devtool: "cheap-module-eval-source-map",
-  plugins: [
-      new HardSourceWebpackPlugin()
-  ],
+  plugins: [],
   resolve: {
     extensions: [".webpack.js", ".web.js", ".ts", ".tsx", ".js", ".vue"],
-    plugins: [
-      new TsconfigPathsPlugin({})
-    ],
+    plugins: [new TsconfigPathsPlugin({})],
     alias: {
       assets: path.resolve(__dirname, "./assets/"),
       ...rxPaths()
@@ -39,7 +36,7 @@ module.exports = {
                 appendTsSuffixTo: [/\.vue$/]
               }
             }
-          },
+          }
         }
       },
       {
@@ -53,15 +50,15 @@ module.exports = {
   }
 };
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === "production") {
   module.exports.mode = "production";
   module.exports.devtool = false;
   module.exports.optimization = {
     minimize: true,
     splitChunks: {
-        name: 'manifest'
+      name: "manifest"
     }
-  }
+  };
   // for Github Pages Deployment
-  module.exports.output.publicPath = "/theraleap/"
+  module.exports.output.publicPath = "/theraleap/";
 }

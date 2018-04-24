@@ -22,7 +22,7 @@
           <div class="md-subhead">Drop every nth Frame from the Hand Tracking Device</div>
         </md-card-header-text>
           <div class="enabled">
-              <md-switch v-model="preprocessors.naiveThrottler.enabled"
+              <md-switch v-model="naiveThrottlerSwitch"
                 @change="preprocessorSelectionUpdated"
                 class="md-accent">Enable</md-switch>
           </div>
@@ -41,7 +41,7 @@
       <md-card-actions md-alignment="left">
         <md-field>
           <label>n</label>
-          <md-input v-model="preprocessors.naiveThrottler.n" type="number"></md-input>
+          <md-input v-model="naiveThrottlerN" type="number"></md-input>
           <span class="md-helper-text">Take every nth frame</span>
         </md-field>
       </md-card-actions>
@@ -55,56 +55,85 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 
-import { DropNFramesPreProcessorId } from '@/processing/generic/dropnframes'
+import {
+  PreProcessor,
+  PreProcessorConfigMap,
+  PreProcessorConfig
+} from "processing/types";
+import { DropNFramesPreProcessorId } from "@/processing/generic/dropnframes";
 import * as device from "@/state/modules/device";
-import { PreProcessor, PreProcessorConfigMap, PreProcessorConfig } from "processing/types";
 
+import * as preprocessors from "@/state/modules/preprocessors";
 
 @Component({
   components: {}
 })
 export default class PreProcessing extends Vue {
-    public showIntro = false;
-    public preprocessors: PreProcessorConfigMap = {
-        naiveThrottler: {
-            enabled: false,
-            n: 0,
-            constructConfig: () => {
-                return {
-                    identifier: DropNFramesPreProcessorId,
-                    args: [this.preprocessors.naiveThrottler.n],
-                }
-            }
-        }
+  public mounted() {
+    if (preprocessors.getShowIntro(this.$store) === undefined) {
+      preprocessors.setShowIntro(this.$store, true);
     }
+  }
 
-    public mounted() {
-        this.showIntro = true;
-    }
+  public preprocessorSelectionUpdated() {
+    const preprocessorSelection: PreProcessorConfig[] = [];
+    Object.keys(this.preprocessors).forEach(name => {
+      if (this.preprocessors[name].enabled) {
+        preprocessorSelection.push(this.preprocessors[name].constructConfig());
+      }
+    });
+    this.deviceFacade.updatePreProcessors(preprocessorSelection);
+  }
 
-    public preprocessorSelectionUpdated() {
-        const preprocessorSelection: PreProcessorConfig[] = [];
-        Object.keys(this.preprocessors).forEach((name) => {
-            if (this.preprocessors[name].enabled) {
-                preprocessorSelection.push(this.preprocessors[name].constructConfig())
-            }
-        });
-        this.deviceFacade.updatePreProcessors(preprocessorSelection);
-    }
+  public get deviceFacade() {
+    return device.getDeviceFacade(this.$store);
+  }
 
-    public get deviceFacade() {
-        return device.getDeviceFacade(this.$store);
-    }
+  public get preprocessors(): PreProcessorConfigMap {
+    return preprocessors.getPreProcessors(this.$store);
+  }
+
+  public get showIntro(): boolean {
+    return preprocessors.getShowIntro(this.$store) as boolean;
+  }
+
+  public set showIntro(change: boolean) {
+    preprocessors.setShowIntro(this.$store, change);
+  }
+
+  public get naiveThrottlerSwitch() {
+    return this.preprocessors.naiveThrottler.enabled;
+  }
+
+  public set naiveThrottlerSwitch(change: boolean) {
+    preprocessors.modifyPreProcessor(this.$store, {
+      name: "naiveThrottler",
+      newState: { enabled: change }
+    });
+  }
+
+  public get naiveThrottlerN() {
+    return this.preprocessors.naiveThrottler.n;
+  }
+
+  public set naiveThrottlerN(change: number) {
+    preprocessors.modifyPreProcessor(this.$store, {
+      name: "naiveThrottler",
+      newState: { n: change }
+    });
+  }
 }
 </script>
 <style lang="scss">
 .md-card {
-    max-width: 700px;
-    margin-top: 20px;
+  max-width: 700px;
+  margin-top: 20px;
 }
-.md-card-header-text {}
+.md-card-header-text {
+}
 .source {
-  font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
+  font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono,
+    DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
   overflow: auto;
   width: auto;
   padding: 3px;
@@ -113,73 +142,73 @@ export default class PreProcessing extends Vue {
   max-height: 600px;
 }
 .type {
-    display:flex;
-    flex-direction: row-reverse;
-    span {
-        padding: 10px;
-        font-weight: 200;
-        user-select: none;
-    }
+  display: flex;
+  flex-direction: row-reverse;
+  span {
+    padding: 10px;
+    font-weight: 200;
+    user-select: none;
+  }
 }
 
 .slide-enter-active,
 .slide-leave-active {
-    transition: all .75s ease-in-out;
-    overflow: hidden;
+  transition: all 0.75s ease-in-out;
+  overflow: hidden;
 }
 
-.slide-enter-to, .slide-leave {
-    max-height: 300px;
+.slide-enter-to,
+.slide-leave {
+  max-height: 300px;
 }
 
-.slide-leave-to, .slide-enter {
-    max-height: 0px;
+.slide-leave-to,
+.slide-enter {
+  max-height: 0px;
 }
 
 @keyframes spin {
-    0% {
-        transform: rotate(0deg);
-        color:white;
-    }
-    50% {
-        color: #00897b;
-    }
-    100% {
-        transform: rotate(360deg);
-        color:white;
-    }
+  0% {
+    transform: rotate(0deg);
+    color: white;
+  }
+  50% {
+    color: #00897b;
+  }
+  100% {
+    transform: rotate(360deg);
+    color: white;
+  }
 }
 
 .intro {
-    background-color: #212121;
-    color: white;
-    padding: 20px;
-    .header {
-        .spin {
-            animation: 3s ease-in-out 0s infinite spin;
-        }
-        .white-icon {
-            color: white;
-            margin-right: 5px;
-        }
-        span {
-            align-self: center;
-        }
-        display: flex;
-        justify-content: space-between;
+  background-color: #212121;
+  color: white;
+  padding: 20px;
+  .header {
+    .spin {
+      animation: 3s ease-in-out 0s infinite spin;
     }
-    .content {
-        padding-left: 20px;
-        padding-right: 20px;
-        max-width: 500px;
+    .white-icon {
+      color: white;
+      margin-right: 5px;
     }
+    span {
+      align-self: center;
+    }
+    display: flex;
+    justify-content: space-between;
+  }
+  .content {
+    padding-left: 20px;
+    padding-right: 20px;
+    max-width: 500px;
+  }
 }
-
 
 .cancelmargin {
-    margin-top: -16px;
-    margin-left: -16px;
-    margin-right: -16px;
+  margin-top: -16px;
+  margin-left: -16px;
+  margin-right: -16px;
 }
-
 </style>
