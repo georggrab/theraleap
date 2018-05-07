@@ -3,3 +3,9 @@
 bundle.js
 node_modules/
 .vscode/
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.synctex.gz
+*.toc
