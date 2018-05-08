@@ -12,6 +12,12 @@
       <md-card-header>
         <div class="md-title">Thumb Spread Classifier</div>
         <div class="md-subhead">Detects extension of the thumb</div>
+        <div class="enabled">
+            <md-switch
+              :value="!thumbSpreadClassifierEnabled"
+              @change="classifierSelectionUpdated('ThumbSpreadClassifier')"
+              class="md-accent">Enable</md-switch>
+        </div>
       </md-card-header>
 
       <md-card-content>
@@ -38,7 +44,11 @@ import GraphicalHandLogger from "@/ui/graphics/GraphicalHandLogger.vue";
 import { HandTrackRecording } from "@/state/modules/record";
 import { createFakeDeviceStream, GenericHandTrackingData } from "@/devices";
 
-import { getClassifiers, modifyClassifier } from "@/state/modules/classifiers";
+import {
+  getClassifiers,
+  modifyClassifier,
+  disableAllClassifiers
+} from "@/state/modules/classifiers";
 
 @Component({
   components: {
@@ -68,6 +78,16 @@ export default class Classifiers extends Vue {
     });
   }
 
+  public classifierSelectionUpdated(activeClassifier: string) {
+    const currentClassifierState = this.classifierConfigState[activeClassifier]
+      .enabled;
+    disableAllClassifiers(this.$store);
+    modifyClassifier(this.$store, {
+      name: activeClassifier,
+      newState: { enabled: !currentClassifierState }
+    });
+  }
+
   get classifiers() {
     return Object.entries(ClassifierRegistry);
   }
@@ -85,6 +105,10 @@ export default class Classifiers extends Vue {
       name: "ThumbSpreadClassifier",
       newState: { threshhold: parseInt(newValue) }
     });
+  }
+
+  get thumbSpreadClassifierEnabled() {
+    return this.classifierConfigState.ThumbSpreadClassifier.enabled;
   }
 }
 </script>

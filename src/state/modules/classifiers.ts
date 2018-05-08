@@ -33,6 +33,11 @@ export const classifier = {
         ...state.classifiers[name],
         ...newState
       });
+    },
+    disableAllClassifiers: (state: ClassifierState) => {
+      Object.values(state.classifiers).forEach(val => {
+        val.enabled = false;
+      });
     }
   }
 };
@@ -44,3 +49,6 @@ const { commit, read, dispatch } = getStoreAccessors<
 
 export const getClassifiers = read(classifier.getters.getClassifiers);
 export const modifyClassifier = commit(classifier.mutations.modifyClassifier);
+export const disableAllClassifiers = commit(
+  classifier.mutations.disableAllClassifiers
+);
