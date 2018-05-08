@@ -1,16 +1,21 @@
-import { Classifier, ClassifierMetadata } from "./classifier";
+import { Operator } from "rxjs";
+import { Classifier, ClassificationData } from "./classifier";
+import { GenericHandTrackingData } from "@/devices";
+
 import {
   ThumbSpreadClassifierId,
   ThumbSpreadClassifier
-} from "./classifiers/thumbspread";
+} from "@/classify/classifiers/thumbspread";
 
-export const ClassifierRegistry: { [k: string]: { new(...args: any[]): Classifier, metadata: ClassifierMetadata } } = {
+export const ClassifierRegistry: {
+  [_: string]: { new (...args: any[]): Operator<any, any> };
+} = {
   [ThumbSpreadClassifierId]: ThumbSpreadClassifier
-}
+};
 
-export const resolveClassifier = (id: string, ...args: any[]): Classifier | undefined => {
-  if (ClassifierRegistry.hasOwnProperty(id)) {
-    return new (ClassifierRegistry[id])(args);
-  }
-  return undefined;
+export const ClassifyResolver = (config: {
+  identifier: string;
+  args: any[];
+}): Operator<any, any> => {
+  return new ClassifierRegistry[config.identifier](...config.args);
 };

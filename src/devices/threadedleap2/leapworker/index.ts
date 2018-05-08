@@ -21,7 +21,7 @@ import {
 } from "@/devices/leapmotion/leaptrackingdata";
 import { ThreadedEngine } from "@/classify/engines/ThreadedEngine";
 import { ThumbSpreadClassifier } from "@/classify/classifiers/thumbspread";
-import { resolveClassifier } from "@/classify/resolver";
+import { ClassifyResolver } from "@/classify/resolver";
 import { PreProcessorConfig, PreProcessingEngine } from "@/processing/types";
 import { PreProcessingResolver } from "@/processing/resolver";
 import { DropNFramesOperator } from "@/processing/generic/dropnframes";
