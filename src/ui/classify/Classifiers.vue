@@ -21,7 +21,7 @@
         <md-divider></md-divider>
         <md-field>
           <label>Detection Threshhold</label>
-          <md-input type="number" />
+          <md-input v-model="thumbThreshhold" type="number" />
           <span class="md-helper-text">How generously to trigger the detection (In Degrees between X and Y)</span>
         </md-field>
       </md-card-content>
@@ -35,8 +35,10 @@ import { Inject, Component } from "vue-property-decorator";
 import { Classifier, ClassifierRegistry } from "@/classify";
 
 import GraphicalHandLogger from "@/ui/graphics/GraphicalHandLogger.vue";
-import { HandTrackRecording, record } from "@/state/modules/record";
+import { HandTrackRecording } from "@/state/modules/record";
 import { createFakeDeviceStream, GenericHandTrackingData } from "@/devices";
+
+import { getClassifiers, modifyClassifier } from "@/state/modules/classifiers";
 
 @Component({
   components: {
@@ -68,6 +70,21 @@ export default class Classifiers extends Vue {
 
   get classifiers() {
     return Object.entries(ClassifierRegistry);
+  }
+
+  get classifierConfigState() {
+    return getClassifiers(this.$store);
+  }
+
+  get thumbThreshhold() {
+    return this.classifierConfigState.ThumbSpreadClassifier.threshhold;
+  }
+
+  set thumbThreshhold(newValue: string) {
+    modifyClassifier(this.$store, {
+      name: "ThumbSpreadClassifier",
+      newState: { threshhold: parseInt(newValue) }
+    });
   }
 }
 </script>
