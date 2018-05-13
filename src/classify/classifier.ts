@@ -11,6 +11,11 @@ export interface ClassificationMetrics {
   quality: number;
 }
 
+export interface ClassifierConfig {
+  args: any[];
+  identifier: string;
+}
+
 export interface Classifier {
   classify(
     source: Observable<GenericHandTrackingData>

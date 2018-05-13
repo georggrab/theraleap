@@ -5,7 +5,7 @@ import {
 } from "@/devices/threadedleap2/messages";
 import { LeapWorkerContext } from "@/devices/threadedleap2/leapworker/types";
 import { processDeviceMessage } from "./process-device-message";
-import { initializePreProcessingPipeline } from "./pipeline";
+import { initializePreProcessingPipeline } from "./preprocessing";
 
 export const handleNoConnection = (ctx: LeapWorkerContext) => {
   updateConnectionState(

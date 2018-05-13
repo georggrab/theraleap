@@ -8,7 +8,8 @@ import {
   WORKER_EVT_FINALIZED_FRAME_RECEIVED,
   WORKER_CMD_UPDATE_CONFIGURATION,
   WORKER_CMD_UPDATE_PREPROCESS,
-  WORKER_CMD_ENABLE_CLASSIFICATION
+  WORKER_CMD_ENABLE_CLASSIFICATION,
+  WORKER_CMD_UPDATE_CLASSIFIER
 } from "./messages";
 import DIIdent from "@/dependencyinjection/symbols";
 import {
@@ -19,6 +20,7 @@ import {
 } from "@/devices/generic";
 import { LEAP_MOTION_DEVICE_NAME } from "@/devices/leapmotion/leapdriver";
 import { PreProcessorConfig } from "@/processing/types";
+import { ClassifierConfig } from "@/classify";
 
 @injectable()
 export class ThreadedLeap2Driver implements DeviceDriver {
@@ -70,6 +72,14 @@ export class ThreadedLeap2Driver implements DeviceDriver {
     this.worker.postMessage({
       cmd: WORKER_CMD_UPDATE_PREPROCESS,
       payload: configs
+    });
+    return true;
+  }
+
+  public updateClassifier(config: ClassifierConfig) {
+    this.worker.postMessage({
+      cmd: WORKER_CMD_UPDATE_CLASSIFIER,
+      payload: config
     });
     return true;
   }

@@ -5,7 +5,8 @@ import { isEqual } from "underscore";
 import * as leap from "leapjs";
 
 import DIIdent from "@/dependencyinjection/symbols";
-import { PreProcessorConfig } from '@/processing/types';
+import { PreProcessorConfig } from "@/processing/types";
+import { ClassifierConfig } from "@/classify";
 import {
   DeviceDriver,
   DeviceConnectionState,
@@ -64,7 +65,7 @@ export class LeapDriver implements DeviceDriver {
 
   public enableClassification(classifiers: string[]) {
     // TODO implement non threaded classification
-    throw "Not Implemented"
+    throw "Not Implemented";
   }
 
   public async getDeviceConnectionState(): Promise<DeviceConnectionState> {
@@ -120,6 +121,10 @@ export class LeapDriver implements DeviceDriver {
   }
 
   public updatePreProcessors(configs: PreProcessorConfig[]) {
+    return false;
+  }
+
+  public updateClassifier(config: ClassifierConfig) {
     return false;
   }
 }

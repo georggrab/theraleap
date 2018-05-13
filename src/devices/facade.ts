@@ -5,6 +5,7 @@ import {
   Subscription,
   ReplaySubject
 } from "rxjs";
+import { Store } from "vuex";
 import { injectable, inject } from "inversify";
 
 import {
@@ -13,11 +14,11 @@ import {
   GenericHandTrackingData
 } from "@/devices/generic";
 import DIIdent from "@/dependencyinjection/symbols";
-import { IStoreFactory, IStoreHolder, RootState } from "state/store";
+import { IStoreFactory, IStoreHolder, RootState } from "@/state/store";
 
 import { getActiveRecording, HandTrackRecording } from "@/state/modules/record";
-import { Store } from "vuex";
-import { PreProcessorConfig } from 'processing/types';
+import { PreProcessorConfig } from "@/processing/types";
+import { ClassifierConfig } from "@/classify";
 
 async function replayInfinite(
   subscriber: Subscriber<GenericHandTrackingData>,
@@ -100,5 +101,9 @@ export abstract class AbstractDeviceFacade implements DeviceFacade {
 
   public updatePreProcessors(configs: PreProcessorConfig[]) {
     this.getDeviceDriver().updatePreProcessors(configs);
+  }
+
+  public updateClassifier(config: ClassifierConfig) {
+    this.getDeviceDriver().updateClassifier(config);
   }
 }

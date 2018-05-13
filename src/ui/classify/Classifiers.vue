@@ -47,8 +47,10 @@ import { createFakeDeviceStream, GenericHandTrackingData } from "@/devices";
 import {
   getClassifiers,
   modifyClassifier,
-  disableAllClassifiers
+  disableAllClassifiers,
+  getActiveClassifier
 } from "@/state/modules/classifiers";
+import { getDeviceFacade } from "@/state/modules/device";
 
 @Component({
   components: {
@@ -86,6 +88,11 @@ export default class Classifiers extends Vue {
       name: activeClassifier,
       newState: { enabled: !currentClassifierState }
     });
+    this.facade.updateClassifier(getActiveClassifier(this.$store));
+  }
+
+  get facade() {
+    return getDeviceFacade(this.$store);
   }
 
   get classifiers() {

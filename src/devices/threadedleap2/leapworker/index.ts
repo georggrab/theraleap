@@ -7,7 +7,8 @@ import {
   WORKER_CMD_ENABLE_CLASSIFICATION,
   WorkerCommand,
   WORKER_EVT_CONNECTION_STATE_CHANGED,
-  WORKER_EVT_FINALIZED_FRAME_RECEIVED
+  WORKER_EVT_FINALIZED_FRAME_RECEIVED,
+  WORKER_CMD_UPDATE_CLASSIFIER
 } from "@/devices/threadedleap2/messages";
 import {
   HardwareDriverConnectionSettings,
@@ -26,14 +27,16 @@ import { PreProcessorConfig, PreProcessingEngine } from "@/processing/types";
 import { PreProcessingResolver } from "@/processing/resolver";
 import { DropNFramesOperator } from "@/processing/generic/dropnframes";
 import { establishConnection } from "./connection";
-import { updatePreprocessors } from "./pipeline";
+import { updatePreprocessors } from "./preprocessing";
 import { LeapWorkerContext } from "@/devices/threadedleap2/leapworker/types";
+import { updateClassifier } from "./classification";
 
 const initializeWorkerContext = (ctx: any): LeapWorkerContext => {
   ctx.pipeline = {
     deviceFrameSubject: new Subject(),
     outputSubject: new Subject(),
-    preprocessSubject: new Subject()
+    preprocessSubject: new Subject(),
+    classifySubject: new Subject()
   };
   ctx.lastFrameTime = 0;
   ctx.connectionState = InitialDeviceState;
@@ -55,11 +58,10 @@ ctx.onmessage = (event: MessageEvent) => {
       return establishConnection(ctx);
     case WORKER_CMD_UPDATE_CONFIGURATION:
       return updateConfiguration(message.payload, ctx);
-    //TODO classification adapt to preprocessor style
-    //case WORKER_CMD_ENABLE_CLASSIFICATION:
-    //  return startClassificationEngine(message.payload);
     case WORKER_CMD_UPDATE_PREPROCESS:
       return updatePreprocessors(message.payload, ctx);
+    case WORKER_CMD_UPDATE_CLASSIFIER:
+      return updateClassifier(message.payload, ctx);
   }
 };
 

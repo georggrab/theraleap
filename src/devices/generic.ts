@@ -1,8 +1,9 @@
 import { Observable, Subscriber } from "rxjs";
 import { Store } from "vuex";
 
-import { RootState } from "state/store";
+import { RootState } from "@/state/store";
 import { PreProcessorConfig } from "@/processing/types";
+import { ClassifierConfig } from "@/classify";
 
 /**
  * Represents to current connection State of the
@@ -55,6 +56,13 @@ export interface DeviceDriver {
    * driver.
    */
   updatePreProcessors: (configs: PreProcessorConfig[]) => boolean;
+
+  /**
+   * Apply Classifier as specified by the Configuration.
+   * Returns false if Classification is not supported by the
+   * device driver.
+   */
+  updateClassifier: (config: ClassifierConfig) => boolean;
 }
 
 export interface DeviceFacade {
@@ -87,4 +95,9 @@ export interface DeviceFacade {
    * The Frame PreProcessors selected by the user.
    */
   updatePreProcessors: (x: PreProcessorConfig[]) => void;
+
+  /**
+   * The Classifier selected by the user
+   */
+  updateClassifier: (x: ClassifierConfig) => void;
 }

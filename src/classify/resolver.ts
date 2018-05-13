@@ -1,5 +1,5 @@
 import { Operator } from "rxjs";
-import { Classifier, ClassificationData } from "./classifier";
+import { Classifier, ClassificationData, ClassifierConfig } from "./classifier";
 import { GenericHandTrackingData } from "@/devices";
 
 import {
@@ -13,9 +13,8 @@ export const ClassifierRegistry: {
   [ThumbSpreadClassifierId]: ThumbSpreadClassifier
 };
 
-export const ClassifyResolver = (config: {
-  identifier: string;
-  args: any[];
-}): Operator<any, any> => {
+export const ClassifyResolver = (
+  config: ClassifierConfig
+): Operator<any, any> => {
   return new ClassifierRegistry[config.identifier](...config.args);
 };
