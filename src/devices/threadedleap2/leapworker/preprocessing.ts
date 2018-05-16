@@ -4,6 +4,7 @@ import { PreProcessorConfig } from "@/processing/types";
 import { LeapWorkerContext } from "@/devices/threadedleap2/leapworker/types";
 import { GenericHandTrackingData } from "@/devices";
 import { PreProcessingResolver } from "@/processing/resolver";
+import { updateClassifier } from "./classification";
 
 export const initializePreProcessingPipeline = (ctx: LeapWorkerContext) => {
   ctx.pipeline.deviceFrameSubscription = ctx.pipeline.deviceFrameSubject.subscribe(
@@ -35,4 +36,5 @@ export const updatePreprocessors = (
   ctx.pipeline.deviceFrameSubscription = ctx.pipeline.deviceFrameSubject.subscribe(
     ctx.pipeline.preprocessSubject
   );
+  updateClassifier(ctx.currentClassifierConfig, ctx);
 };

@@ -228,16 +228,6 @@ export default class PreProcessing extends Vue {
 
 .md-card-header-text {
 }
-.source {
-  font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono,
-    DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
-  overflow: auto;
-  width: auto;
-  padding: 3px;
-  margin-right: 2px;
-  background-color: #eee;
-  max-height: 600px;
-}
 .type {
   display: flex;
   flex-direction: row-reverse;

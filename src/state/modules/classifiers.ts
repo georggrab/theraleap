@@ -16,12 +16,24 @@ export const classifier = {
     classifiers: {
       ThumbSpreadClassifier: {
         enabled: false,
-        threshhold: 3,
+        windowSize: 200,
+        windowInterval: 50,
+        threshhold: 30,
+        symmetryTolerance: 10,
+        throttleTime: 200,
+        leapPointableIdentifier: 0,
         constructConfig: () => {
           return {
             identifier: ThumbSpreadClassifierId,
             args: [
-              classifier.state.classifiers.ThumbSpreadClassifier.threshhold
+              classifier.state.classifiers.ThumbSpreadClassifier.windowSize,
+              classifier.state.classifiers.ThumbSpreadClassifier.windowInterval,
+              classifier.state.classifiers.ThumbSpreadClassifier.threshhold,
+              classifier.state.classifiers.ThumbSpreadClassifier
+                .symmetryTolerance,
+              classifier.state.classifiers.ThumbSpreadClassifier.throttleTime,
+              classifier.state.classifiers.ThumbSpreadClassifier
+                .leapPointableIdentifier
             ]
           };
         }

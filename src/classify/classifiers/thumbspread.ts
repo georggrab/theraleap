@@ -37,7 +37,14 @@ const fZero = (vector: number[]): number | undefined => {
 
 export class ThumbSpreadClassifier
   implements Operator<LeapHandTrackingData, ClassificationData> {
-  constructor(private detectionThreshhold: number) {}
+  constructor(
+    private windowSize: number,
+    private windowInterval: number,
+    private detectionThreshhold: number,
+    private symmetryTolerance: number,
+    private throttleTime: number,
+    private leapPointableIdentifier: number
+  ) {}
 
   public call(
     subscriber: Subscriber<ClassificationData>,
@@ -45,12 +52,12 @@ export class ThumbSpreadClassifier
   ) {
     return source
       .pipe(
-        bufferTime(200, 50),
+        bufferTime(this.windowSize, this.windowInterval),
         map((bufferedData: LeapHandTrackingData[]) => {
           const thumbData: LeapPointable[] = [];
           bufferedData.forEach((data: LeapHandTrackingData) => {
             data.data.pointables.forEach(pointable => {
-              if (pointable.type === 0) {
+              if (pointable.type === this.leapPointableIdentifier) {
                 thumbData.push(pointable);
               }
             });
@@ -69,13 +76,11 @@ export class ThumbSpreadClassifier
           const zero = fZero(nDeriv);
           const leftOfZero = nDeriv.slice(0, zero);
           const rightOfZero = nDeriv.slice(zero);
-          //console.log(leftOfZero)
-          //console.log(rightOfZero)
-          const tolerance = 10;
           if (
             leftOfZero.length > 10 &&
             rightOfZero.length > 10 &&
-            Math.abs(leftOfZero.length - rightOfZero.length) < tolerance
+            Math.abs(leftOfZero.length - rightOfZero.length) <
+              this.symmetryTolerance
           ) {
             return {
               actionName: "STUB",
@@ -88,7 +93,7 @@ export class ThumbSpreadClassifier
           }
         }),
         filter(x => x !== undefined),
-        throttleTime(200)
+        throttleTime(this.throttleTime)
       )
       .subscribe(subscriber);
   }

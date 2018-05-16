@@ -5,7 +5,7 @@ import { ClassificationData } from "@/classify/classifier";
 import { GenericHandTrackingData } from "@/devices";
 
 export const updateClassifier = (
-  conf: ClassifierConfig,
+  conf: ClassifierConfig | undefined,
   ctx: LeapWorkerContext
 ) => {
   if (ctx.pipeline.classifySubscription) {
@@ -28,5 +28,6 @@ export const updateClassifier = (
         console.log(data);
       }
     );
+    ctx.currentClassifierConfig = conf;
   }
 };

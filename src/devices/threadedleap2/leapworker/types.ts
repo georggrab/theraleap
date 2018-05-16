@@ -3,7 +3,7 @@ import {
   DeviceConnectionState,
   GenericHandTrackingData
 } from "@/devices/generic";
-import { ClassificationData } from "@/classify";
+import { ClassificationData, ClassifierConfig } from "@/classify";
 
 export interface LeapWorkerContext extends Worker {
   connectionState: DeviceConnectionState;
@@ -11,6 +11,7 @@ export interface LeapWorkerContext extends Worker {
   lastFrameTime: number;
   configuration: any;
   pipeline: LeapWorkerReactivePipeline;
+  currentClassifierConfig: ClassifierConfig | undefined;
 }
 
 /**
