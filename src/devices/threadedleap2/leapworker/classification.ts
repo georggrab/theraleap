@@ -29,5 +29,6 @@ export const updateClassifier = (
       }
     );
     ctx.currentClassifierConfig = conf;
+    console.debug("New Classifier", conf);
   }
 };

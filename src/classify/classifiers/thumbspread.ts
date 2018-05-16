@@ -83,9 +83,10 @@ export class ThumbSpreadClassifier
               this.symmetryTolerance
           ) {
             return {
-              actionName: "STUB",
+              actionName: "ONE_SHOT",
               metrics: {
-                quality: 0
+                quality: 0,
+                cheatFactor: 0
               }
             };
           } else {

@@ -147,6 +147,7 @@ export default class Classifiers extends Vue {
       name: "ThumbSpreadClassifier",
       newState: { threshhold: parseInt(newValue) }
     });
+    this.classifierSelectionUpdated("ThumbSpreadClassifier");
   }
 
   get thumbWindowSize() {
@@ -157,6 +158,7 @@ export default class Classifiers extends Vue {
       name: "ThumbSpreadClassifier",
       newState: { windowSize: parseInt(newValue) }
     });
+    this.classifierSelectionUpdated("ThumbSpreadClassifier");
   }
 
   get thumbWindowInterval() {
@@ -167,6 +169,7 @@ export default class Classifiers extends Vue {
       name: "ThumbSpreadClassifier",
       newState: { windowInterval: parseInt(newValue) }
     });
+    this.classifierSelectionUpdated("ThumbSpreadClassifier");
   }
 
   get thumbSymmetryTolerance() {
@@ -177,6 +180,7 @@ export default class Classifiers extends Vue {
       name: "ThumbSpreadClassifier",
       newState: { symmetryTolerance: parseInt(newValue) }
     });
+    this.classifierSelectionUpdated("ThumbSpreadClassifier");
   }
 
   get thumbThrottleTime() {
@@ -187,6 +191,7 @@ export default class Classifiers extends Vue {
       name: "ThumbSpreadClassifier",
       newState: { throttleTime: parseInt(newValue) }
     });
+    this.classifierSelectionUpdated("ThumbSpreadClassifier");
   }
 
   get leapPointableIdentifier() {
@@ -198,6 +203,7 @@ export default class Classifiers extends Vue {
       name: "ThumbSpreadClassifier",
       newState: { leapPointableIdentifier: parseInt(newValue) }
     });
+    this.classifierSelectionUpdated("ThumbSpreadClassifier");
   }
 
   get thumbSpreadClassifierEnabled() {
