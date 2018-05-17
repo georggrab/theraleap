@@ -1,5 +1,5 @@
 import { EventEmitter, Controller } from "leapjs";
-import { Observable, Observer, fromEvent } from "rxjs";
+import { Observable, Observer, fromEvent, Subject, Subscription } from "rxjs";
 import { injectable, inject } from "inversify";
 import { isEqual } from "underscore";
 import * as leap from "leapjs";
@@ -24,7 +24,8 @@ export class LeapDriver implements DeviceDriver {
   private connectionActive: boolean = false;
   private deviceConnected: boolean | undefined;
 
-  private frameStream: Observable<GenericHandTrackingData>;
+  private outputSubject: Subject<GenericHandTrackingData>;
+  private frameStreamSubscription: Subscription;
 
   constructor(
     @inject(DIIdent.SETTINGS_HARDWARE_DRIVER_CONNECTION)
@@ -38,7 +39,11 @@ export class LeapDriver implements DeviceDriver {
       "deviceDisconnected",
       () => (this.deviceConnected = false)
     );
-    this.frameStream = fromEvent(this.controller, "frame");
+    this.outputSubject = new Subject<GenericHandTrackingData>();
+    this.frameStreamSubscription = (fromEvent(
+      this.controller,
+      "frame"
+    ) as Observable<GenericHandTrackingData>).subscribe(this.outputSubject);
   }
 
   public async isLeapServerRunning(maxWaitTimeInMs: number): Promise<boolean> {
@@ -106,7 +111,7 @@ export class LeapDriver implements DeviceDriver {
   }
 
   public getTrackingData(): Observable<GenericHandTrackingData> {
-    return this.frameStream;
+    return this.outputSubject;
   }
 
   public async connect(): Promise<boolean> {
@@ -126,5 +131,9 @@ export class LeapDriver implements DeviceDriver {
 
   public updateClassifier(config: ClassifierConfig) {
     return false;
+  }
+
+  public digest(data: GenericHandTrackingData) {
+    this.outputSubject.next(data);
   }
 }

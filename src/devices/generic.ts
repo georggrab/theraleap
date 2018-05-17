@@ -63,6 +63,11 @@ export interface DeviceDriver {
    * device driver.
    */
   updateClassifier: (config: ClassifierConfig) => boolean;
+
+  /**
+   * Feed arbitrary GenericHandTrackingData into the driver
+   */
+  digest: (data: GenericHandTrackingData) => void;
 }
 
 export interface DeviceFacade {

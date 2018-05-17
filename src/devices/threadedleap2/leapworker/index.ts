@@ -8,7 +8,8 @@ import {
   WorkerCommand,
   WORKER_EVT_CONNECTION_STATE_CHANGED,
   WORKER_EVT_FINALIZED_FRAME_RECEIVED,
-  WORKER_CMD_UPDATE_CLASSIFIER
+  WORKER_CMD_UPDATE_CLASSIFIER,
+  WORKER_CMD_DIGEST
 } from "@/devices/threadedleap2/messages";
 import {
   HardwareDriverConnectionSettings,
@@ -62,7 +63,13 @@ ctx.onmessage = (event: MessageEvent) => {
       return updatePreprocessors(message.payload, ctx);
     case WORKER_CMD_UPDATE_CLASSIFIER:
       return updateClassifier(message.payload, ctx);
+    case WORKER_CMD_DIGEST:
+      return digest(message.payload, ctx);
   }
+};
+
+const digest = (payload: GenericHandTrackingData, ctx: LeapWorkerContext) => {
+  ctx.pipeline.deviceFrameSubject.next(payload);
 };
 
 const updateConfiguration = (data: any, ctx: LeapWorkerContext) => {

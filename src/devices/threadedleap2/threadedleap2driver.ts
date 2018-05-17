@@ -9,7 +9,8 @@ import {
   WORKER_CMD_UPDATE_CONFIGURATION,
   WORKER_CMD_UPDATE_PREPROCESS,
   WORKER_CMD_ENABLE_CLASSIFICATION,
-  WORKER_CMD_UPDATE_CLASSIFIER
+  WORKER_CMD_UPDATE_CLASSIFIER,
+  WORKER_CMD_DIGEST
 } from "./messages";
 import DIIdent from "@/dependencyinjection/symbols";
 import {
@@ -82,6 +83,13 @@ export class ThreadedLeap2Driver implements DeviceDriver {
       payload: config
     });
     return true;
+  }
+
+  public digest(data: GenericHandTrackingData) {
+    this.worker.postMessage({
+      cmd: WORKER_CMD_DIGEST,
+      payload: data
+    });
   }
 
   private handleWorkerMessage(event: MessageEvent) {
