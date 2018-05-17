@@ -25,7 +25,7 @@
           <h1>General</h1>
           Example Classifier initially provided with Theraleap. It does a naive classification of whether the User is spreading the Thumb. This classifier is intentionally very crude, as not much time was invested in its conception (development of classifiers is no integral part of the Theraleap student research project). Instead, this classifier is supposed to give a proof of concept of how classifiers are integrated and configured in Theraleap.
           <h1>Algorithm</h1>
-          This classifier detects the extension of the thumb. It does so naively simply by looking at the thumb position in a configurable timeframe (<span class="source">window</span>). It first computes the difference between the maximum and minimum thumb positions in the timeframe. If (and only if) a significant decisive factor is determined (as configured by <span class="source">detectionThreshhold</span>), the first derivative of the historic thumb positions is taken, and the first zero intersection is searched. Zero intersections of the first derivatives denote a change of direction. If a zero intersection is found in the first derivative, it is fuzzily (as configurable through <span class="source">symmetryTolerance</span>) determined if the intersection is centered in the dataset. Finally, the detection may be throttled (<span class="source">detectionThrottle</span>) in order to prevent duplicate detections.
+          This classifier detects the extension of the thumb. It does so naively simply by looking at the thumb position in a configurable timeframe (<s-code>window</s-code>). It first computes the difference between the maximum and minimum thumb positions in the timeframe. If (and only if) a significant decisive factor is determined (as configured by <s-code>detectionThreshhold</s-code>), the first derivative of the historic thumb positions is taken, and the first zero intersection is searched. Zero intersections of the first derivatives denote a change of direction. If a zero intersection is found in the first derivative, it is fuzzily (as configurable through <s-code>symmetryTolerance</s-code>) determined if the intersection is centered in the dataset. Finally, the detection may be throttled (<s-code>detectionThrottle</s-code>) in order to prevent duplicate detections.
           <h1>Performance Metric</h1>
           This classifier includes no Performance Metric. Metrics based on a configurable maximum Spread distance are thinkable as a possible next step.
           <h1>Cheat Metric</h1>
@@ -75,6 +75,7 @@ import { Inject, Component, Prop } from "vue-property-decorator";
 import { Classifier, ClassifierRegistry } from "@/classify";
 
 import GraphicalHandLogger from "@/ui/graphics/GraphicalHandLogger.vue";
+import Code from "@/ui/utils/Code.vue";
 import { HandTrackRecording } from "@/state/modules/record";
 import { createFakeDeviceStream, GenericHandTrackingData } from "@/devices";
 
@@ -90,7 +91,8 @@ const EVT_CLASSIFIER_SEL_UPDATED = "classifierSelectionUpdated";
 
 @Component({
   components: {
-    GraphicalHandLogger
+    GraphicalHandLogger,
+    "s-code": Code
   }
 })
 export default class ThumbSpreadClassifier extends Vue {

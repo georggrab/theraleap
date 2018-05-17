@@ -2,17 +2,6 @@ body {
   font-family: "Roboto", monospace;
 }
 
-/* Stolen from how Stackoverflow formats Code Blocks */
-.source {
-  font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono,
-    DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
-  overflow: auto;
-  width: auto;
-  padding: 3px;
-  margin-right: 2px;
-  background-color: #eee;
-  max-height: 600px;
-}
 @import "~vue-material/dist/vue-material";
 @import "~vue-material/dist/theme/engine";
 
