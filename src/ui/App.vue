@@ -5,26 +5,11 @@
       <md-icon>menu</md-icon>
     </md-button>
     <span class="md-title">TheraLeap</span>
-    <div v-if="simulationRunning" class="simulated">
-      <span>SIMULATED</span>
-      <span @click="deactivateRecording" class="md-accent clickable">(STOP)</span>
-    </div>
-    <div v-if="simulationRunning">
-      <md-icon>mic
-        <md-tooltip md-direction="top">Data is coming from a simulation.</md-tooltip>
-      </md-icon>
-    </div>
-    <div v-else-if="connectionHealthy" class="device-status device-status--good">
-      <md-icon>settings_remote
-        <md-tooltip md-direction="top">Connected to Leap Device.</md-tooltip>
-      </md-icon>
-    </div>
-    <div v-else class="device-status device-status--bad">
-      <md-icon>settings_remote
-        <md-tooltip md-direction="top">No connection to Leap Device. Check Status Tab.</md-tooltip>
-      </md-icon>
-      <md-progress-spinner class="md-accent" :md-stroke="2" :md-diameter="30" md-mode="indeterminate"></md-progress-spinner>
-    </div>
+    <device-status 
+      :simulationRunning="simulationRunning"
+      :connectionHealthy="connectionHealthy"
+      @deactivateRecording="deactivateRecording"
+    />
     <div class="transfer-rate" v-if="deviceDataTransferRate">{{ format(deviceDataTransferRate) }}/s</div>
     <div :class="{ 'menu-not-visible': !menuVisible }" class="md-toolbar-row">
         <router-view name="tabs"></router-view>
@@ -91,6 +76,7 @@ import { Inject, Component } from "vue-property-decorator";
 import ConnectionState from "@/ui/ConnectionState.vue";
 import HandPlotter from "@/ui/HandPlotter.vue";
 import DIIdent from "@/dependencyinjection/symbols";
+import DeviceStatus from "@/ui/utils/DeviceStatus.vue";
 import { AppContainer } from "@/dependencyinjection";
 import {
   DeviceConnectionState,
@@ -103,9 +89,6 @@ import { inject } from "inversify";
 import * as device from "@/state/modules/device";
 import * as record from "@/state/modules/record";
 
-//@ts-ignore
-import { format } from "sizeof";
-
 /**
  * Main Vue.JS App
  * Creates a standard layout with a sidebar, header, and content area
@@ -117,13 +100,13 @@ import { format } from "sizeof";
  *   - tabs, which represents the tabs above the content area.
  */
 @Component({
-  components: {}
+  components: {
+    DeviceStatus
+  }
 })
 export default class App extends Vue {
   public menuVisible: boolean = false;
   public activeNavItem: number = -1;
-
-  private format = format;
 
   public toggleMenu() {
     this.menuVisible = !this.menuVisible;
@@ -156,7 +139,7 @@ export default class App extends Vue {
 <style lang="scss">
 @import "~assets/_globals";
 body {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
 }
 </style>
 <style lang="scss" scoped>
@@ -192,45 +175,5 @@ body {
 
 .md-list-item.active .md-icon {
   color: #303f9f;
-}
-
-.device-status {
-  position: relative;
-  margin-left: 20px;
-}
-
-.device-status--good {
-  .md-progress-spinner {
-    display: none;
-  }
-  .md-icon {
-    padding-left: 4px;
-  }
-}
-
-.device-status--bad {
-  .md-progress-spinner {
-    float: left;
-  }
-  .md-icon {
-    left: 2px;
-    top: 3px;
-    position: absolute;
-  }
-}
-
-.transfer-rate {
-  font-family: monospace;
-}
-
-.simulated {
-  display: flex;
-  align-items: baseline;
-  font-family: monospace;
-  margin-left: 10px;
-  .clickable {
-    text-decoration: underline;
-    cursor: pointer;
-  }
 }
 </style>
