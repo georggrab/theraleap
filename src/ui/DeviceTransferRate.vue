@@ -18,7 +18,7 @@ export default class DeviceTransferRate extends Vue {
   public format = format;
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .transfer-rate {
   font-family: monospace;
 }

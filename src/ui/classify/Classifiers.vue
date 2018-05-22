@@ -78,7 +78,7 @@ export default class Classifiers extends Vue {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .md-card {
   max-width: 800px;
 }

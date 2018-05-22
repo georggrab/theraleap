@@ -175,7 +175,7 @@ export default class ThumbSpreadClassifier extends Vue {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .md-card {
   max-width: 800px;
 }

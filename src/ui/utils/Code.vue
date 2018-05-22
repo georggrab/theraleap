@@ -12,7 +12,7 @@ import { Inject, Component, Prop } from "vue-property-decorator";
 })
 export default class Code extends Vue {}
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 /* Stolen from how Stackoverflow formats Code Blocks */
 .source {
   font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono,

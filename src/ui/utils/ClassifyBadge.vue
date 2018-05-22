@@ -34,7 +34,7 @@ export default class ClassifyBadge extends Vue {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .disappear-immediate-enter {
   opacity: 1;
 }
