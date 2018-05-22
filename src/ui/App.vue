@@ -63,6 +63,12 @@
         </md-icon>
         <span class="md-list-item-text">Classifier</span>
       </md-list-item>
+      <md-list-item to="/games" :class="{active: activeNavItem == 5}" @click="setActiveNavItem(5)">
+        <md-icon>games
+          <md-tooltip md-direction="right">Games</md-tooltip>
+        </md-icon>
+        <span class="md-list-item-text">Games</span>
+      </md-list-item>
     </md-list>
   </md-app-drawer>
   <md-app-content>

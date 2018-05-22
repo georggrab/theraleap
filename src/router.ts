@@ -1,47 +1,36 @@
 import VueRouter from "vue-router";
 
-const DeviceLog = () =>
-  import("@/ui/debug/DeviceLog.vue");
-const StatusLog = () =>
-  import("@/ui/debug/StatusLog.vue");
-const DeviceGraphicalLog = () =>
-  import("@/ui/debug/DeviceGraphicalLog.vue");
-const DeviceDebugRoot = () =>
-  import("@/ui/debug/DeviceDebugRoot.vue");
-const DeviceDebugTabs = () =>
-  import("@/ui/debug/DeviceDebugTabs.vue");
+const DeviceLog = () => import("@/ui/debug/DeviceLog.vue");
+const StatusLog = () => import("@/ui/debug/StatusLog.vue");
+const DeviceGraphicalLog = () => import("@/ui/debug/DeviceGraphicalLog.vue");
+const DeviceDebugRoot = () => import("@/ui/debug/DeviceDebugRoot.vue");
+const DeviceDebugTabs = () => import("@/ui/debug/DeviceDebugTabs.vue");
 
-const DeviceRecorderRoot = () =>
-  import("@/ui/recorder/DeviceRecorderRoot.vue");
-const DeviceRecorderTabs = () =>
-  import("@/ui/recorder/DeviceRecorderTabs.vue");
-const DeviceRecorder = () =>
-  import("@/ui/recorder/DeviceRecorder.vue");
+const DeviceRecorderRoot = () => import("@/ui/recorder/DeviceRecorderRoot.vue");
+const DeviceRecorderTabs = () => import("@/ui/recorder/DeviceRecorderTabs.vue");
+const DeviceRecorder = () => import("@/ui/recorder/DeviceRecorder.vue");
 const DeviceRecorderSettings = () =>
   import("@/ui/recorder/DeviceRecorderSettings.vue");
 
-const Classifiers = () =>
-  import("@/ui/classify/Classifiers.vue");
-const ClassifyRoot = () =>
-  import("@/ui/classify/ClassifyRoot.vue");
-const ClassifySettings = () =>
-  import("@/ui/classify/ClassifySettings.vue");
-const ClassifyTabs = () =>
-  import("@/ui/classify/ClassifyTabs.vue");
+const Classifiers = () => import("@/ui/classify/Classifiers.vue");
+const ClassifyRoot = () => import("@/ui/classify/ClassifyRoot.vue");
+const ClassifySettings = () => import("@/ui/classify/ClassifySettings.vue");
+const ClassifyTabs = () => import("@/ui/classify/ClassifyTabs.vue");
 
-const PreProcessing = () =>
-  import("@/ui/data-processing/PreProcessing.vue");
-const ProcessingRoot = () =>
-  import("@/ui/data-processing/ProcessingRoot.vue");
-const ProcessingTabs = () =>
-  import("@/ui/data-processing/ProcessingTabs.vue");
+const PreProcessing = () => import("@/ui/data-processing/PreProcessing.vue");
+const ProcessingRoot = () => import("@/ui/data-processing/ProcessingRoot.vue");
+const ProcessingTabs = () => import("@/ui/data-processing/ProcessingTabs.vue");
 
-const HandMeasurement = () =>
-  import("@/ui/measure/HandMeasurement.vue");
+const HandMeasurement = () => import("@/ui/measure/HandMeasurement.vue");
 const HandMeasurementRoot = () =>
   import("@/ui/measure/HandMeasurementRoot.vue");
 const HandMeasurementTabs = () =>
   import("@/ui/measure/HandMeasurementTabs.vue");
+
+const Games = () => import("@/ui/games/GameList.vue");
+const GameSettings = () => import("@/ui/games/GameSettings.vue");
+const GameRoot = () => import("@/ui/games/GameRoot.vue");
+const GameTabs = () => import("@/ui/games/GameTabs.vue");
 
 import App from "@/ui/App.vue";
 
@@ -117,7 +106,7 @@ export const RootRouter = new VueRouter({
             {
               component: PreProcessing,
               path: "preprocessing"
-            },
+            }
           ],
           components: {
             main: ProcessingRoot,
@@ -131,11 +120,29 @@ export const RootRouter = new VueRouter({
             {
               component: HandMeasurement,
               path: "display"
-            },
+            }
           ],
           components: {
             main: HandMeasurementRoot,
-            tabs: HandMeasurementTabs,
+            tabs: HandMeasurementTabs
+          }
+        },
+        {
+          path: "games",
+          redirect: "/games/list",
+          children: [
+            {
+              component: Games,
+              path: "list"
+            },
+            {
+              component: GameSettings,
+              path: "settings"
+            }
+          ],
+          components: {
+            main: GameRoot,
+            tabs: GameTabs
           }
         }
       ]
