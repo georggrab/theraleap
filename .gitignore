@@ -2,7 +2,6 @@
 *.worker.js
 bundle.js
 node_modules/
-.vscode/
 *.aux
 *.fdb_latexmk
 *.fls
