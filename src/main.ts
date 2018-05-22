@@ -1,10 +1,47 @@
 import Vue from "vue";
-// @ts-ignore
-import VueMaterial from 'vue-material';
+import {
+  MdCard,
+  MdApp,
+  MdSwitch,
+  MdSubheader,
+  MdField,
+  MdDivider,
+  MdIcon,
+  MdProgress,
+  MdTooltip,
+  MdTabs,
+  MdContent,
+  MdButton,
+  MdList,
+  MdDrawer,
+  MdToolbar,
+  MdEmptyState,
+  MdSnackbar
+  // @ts-ignore
+} from "vue-material/dist/components";
+
 import VueRouter from "vue-router";
 import Vuex from "vuex";
 
-Vue.use(VueMaterial);
+[
+  MdCard,
+  MdApp,
+  MdSwitch,
+  MdSubheader,
+  MdField,
+  MdDivider,
+  MdIcon,
+  MdProgress,
+  MdTooltip,
+  MdTabs,
+  MdContent,
+  MdButton,
+  MdList,
+  MdDrawer,
+  MdToolbar,
+  MdEmptyState,
+  MdSnackbar
+].forEach(x => Vue.use(x));
 Vue.use(VueRouter);
 Vue.use(Vuex);
 
