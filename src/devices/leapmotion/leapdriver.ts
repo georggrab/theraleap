@@ -73,6 +73,11 @@ export class LeapDriver implements DeviceDriver {
     throw "Not Implemented";
   }
 
+  public getClassificationData() {
+    // TODO classification is not yet supported by the non threaded driver.
+    return undefined;
+  }
+
   public async getDeviceConnectionState(): Promise<DeviceConnectionState> {
     return {
       nativeDeviceDriverOnline: await this.isLeapServerRunning(1000),

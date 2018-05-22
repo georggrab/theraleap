@@ -3,6 +3,7 @@ import { LeapWorkerContext } from "@/devices/threadedleap2/leapworker/types";
 import { Subject, Observable } from "rxjs";
 import { ClassificationData } from "@/classify/classifier";
 import { GenericHandTrackingData } from "@/devices";
+import { WORKER_EVT_CLASSIFICATION } from "../messages";
 
 export const updateClassifier = (
   conf: ClassifierConfig | undefined,
@@ -26,6 +27,10 @@ export const updateClassifier = (
     ctx.pipeline.classifyOutputSubscription = ctx.pipeline.classifySubject.subscribe(
       data => {
         console.log(data);
+        ctx.postMessage({
+          type: WORKER_EVT_CLASSIFICATION,
+          payload: data
+        });
       }
     );
     ctx.currentClassifierConfig = conf;

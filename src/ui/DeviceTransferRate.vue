@@ -1,5 +1,5 @@
 <template>
-  <div class="transfer-rate" v-if="deviceDataTransferRate">{{ format(deviceDataTransferRate) }}/s</div>
+  <div class="transfer-rate" v-if="transferRate">{{ format(transferRate) }}/s</div>
 </template>
 <script lang="ts">
 import Vue from "Vue";
@@ -12,8 +12,9 @@ import { format } from "sizeof";
   components: {}
 })
 export default class DeviceTransferRate extends Vue {
-  @Prop({ required: true })
-  public deviceDataTransferRate!: boolean;
+  @Prop({ required: false, type: Number })
+  public transferRate: number | undefined = undefined;
+
   public format = format;
 }
 </script>

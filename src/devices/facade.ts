@@ -95,4 +95,8 @@ export abstract class AbstractDeviceFacade implements DeviceFacade {
   public updateClassifier(config: ClassifierConfig) {
     this.getDeviceDriver().updateClassifier(config);
   }
+
+  public getClassificationStream() {
+    return this.getDeviceDriver().getClassificationData();
+  }
 }

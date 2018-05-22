@@ -35,6 +35,10 @@ export default class DeviceStatus extends Vue {
 }
 </script>
 <style lang="scss">
+#deviceStatus {
+  display: flex;
+}
+
 .device-status {
   position: relative;
   margin-left: 20px;

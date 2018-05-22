@@ -10,7 +10,8 @@
       :connectionHealthy="connectionHealthy"
       @deactivateRecording="deactivateRecording"
     />
-    <div class="transfer-rate" v-if="deviceDataTransferRate">{{ format(deviceDataTransferRate) }}/s</div>
+    <device-transfer-rate :transferRate="deviceDataTransferRate"></device-transfer-rate>
+    <classify-badge></classify-badge>
     <div :class="{ 'menu-not-visible': !menuVisible }" class="md-toolbar-row">
         <router-view name="tabs"></router-view>
     </div>
@@ -77,6 +78,8 @@ import ConnectionState from "@/ui/ConnectionState.vue";
 import HandPlotter from "@/ui/HandPlotter.vue";
 import DIIdent from "@/dependencyinjection/symbols";
 import DeviceStatus from "@/ui/utils/DeviceStatus.vue";
+import ClassifyBadge from "@/ui/utils/ClassifyBadge.vue";
+import DeviceTransferRate from "@/ui/DeviceTransferRate.vue";
 import { AppContainer } from "@/dependencyinjection";
 import {
   DeviceConnectionState,
@@ -101,7 +104,9 @@ import * as record from "@/state/modules/record";
  */
 @Component({
   components: {
-    DeviceStatus
+    DeviceStatus,
+    DeviceTransferRate,
+    ClassifyBadge
   }
 })
 export default class App extends Vue {

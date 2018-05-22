@@ -3,7 +3,7 @@ import { Store } from "vuex";
 
 import { RootState } from "@/state/store";
 import { PreProcessorConfig } from "@/processing/types";
-import { ClassifierConfig } from "@/classify";
+import { ClassifierConfig, ClassificationData } from "@/classify";
 
 /**
  * Represents to current connection State of the
@@ -44,10 +44,22 @@ export const InitialDeviceState = {
 export interface DeviceDriver {
   deviceName: string;
 
+  /** Returns the current ConnectionState */
   getDeviceConnectionState: () => Promise<DeviceConnectionState>;
+
+  /** Returns a Stream of ConnectionStates */
   streamConnectionState: () => Observable<DeviceConnectionState> | undefined;
+
+  /** Attempts to establish the connection to the native driver. Returns a stream of Connectionstates. */
   establishConnection: () => Observable<DeviceConnectionState>;
+
+  /** Returns an Observable Stream of eventually preprocessed HandtrackingData */
   getTrackingData: () => Observable<GenericHandTrackingData>;
+
+  /** Returns a Stream of ClassificationData, or undefined if Classification is not supported by the driver. */
+  getClassificationData: () => Observable<ClassificationData> | undefined;
+
+  /** configure a List of classifiers. Currently, only one will be used. */
   enableClassification: (classifiers: string[]) => void;
 
   /**
@@ -95,6 +107,11 @@ export interface DeviceFacade {
    * to include simulated data!
    */
   getDeviceTrackingData: () => Observable<GenericHandTrackingData> | undefined;
+
+  /**
+   * The Classification Stream
+   */
+  getClassificationStream: () => Observable<ClassificationData> | undefined;
 
   /**
    * The Frame PreProcessors selected by the user.

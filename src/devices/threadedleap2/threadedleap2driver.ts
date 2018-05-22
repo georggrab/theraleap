@@ -6,6 +6,7 @@ import {
   WORKER_CMD_ESTABLISH_CONNECTION,
   WORKER_EVT_CONNECTION_STATE_CHANGED,
   WORKER_EVT_FINALIZED_FRAME_RECEIVED,
+  WORKER_EVT_CLASSIFICATION,
   WORKER_CMD_UPDATE_CONFIGURATION,
   WORKER_CMD_UPDATE_PREPROCESS,
   WORKER_CMD_ENABLE_CLASSIFICATION,
@@ -21,7 +22,7 @@ import {
 } from "@/devices/generic";
 import { LEAP_MOTION_DEVICE_NAME } from "@/devices/leapmotion/leapdriver";
 import { PreProcessorConfig } from "@/processing/types";
-import { ClassifierConfig } from "@/classify";
+import { ClassifierConfig, ClassificationData } from "@/classify";
 
 @injectable()
 export class ThreadedLeap2Driver implements DeviceDriver {
@@ -32,6 +33,7 @@ export class ThreadedLeap2Driver implements DeviceDriver {
   private deviceConnectionState: BehaviorSubject<
     DeviceConnectionState
   > = new BehaviorSubject(InitialDeviceState as DeviceConnectionState);
+  private classifySubject: Subject<ClassificationData> = new Subject();
 
   constructor(
     @inject(DIIdent.SETTINGS_HARDWARE_DRIVER_CONNECTION)
@@ -92,17 +94,27 @@ export class ThreadedLeap2Driver implements DeviceDriver {
     });
   }
 
+  public getClassificationData() {
+    return this.classifySubject;
+  }
+
   private handleWorkerMessage(event: MessageEvent) {
     switch (event.data.type) {
       case WORKER_EVT_CONNECTION_STATE_CHANGED:
         return this.onConnectionStateChanged(event.data.payload);
       case WORKER_EVT_FINALIZED_FRAME_RECEIVED:
         return this.onFinalizedFrameReceived(event.data.payload);
+      case WORKER_EVT_CLASSIFICATION:
+        return this.onClassificationReceived(event.data.payload);
     }
   }
 
   private onConnectionStateChanged(data: any) {
     this.deviceConnectionState.next(data);
+  }
+
+  private onClassificationReceived(data: any) {
+    this.classifySubject.next(data);
   }
 
   private onFinalizedFrameReceived(data: any) {

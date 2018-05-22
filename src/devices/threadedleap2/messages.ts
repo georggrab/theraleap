@@ -6,6 +6,7 @@ export const WORKER_CMD_UPDATE_CLASSIFIER = "UpdateClassifier";
 export const WORKER_CMD_DIGEST = "Digest";
 export const WORKER_EVT_CONNECTION_STATE_CHANGED = "OnConnectionStateChanged";
 export const WORKER_EVT_FINALIZED_FRAME_RECEIVED = "OnFinalizedFrameReceived";
+export const WORKER_EVT_CLASSIFICATION = "OnClassificationReceived";
 
 export interface WorkerCommand {
   cmd: string;
