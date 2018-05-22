@@ -1,8 +1,9 @@
-import { GenericHandTrackingData } from "../../devices/generic";
-import { getStoreAccessors } from "vuex-typescript";
-import { DeviceState } from "./device";
-import { RootState } from "../store";
 import Vue from "vue";
+import { getStoreAccessors } from "vuex-typescript";
+
+import { DeviceState } from "@/state/modules/device";
+import { GenericHandTrackingData } from "@/devices/generic";
+import { RootState } from "@/state/store";
 import { KVPersistenceProvider } from "@/state/persistence";
 
 export interface RecordState {

@@ -23,9 +23,9 @@ export default class ClassifyBadge extends Vue {
   }
 
   public mounted() {
-    const stream = device
-      .getDeviceFacade(this.$store)
-      .getClassificationStream();
+    const facade = device.getDeviceFacade(this.$store);
+    console.log(facade);
+    const stream = facade.getClassificationStream();
     if (stream) {
       stream.subscribe(classification => {
         this.classificationHappened = true;

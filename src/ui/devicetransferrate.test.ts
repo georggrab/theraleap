@@ -1,3 +1,4 @@
+import Vue from "vue";
 import { mount, shallowMount } from "@vue/test-utils";
 import { expect } from "chai";
 import DeviceTransferRate from "./DeviceTransferRate.vue";
@@ -12,6 +13,8 @@ describe("DeviceTransferRate", () => {
         deviceDataTransferRate: 4096
       }
     });
-    expect(wrapper.text()).to.contain("4.000K/s");
+    Vue.nextTick().then(() => {
+      expect(wrapper.text()).to.contain("4.000K/s");
+    });
   });
 });

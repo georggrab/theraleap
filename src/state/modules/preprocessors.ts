@@ -6,11 +6,11 @@ import { RootState } from "@/state/store";
 import {
   PreProcessorConfigMap,
   PreProcessorDescription
-} from "processing/types";
-import { DropNFramesPreProcessorId } from "processing/generic/dropnframes";
+} from "@/processing/types";
+import { DropNFramesPreProcessorId } from "@/processing/generic/dropnframes";
 import { PreProcessorConfig } from "@/processing/types";
-import { DestroyUselessFramesId } from "processing/leap/destroyuselessframes";
-import { FPSThrottlerId } from "processing/generic/fpsthrottler";
+import { DestroyUselessFramesId } from "@/processing/leap/destroyuselessframes";
+import { FPSThrottlerId } from "@/processing/generic/fpsthrottler";
 
 export interface PreProcessorsState {
   preprocessors: PreProcessorConfigMap;

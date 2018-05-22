@@ -117,7 +117,7 @@ import {
   PreProcessor,
   PreProcessorConfigMap,
   PreProcessorConfig
-} from "processing/types";
+} from "@/processing/types";
 import { DropNFramesPreProcessorId } from "@/processing/generic/dropnframes";
 import * as device from "@/state/modules/device";
 
