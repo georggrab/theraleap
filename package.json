@@ -21,10 +21,15 @@
   "scripts": {
     "test": "karma start karma.config.js",
     "jest": "jest",
-    "dev": "webpack-dev-server --content-base dist --config webpack.config.js",
-    "build": "webpack -p --config webpack.config.js",
+    "dev":
+      "check-node-version --package && webpack-dev-server --content-base dist --config webpack.config.js",
+    "build":
+      "check-node-version --package && webpack -p --config webpack.config.js",
     "deploy": "npx gh-pages --dist dist/",
     "precommit": "pretty-quick --staged"
+  },
+  "engines": {
+    "node": ">=8 <9"
   },
   "devDependencies": {
     "@types/chai": "^4.1.2",
@@ -35,6 +40,7 @@
     "@vue/test-utils": "^1.0.0-beta.16",
     "chai": "^4.1.2",
     "css-loader": "^0.28.11",
+    "check-node-version": "^3.2.0",
     "hard-source-webpack-plugin": "^0.6.4",
     "html-webpack-plugin": "^3.2.0",
     "husky": "^0.14.3",
