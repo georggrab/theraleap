@@ -1,0 +1,25 @@
+{
+  "Vue Import": {
+    "prefix": "uimp",
+    "body": "import $2 from \"@/$1/$2.vue\";"
+  },
+  "Test Scaffold": {
+    "prefix": "utestu",
+    "body": [
+      "describe(\"$1\", () => {",
+      "\tit(\"should shallow mount\", () => {",
+      "\t\tconst wrapper = shallowMount($1);",
+      "\t\t$0",
+      "\t});",
+      "});"
+    ]
+  },
+  "Test Vue Imports": {
+    "prefix": "utestvueimp",
+    "body": [
+      "import { mount, shallowMount } from \"@vue/test-utils\";",
+      "import { expect } from \"chai\";",
+      "import $1 from \"./$1.vue\";"
+    ]
+  }
+}

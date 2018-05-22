@@ -1,0 +1,31 @@
+{
+  "SFC Claffold": {
+    "prefix": "usfc",
+    "body": [
+      "<template>",
+      "\t<section id=\"$1\">",
+      "\t</section>",
+      "</template>",
+      "<script lang=\"ts\">",
+      "import Vue from \"vue\";",
+      "import { Inject, Component, Prop } from \"vue-property-decorator\";",
+      "",
+      "@Component({",
+      "\tcomponents: {}",
+      "})",
+      "export default class $1 extends Vue {",
+      "$0",
+      "}",
+      "</script>"
+    ],
+    "description": "Vue SFC Scaffold"
+  },
+  "Style": {
+    "prefix": "ustl",
+    "body": ["<style lang=\"scss\">", "$0", "</style>"]
+  },
+  "Vue Import": {
+    "prefix": "uimp",
+    "body": "import $2 from \"@/$1/$2.vue\";"
+  }
+}
