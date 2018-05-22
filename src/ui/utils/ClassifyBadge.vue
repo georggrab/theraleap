@@ -8,7 +8,7 @@
     </section>
 </template>
 <script lang="ts">
-import Vue from "Vue";
+import Vue from "vue";
 import { Inject, Component, Prop } from "vue-property-decorator";
 import * as device from "@/state/modules/device";
 

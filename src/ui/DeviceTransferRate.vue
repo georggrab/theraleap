@@ -2,7 +2,7 @@
   <div class="transfer-rate" v-if="transferRate">{{ format(transferRate) }}/s</div>
 </template>
 <script lang="ts">
-import Vue from "Vue";
+import Vue from "vue";
 import { Inject, Component, Prop } from "vue-property-decorator";
 
 //@ts-ignore
