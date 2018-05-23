@@ -7,7 +7,12 @@ import { LeapDeviceFrame } from "@/devices/leapmotion";
 import { project } from "@/ui/graphics/util";
 
 import { Bullet, SpaceRock } from "./types";
-import { shootBullet, tickBullets, tickSpaceRocks } from "./logic";
+import {
+  shootBullet,
+  tickBullets,
+  tickSpaceRocks,
+  processBulletCollision
+} from "./logic";
 import { drawBullets, drawSpaceShip, drawScene, drawSpaceRocks } from "./draw";
 
 export default class SpaceShooterGame implements Game {
@@ -32,10 +37,11 @@ export default class SpaceShooterGame implements Game {
       };
 
       s.draw = () => {
-        drawScene(s);
-        drawSpaceShip(this.x, this.y, s);
         this.bullets = tickBullets(this.bullets, s);
         this.spaceRocks = tickSpaceRocks(this.spaceRocks, s);
+        processBulletCollision(this.bullets, this.spaceRocks, s);
+        drawScene(s);
+        drawSpaceShip(this.x, this.y, s);
         drawSpaceRocks(this.spaceRocks, s);
         drawBullets(this.bullets, s);
       };

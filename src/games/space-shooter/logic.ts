@@ -70,3 +70,25 @@ export const tickSpaceRocks = (s: SpaceRock[], ctx: p5) => {
   });
   return newRocks;
 };
+
+export const processBulletCollision = (
+  b: Bullet[],
+  r: SpaceRock[],
+  ctx: p5
+) => {
+  let hit: number[] = [];
+  b.forEach((bullet, bIdx) => {
+    r.forEach((rock, rIdx) => {
+      if (
+        Math.abs(bullet.x - rock.x) < 50 &&
+        Math.abs(bullet.y - rock.y) < 30
+      ) {
+        hit = [bIdx, rIdx];
+      }
+    });
+  });
+  if (hit.length !== 0) {
+    b.splice(hit[0], 1);
+    r.splice(hit[1], 1);
+  }
+};
