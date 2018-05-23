@@ -14,7 +14,6 @@ export default class SpaceShooterGame implements Game {
   public iP5: p5 | undefined;
 
   async onStart(config: GameConfiguration) {
-    console.log(config);
     this.iP5 = new p5((s: p5) => {
       s.setup = () => {
         s.createCanvas(config.element.clientWidth, config.element.clientHeight);

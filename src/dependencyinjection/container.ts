@@ -6,7 +6,6 @@ import {
   DeviceFacade,
   HardwareDriverConnectionSettings
 } from "@/devices";
-import { LeapDriver } from "@/devices/leapmotion";
 import DIIdent from "@/dependencyinjection/symbols";
 import {
   RootState,
@@ -20,8 +19,8 @@ import {
   KVPersistenceProvider,
   IndexedDBPersistenceProvider
 } from "@/state/persistence";
-import { ThreadedLeap2Driver } from "devices/threadedleap2/threadedleap2driver";
-import { AllPurposeRecordingFacade } from 'devices/allpurposefacade';
+import { ThreadedLeap2Driver } from "@/devices/threadedleap2/threadedleap2driver";
+import { AllPurposeRecordingFacade } from "@/devices/allpurposefacade";
 
 const AppContainer = new Container();
 AppContainer.bind<DeviceDriver>(DIIdent.SERVICE_MOTION_TRACKING_DEVICE_DRIVER)

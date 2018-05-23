@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import "imports-loader?THREE=three!three/examples/js/controls/OrbitControls"
+import "imports-loader?THREE=three!three/examples/js/controls/OrbitControls";
 import * as THREE from "three";
 import { BufferGeometry, Geometry } from "three";
 import { Observable, Subscription } from "rxjs";
@@ -15,8 +15,8 @@ import { Component, Prop } from "vue-property-decorator";
 
 import * as device from "@/state/modules/device";
 import * as record from "@/state/modules/record";
-import { DeviceFacade, GenericHandTrackingData } from "devices";
-import { LEAP_MOTION_DEVICE_NAME, LeapDeviceFrame } from "devices/leapmotion";
+import { DeviceFacade, GenericHandTrackingData } from "@/devices";
+import { LEAP_MOTION_DEVICE_NAME, LeapDeviceFrame } from "@/devices/leapmotion";
 
 import * as graphics from "@/state/modules/graphics";
 import { hasSalvagableStream } from "@/state/utils";
@@ -24,7 +24,7 @@ import { hasSalvagableStream } from "@/state/utils";
 import { MultiHandScene, HandConfig } from "./types";
 import * as leapRenderUtils from "./leap-render-utils";
 
-@Component
+@Component({})
 export default class GraphicalHandLogger extends Vue {
   @Prop({ default: false })
   public transparent!: boolean;
@@ -55,6 +55,7 @@ export default class GraphicalHandLogger extends Vue {
   private subscription: Subscription | undefined;
 
   private mounted() {
+    this.initializeRenderer();
     this.initializeGraphics();
     this.setupWindowResizeListener();
     this.setupDataStream();
@@ -108,6 +109,15 @@ export default class GraphicalHandLogger extends Vue {
     }
   }
 
+  private initializeRenderer() {
+    if (!this.renderer) {
+      graphics.setRenderer(
+        this.$store,
+        new THREE.WebGLRenderer({ antialias: true, alpha: true })
+      );
+    }
+  }
+
   private initializeGraphics() {
     let animation = this.$refs.animation as HTMLMainElement;
 
@@ -157,10 +167,10 @@ export default class GraphicalHandLogger extends Vue {
   private animate() {
     this.animationHandle = window.requestAnimationFrame(this.animate);
     if (this.renderer && this.camera) {
-        if (this.controls) {
-          this.controls.update();
-        }
-        this.renderer.render(this.scene, this.camera);
+      if (this.controls) {
+        this.controls.update();
+      }
+      this.renderer.render(this.scene, this.camera);
     } else {
       console.warn("THREE.js not initialized properly");
       window.cancelAnimationFrame(this.animationHandle);

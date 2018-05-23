@@ -34,9 +34,6 @@ import { Inject, Component, Prop } from "vue-property-decorator";
 import { hasSalvagableStream } from "@/state/utils";
 import * as classifier from "@/state/modules/classifiers";
 
-// @ts-ignore
-import p5 from "p5/lib/p5.min";
-
 @Component({
   components: {}
 })

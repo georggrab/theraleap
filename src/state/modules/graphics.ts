@@ -1,5 +1,3 @@
-import * as THREE from "three";
-
 import { RootState } from "@/state/store";
 import { getStoreAccessors } from "vuex-typescript";
 
@@ -11,11 +9,17 @@ export const graphics = {
   namespaced: true,
 
   state: {
-    renderer: new THREE.WebGLRenderer({ antialias: true, alpha: true })
+    renderer: undefined
   },
 
   getters: {
     getRenderer: (state: GraphicsState) => state.renderer
+  },
+
+  mutations: {
+    setRenderer: (state: GraphicsState, r: THREE.WebGLRenderer) => {
+      state.renderer = r;
+    }
   }
 };
 
@@ -24,3 +28,4 @@ const { commit, read, dispatch } = getStoreAccessors<GraphicsState, RootState>(
 );
 
 export const getRenderer = read(graphics.getters.getRenderer);
+export const setRenderer = commit(graphics.mutations.setRenderer);

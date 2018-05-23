@@ -80,20 +80,9 @@
 import Vue from "vue";
 import { Inject, Component } from "vue-property-decorator";
 
-import ConnectionState from "@/ui/ConnectionState.vue";
-import HandPlotter from "@/ui/HandPlotter.vue";
-import DIIdent from "@/dependencyinjection/symbols";
 import DeviceStatus from "@/ui/utils/DeviceStatus.vue";
 import ClassifyBadge from "@/ui/utils/ClassifyBadge.vue";
 import DeviceTransferRate from "@/ui/DeviceTransferRate.vue";
-import { AppContainer } from "@/dependencyinjection";
-import {
-  DeviceConnectionState,
-  InitialDeviceState,
-  DeviceFacade,
-  DeviceDriver
-} from "@/devices";
-import { inject } from "inversify";
 
 import * as device from "@/state/modules/device";
 import * as record from "@/state/modules/record";

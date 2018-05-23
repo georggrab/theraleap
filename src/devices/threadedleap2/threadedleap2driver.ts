@@ -20,13 +20,12 @@ import {
   DeviceConnectionState,
   InitialDeviceState
 } from "@/devices/generic";
-import { LEAP_MOTION_DEVICE_NAME } from "@/devices/leapmotion/leapdriver";
 import { PreProcessorConfig } from "@/processing/types";
 import { ClassifierConfig, ClassificationData } from "@/classify";
 
 @injectable()
 export class ThreadedLeap2Driver implements DeviceDriver {
-  public deviceName = LEAP_MOTION_DEVICE_NAME;
+  public deviceName = "Leap Motion";
   private worker: Worker;
 
   private deviceTrackingData: Subject<GenericHandTrackingData> = new Subject();

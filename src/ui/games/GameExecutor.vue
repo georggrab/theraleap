@@ -12,6 +12,9 @@
 <script lang="ts">
 import Vue from "vue";
 import { Inject, Component, Prop } from "vue-property-decorator";
+import { Subscription } from "rxjs";
+
+import * as device from "@/state/modules/device";
 
 import GameLoadError from "@/ui/games/GameLoadError.vue";
 import GameLoadingSpinner from "@/ui/games/GameLoadingSpinner.vue";
@@ -32,7 +35,10 @@ export default class GameExecutor extends Vue {
   public gameLoadError: string = "";
   public gameIsLoading: boolean = true;
 
-  public game: Game | undefined;
+  private game: Game | undefined;
+
+  private classificationSubscription: Subscription | undefined;
+  private motionTrackingSubscription: Subscription | undefined;
 
   public async mounted() {
     const resolver: (() => Promise<any>) | undefined =
@@ -56,6 +62,7 @@ export default class GameExecutor extends Vue {
         this.gameIdentifier
       }. four - oh - four.`;
     }
+    this.setupStreams();
   }
 
   public async beforeRouteLeave(to: any, from: any, next: any) {
@@ -69,6 +76,33 @@ export default class GameExecutor extends Vue {
     if (this.game) {
       await this.game.onStop();
     }
+  }
+
+  private setupStreams() {
+    if (this.trackingData) {
+      this.motionTrackingSubscription = this.trackingData.subscribe(data => {
+        if (this.game) {
+          this.game.onMotionTrackingDataReceived(data);
+        }
+      });
+    }
+    if (this.classificationData) {
+      this.classificationSubscription = this.classificationData.subscribe(
+        data => {
+          if (this.game) {
+            this.game.onClassificationReceived(data);
+          }
+        }
+      );
+    }
+  }
+
+  private get trackingData() {
+    return device.getDeviceFacade(this.$store).getHandTrackingData(this.$store);
+  }
+
+  private get classificationData() {
+    return device.getDeviceFacade(this.$store).getClassificationStream();
   }
 }
 </script>

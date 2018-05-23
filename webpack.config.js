@@ -14,7 +14,7 @@ module.exports = {
   },
   mode: "development",
   devtool: "cheap-module-eval-source-map",
-  plugins: [],
+  plugins: [new BundleAnalyzerPlugin()],
   resolve: {
     extensions: [".webpack.js", ".web.js", ".ts", ".tsx", ".js", ".vue"],
     plugins: [new TsconfigPathsPlugin({})],
