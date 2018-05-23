@@ -31,6 +31,7 @@ const Games = () => import("@/ui/games/GameList.vue");
 const GameSettings = () => import("@/ui/games/GameSettings.vue");
 const GameRoot = () => import("@/ui/games/GameRoot.vue");
 const GameTabs = () => import("@/ui/games/GameTabs.vue");
+const GameExecutor = () => import("@/ui/games/GameExecutor.vue");
 
 import App from "@/ui/App.vue";
 
@@ -138,6 +139,11 @@ export const RootRouter = new VueRouter({
             {
               component: GameSettings,
               path: "settings"
+            },
+            {
+              component: GameExecutor,
+              path: "play/:gameIdentifier",
+              props: true
             }
           ],
           components: {
