@@ -31,3 +31,8 @@ export const drawSpaceRocks = (rocks: SpaceRock[], ctx: p5) => {
     polygon(rock.x, rock.y, 50, rock.edges, ctx);
   });
 };
+
+export const drawScore = (score: number, ctx: p5) => {
+  ctx.textFont("Courier New", 40);
+  ctx.text(score.toString().padStart(5, "0"), 20, 50);
+};

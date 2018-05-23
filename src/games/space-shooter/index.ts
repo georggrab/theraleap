@@ -11,9 +11,16 @@ import {
   shootBullet,
   tickBullets,
   tickSpaceRocks,
-  processBulletCollision
+  processBulletCollision,
+  updateScore
 } from "./logic";
-import { drawBullets, drawSpaceShip, drawScene, drawSpaceRocks } from "./draw";
+import {
+  drawBullets,
+  drawSpaceShip,
+  drawScene,
+  drawSpaceRocks,
+  drawScore
+} from "./draw";
 
 export default class SpaceShooterGame implements Game {
   public iP5: p5 | undefined;
@@ -21,8 +28,10 @@ export default class SpaceShooterGame implements Game {
   private width!: number;
   private height!: number;
 
-  private x: number = 100;
-  private y: number = 100;
+  private x: number = 0;
+  private y: number = 0;
+
+  private score: number = 0;
 
   private bullets: Bullet[] = [];
   private spaceRocks: SpaceRock[] = [];
@@ -30,6 +39,8 @@ export default class SpaceShooterGame implements Game {
   async onStart(config: GameConfiguration) {
     this.width = config.element.clientWidth;
     this.height = config.element.clientHeight;
+    this.x = config.element.clientWidth / 2;
+    this.y = config.element.clientHeight - 50;
     this.iP5 = new p5((s: p5) => {
       s.setup = () => {
         console.log(config.element.clientWidth);
@@ -39,8 +50,16 @@ export default class SpaceShooterGame implements Game {
       s.draw = () => {
         this.bullets = tickBullets(this.bullets, s);
         this.spaceRocks = tickSpaceRocks(this.spaceRocks, s);
-        processBulletCollision(this.bullets, this.spaceRocks, s);
+        const collisionOccured = processBulletCollision(
+          this.bullets,
+          this.spaceRocks,
+          s
+        );
+        if (collisionOccured) {
+          this.score = updateScore(this.score);
+        }
         drawScene(s);
+        drawScore(this.score, s);
         drawSpaceShip(this.x, this.y, s);
         drawSpaceRocks(this.spaceRocks, s);
         drawBullets(this.bullets, s);

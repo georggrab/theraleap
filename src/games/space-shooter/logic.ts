@@ -77,6 +77,7 @@ export const processBulletCollision = (
   ctx: p5
 ) => {
   let hit: number[] = [];
+  let collisionOccured = false;
   b.forEach((bullet, bIdx) => {
     r.forEach((rock, rIdx) => {
       if (
@@ -90,5 +91,11 @@ export const processBulletCollision = (
   if (hit.length !== 0) {
     b.splice(hit[0], 1);
     r.splice(hit[1], 1);
+    collisionOccured = true;
   }
+  return collisionOccured;
+};
+
+export const updateScore = (oldScore: number) => {
+  return oldScore + 20;
 };
