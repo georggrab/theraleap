@@ -1,8 +1,12 @@
-import { ClassificationData } from "classify";
-import { GenericHandTrackingData } from "devices";
+import { ClassificationData } from "@/classify";
+import { GenericHandTrackingData } from "@/devices";
+
+export interface GameConfiguration {
+  element: HTMLDivElement;
+}
 
 export interface Game {
-  onStart: () => Promise<void>;
+  onStart: (config: GameConfiguration) => Promise<void>;
   onPause: () => Promise<void>;
   onStop: () => Promise<void>;
 
