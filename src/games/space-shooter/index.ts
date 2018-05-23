@@ -6,9 +6,9 @@ import { GenericHandTrackingData } from "@/devices";
 import { LeapDeviceFrame } from "@/devices/leapmotion";
 import { project } from "@/ui/graphics/util";
 
-import { Bullet } from "./types";
-import { shootBullet, tickBullets } from "./logic";
-import { drawBullets, drawSpaceShip, drawScene } from "./draw";
+import { Bullet, SpaceRock } from "./types";
+import { shootBullet, tickBullets, tickSpaceRocks } from "./logic";
+import { drawBullets, drawSpaceShip, drawScene, drawSpaceRocks } from "./draw";
 
 export default class SpaceShooterGame implements Game {
   public iP5: p5 | undefined;
@@ -20,6 +20,7 @@ export default class SpaceShooterGame implements Game {
   private y: number = 100;
 
   private bullets: Bullet[] = [];
+  private spaceRocks: SpaceRock[] = [];
 
   async onStart(config: GameConfiguration) {
     this.width = config.element.clientWidth;
@@ -34,6 +35,8 @@ export default class SpaceShooterGame implements Game {
         drawScene(s);
         drawSpaceShip(this.x, this.y, s);
         this.bullets = tickBullets(this.bullets, s);
+        this.spaceRocks = tickSpaceRocks(this.spaceRocks, s);
+        drawSpaceRocks(this.spaceRocks, s);
         drawBullets(this.bullets, s);
       };
     }, config.element);
