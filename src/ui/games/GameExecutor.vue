@@ -6,7 +6,7 @@
       <transition name="fade">
         <game-loading-spinner :gameName="gameIdentifier" v-if="gameIsLoading"></game-loading-spinner>
       </transition>
-      <div id="gameTargetElement" v-show="!gameIsLoading && gameLoadError === ''" ref="gameElement"></div>
+      <div id="gameTargetElement" :class="{visible: !gameIsLoading && gameLoadError === ''}" ref="gameElement"></div>
     </section>
 </template>
 <script lang="ts">
@@ -41,6 +41,7 @@ export default class GameExecutor extends Vue {
   private motionTrackingSubscription: Subscription | undefined;
 
   public async mounted() {
+    this.cleanGameElement();
     const resolver: (() => Promise<any>) | undefined =
       GameResolveMapping[this.gameIdentifier];
     if (resolver !== undefined) {
@@ -75,6 +76,13 @@ export default class GameExecutor extends Vue {
   public async beforeDestroy() {
     if (this.game) {
       await this.game.onStop();
+    }
+  }
+
+  private cleanGameElement() {
+    const el = this.$refs.gameElement as HTMLDivElement;
+    while (el.firstChild) {
+      el.removeChild(el.firstChild);
     }
   }
 
@@ -117,5 +125,11 @@ export default class GameExecutor extends Vue {
 #gameTargetElement {
   width: 100%;
   height: calc(100vh - 150px);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+#gameTargetElement.visible {
+  opacity: 1;
 }
 </style>

@@ -18,6 +18,7 @@
       <md-card-actions>
         <md-button 
           :disabled="!classifierConfigured || !hasSalvagableStream"
+          @click="play('space-shooter')"
           class="md-raised md-primary"><md-icon>play_arrow</md-icon>Play
           </md-button>
           <md-tooltip v-if="!classifierConfigured || !hasSalvagableStream" md-direction="right">
@@ -38,6 +39,9 @@ import * as classifier from "@/state/modules/classifiers";
   components: {}
 })
 export default class GameList extends Vue {
+  public play(id: string) {
+    this.$router.push(`/games/play/${id}`);
+  }
   public get classifierConfigured() {
     return classifier.getActiveClassifier(this.$store) !== undefined;
   }
