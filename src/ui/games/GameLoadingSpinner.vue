@@ -21,5 +21,6 @@ export default class GameLoadingSpinner extends Vue {
 section {
   margin: 50px;
   position: absolute;
+  background-color: #ffffff55;
 }
 </style>
