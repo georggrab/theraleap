@@ -8,6 +8,8 @@
   </section>
 </template>
 <script lang="ts">
+declare const __path__: string;
+
 import Vue from "vue";
 import { Observable } from "rxjs";
 import { Inject, Component } from "vue-property-decorator";
@@ -39,7 +41,7 @@ export default class Classifiers extends Vue {
     };
   } = {
     ThumbSpreadClassifier: {
-      path: "/json/thera-rec-slow-thumb-spread.json"
+      path: `${__path__}json/thera-rec-slow-thumb-spread.json`
     }
   };
 

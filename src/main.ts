@@ -45,11 +45,20 @@ import Vuex from "vuex";
 Vue.use(VueRouter);
 Vue.use(Vuex);
 
+// @ts-ignore
+import VueOffline from "vue-offline";
+Vue.use(VueOffline);
+
 import { RootRouter } from "@/router";
 import { DeviceDriver } from "@/devices";
 import { AppContainer } from "@/dependencyinjection";
 import DIInject from "@/dependencyinjection/symbols";
 import { IStoreFactory } from "state/store";
+
+declare const __path__: string;
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register(__path__ + "service-worker.js");
+}
 
 export const RootVue = new Vue({
   el: "#app",

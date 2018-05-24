@@ -12,6 +12,8 @@
     />
     <device-transfer-rate :transferRate="deviceDataTransferRate"></device-transfer-rate>
     <classify-badge></classify-badge>
+    <div class="spacer"></div>
+    <offline-indicator class="right-side"></offline-indicator>
     <div :class="{ 'menu-not-visible': !menuVisible }" class="md-toolbar-row">
         <router-view name="tabs"></router-view>
     </div>
@@ -83,6 +85,7 @@ import { Inject, Component } from "vue-property-decorator";
 import DeviceStatus from "@/ui/utils/DeviceStatus.vue";
 import ClassifyBadge from "@/ui/utils/ClassifyBadge.vue";
 import DeviceTransferRate from "@/ui/DeviceTransferRate.vue";
+import OfflineIndicator from "@/ui/utils/OfflineIndicator.vue";
 
 import * as device from "@/state/modules/device";
 import * as record from "@/state/modules/record";
@@ -101,7 +104,8 @@ import * as record from "@/state/modules/record";
   components: {
     DeviceStatus,
     DeviceTransferRate,
-    ClassifyBadge
+    ClassifyBadge,
+    OfflineIndicator
   }
 })
 export default class App extends Vue {
@@ -146,6 +150,13 @@ body {
 .md-app {
   border: 1px solid rgba(#000, 0.12);
   min-height: 50vh;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.right-side {
 }
 
 .md-app-drawer {
