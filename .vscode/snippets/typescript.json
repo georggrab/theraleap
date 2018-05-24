@@ -17,9 +17,23 @@
   "Test Vue Imports": {
     "prefix": "utestvueimp",
     "body": [
-      "import { mount, shallowMount } from \"@vue/test-utils\";",
+      "import { mount, shallowMount, createLocalVue } from \"@vue/test-utils\";",
       "import { expect } from \"chai\";",
       "import $1 from \"./$1.vue\";"
     ]
+  },
+
+  "Vuex import": {
+    "prefix": "uvueximp",
+    "body": ["import Vuex from \"vuex\";"]
+  },
+
+  "Vuex Local Vue": {
+    "prefix": "uvuexlocalvue",
+    "body": ["const localVue = createLocalVue();", "localVue.use(Vuex)"]
+  },
+  "Test Sinon Import": {
+    "prefix": "utestsinonimp",
+    "body": ["import sinon from \"sinon\";"]
   }
 }
