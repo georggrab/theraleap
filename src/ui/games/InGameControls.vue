@@ -6,8 +6,18 @@
     </md-card-header>
     <md-card-content>
         <ul class="controls-list">
-        <li><span class="function"><md-icon>pause</md-icon>Pause:</span><span class="divider"></span><span class="key">Space</span></li>
-        <li><span class="function"><md-icon>exit_to_app</md-icon>Quit:</span><span class="divider"></span><span class="key">Esc</span></li>
+        <li>
+            <span class="function">
+                <md-icon>pause</md-icon>Pause:
+            </span>
+            <span class="divider">
+            </span>
+            <span class="key">Space</span></li>
+        <li>
+            <span class="function"><md-icon>exit_to_app</md-icon>Quit:</span>
+            <span class="divider"></span>
+            <span class="key">Esc</span>
+        </li>
         </ul>
     </md-card-content>
     </md-card>
