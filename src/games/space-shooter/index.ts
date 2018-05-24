@@ -12,7 +12,8 @@ import {
   tickBullets,
   tickSpaceRocks,
   processBulletCollision,
-  updateScore
+  updateScore,
+  processSpaceShipCollision
 } from "./logic";
 import {
   drawBullets,
@@ -21,6 +22,7 @@ import {
   drawSpaceRocks,
   drawScore
 } from "./draw";
+import Vue from "vue";
 
 export default class SpaceShooterGame implements Game {
   public iP5: p5 | undefined;
@@ -32,11 +34,15 @@ export default class SpaceShooterGame implements Game {
   private y: number = 0;
 
   private score: number = 0;
+  private gameOver: boolean = false;
 
   private bullets: Bullet[] = [];
   private spaceRocks: SpaceRock[] = [];
 
-  async onStart(config: GameConfiguration) {
+  async onStart(
+    config: GameConfiguration,
+    notifyGameOver: (cb: (vm: Vue) => void) => void
+  ) {
     this.width = config.element.clientWidth;
     this.height = config.element.clientHeight;
     this.x = config.element.clientWidth / 2;
@@ -50,19 +56,31 @@ export default class SpaceShooterGame implements Game {
       s.draw = () => {
         this.bullets = tickBullets(this.bullets, s);
         this.spaceRocks = tickSpaceRocks(this.spaceRocks, s);
-        const collisionOccured = processBulletCollision(
+        const bulletCollissionOccurred = processBulletCollision(
           this.bullets,
           this.spaceRocks,
           s
         );
-        if (collisionOccured) {
+        if (bulletCollissionOccurred) {
           this.score = updateScore(this.score);
         }
-        drawScene(s);
-        drawScore(this.score, s);
-        drawSpaceShip(this.x, this.y, s);
-        drawSpaceRocks(this.spaceRocks, s);
-        drawBullets(this.bullets, s);
+        this.gameOver = processSpaceShipCollision(
+          this.x,
+          this.y,
+          this.spaceRocks
+        );
+        if (this.gameOver) {
+          notifyGameOver((vm: Vue) => {
+            vm.$router.push("/games/list");
+          });
+          s.remove();
+        } else {
+          drawScene(s);
+          drawScore(this.score, s);
+          drawSpaceShip(this.x, this.y, s);
+          drawSpaceRocks(this.spaceRocks, s);
+          drawBullets(this.bullets, s);
+        }
       };
     }, config.element);
   }

@@ -1,3 +1,5 @@
+import Vue from "vue";
+
 import { ClassificationData } from "@/classify";
 import { GenericHandTrackingData } from "@/devices";
 
@@ -6,7 +8,10 @@ export interface GameConfiguration {
 }
 
 export interface Game {
-  onStart: (config: GameConfiguration) => Promise<void>;
+  onStart: (
+    config: GameConfiguration,
+    notifyGameOver: ((cb: (vm: Vue) => void) => void)
+  ) => Promise<void>;
   onPause: () => Promise<void>;
   onStop: () => Promise<void>;
 

@@ -48,9 +48,15 @@ export default class GameExecutor extends Vue {
       try {
         this.gameIsLoading = true;
         this.game = new (await resolver())();
-        await this.game!.onStart({
-          element: this.$refs.gameElement
-        } as GameConfiguration);
+        await this.game!.onStart(
+          {
+            element: this.$refs.gameElement
+          } as GameConfiguration,
+          (arg: (vm: Vue) => void) => {
+            console.log("got gameover", arg);
+            arg(this);
+          }
+        );
         this.gameIsLoading = false;
       } catch (err) {
         this.gameIsLoading = false;

@@ -50,7 +50,6 @@ export const tickSpaceRocks = (s: SpaceRock[], ctx: p5) => {
   if (Math.random() > 0.985) {
     const rock = createNewRock(ctx);
     newRocks.push(rock);
-    console.log("New Rock", rock);
   }
   s.forEach(rock => {
     if (
@@ -94,6 +93,21 @@ export const processBulletCollision = (
     collisionOccured = true;
   }
   return collisionOccured;
+};
+
+export const processSpaceShipCollision = (
+  shipX: number,
+  shipY: number,
+  spaceRocks: SpaceRock[]
+) => {
+  let collision = false;
+  spaceRocks.forEach(rock => {
+    if (Math.abs(rock.x - shipX) < 20 && Math.abs(rock.y - shipY) < 20) {
+      collision = true;
+      return;
+    }
+  });
+  return collision;
 };
 
 export const updateScore = (oldScore: number) => {
