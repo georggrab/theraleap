@@ -56,7 +56,9 @@ import DIInject from "@/dependencyinjection/symbols";
 import { IStoreFactory } from "state/store";
 
 declare const __path__: string;
-if ("serviceWorker" in navigator) {
+declare const __prod__: boolean;
+
+if ("serviceWorker" in navigator && __prod__) {
   navigator.serviceWorker.register(__path__ + "service-worker.js");
 }
 

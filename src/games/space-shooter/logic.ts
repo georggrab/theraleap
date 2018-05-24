@@ -102,7 +102,7 @@ export const processSpaceShipCollision = (
 ) => {
   let collision = false;
   spaceRocks.forEach(rock => {
-    if (Math.abs(rock.x - shipX) < 20 && Math.abs(rock.y - shipY) < 20) {
+    if (Math.abs(rock.x - shipX) < 35 && Math.abs(rock.y - shipY) < 35) {
       collision = true;
       return;
     }

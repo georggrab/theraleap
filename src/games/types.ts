@@ -13,6 +13,7 @@ export interface Game {
     notifyGameOver: ((cb: (vm: Vue) => void) => void)
   ) => Promise<void>;
   onPause: () => Promise<void>;
+  onResume: () => Promise<void>;
   onStop: () => Promise<void>;
 
   onClassificationReceived: (c: ClassificationData) => void;

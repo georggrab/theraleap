@@ -35,6 +35,7 @@ export default class SpaceShooterGame implements Game {
 
   private score: number = 0;
   private gameOver: boolean = false;
+  private paused: boolean = false;
 
   private bullets: Bullet[] = [];
   private spaceRocks: SpaceRock[] = [];
@@ -54,6 +55,9 @@ export default class SpaceShooterGame implements Game {
       };
 
       s.draw = () => {
+        if (this.paused) {
+          return;
+        }
         this.bullets = tickBullets(this.bullets, s);
         this.spaceRocks = tickSpaceRocks(this.spaceRocks, s);
         const bulletCollissionOccurred = processBulletCollision(
@@ -90,7 +94,11 @@ export default class SpaceShooterGame implements Game {
   }
 
   async onPause() {
-    console.log("onPause");
+    this.paused = true;
+  }
+
+  async onResume() {
+    this.paused = false;
   }
 
   onClassificationReceived(c: ClassificationData) {

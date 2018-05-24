@@ -8,7 +8,8 @@ const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
 const SWPrecacheWebpackPlugin = require("sw-precache-webpack-plugin");
 
 let definitions = {
-  __path__: JSON.stringify("/")
+  __path__: JSON.stringify("/"),
+  __prod__: JSON.stringify(false)
 };
 
 const precachePlugin = new SWPrecacheWebpackPlugin({
@@ -78,6 +79,7 @@ if (process.env.NODE_ENV === "production") {
     }
   };
   definitions.__path__ = JSON.stringify("/theraleap/");
+  definitions.__prod__ = JSON.stringify(true);
   // for Github Pages Deployment
   module.exports.output.publicPath = "/theraleap/";
 

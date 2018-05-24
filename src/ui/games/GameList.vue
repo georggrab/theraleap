@@ -17,9 +17,13 @@
       </md-card-content>
       <md-card-actions>
         <md-button 
-          :disabled="!classifierConfigured || !hasSalvagableStream"
           @click="play('space-shooter')"
           class="md-raised md-primary"><md-icon>play_arrow</md-icon>Play
+          </md-button>
+        <md-button 
+          :disabled="!classifierConfigured || !hasSalvagableStream"
+          @click="play('space-shooter')"
+          class="md-raised md-primary"><md-icon>play_arrow</md-icon><md-icon>settings_remote</md-icon>Play with Motion Tracking
           </md-button>
           <md-tooltip v-if="!classifierConfigured || !hasSalvagableStream" md-direction="right">
               <span v-if="!classifierConfigured">You or your therapist did not yet configure an appropriate gesture classifier for you. Please configure one in the Classification Tab.</span>
@@ -51,7 +55,7 @@ export default class GameList extends Vue {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .md-card {
   max-width: 500px;
 }

@@ -22,7 +22,7 @@
   },
   "Style": {
     "prefix": "ustl",
-    "body": ["<style lang=\"scss\">", "$0", "</style>"]
+    "body": ["<style lang=\"scss\" scoped>", "$0", "</style>"]
   },
   "Vue Import": {
     "prefix": "uimp",
