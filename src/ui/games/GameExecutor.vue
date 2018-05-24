@@ -50,7 +50,6 @@ export default class GameExecutor extends Vue {
   private motionTrackingSubscription: Subscription | undefined;
 
   private keyUpEvent(event: KeyboardEvent) {
-    console.log(event.keyCode);
     if (event.keyCode === 32) {
       if (this.game !== undefined && !this.gameIsPaused) {
         this.game.onPause();
@@ -60,9 +59,7 @@ export default class GameExecutor extends Vue {
       this.gameIsPaused = !this.gameIsPaused;
     }
     if (event.keyCode === 27) {
-      if (this.game !== undefined) {
-        this.game.onStop(this);
-      }
+      this.stopGame();
     }
   }
 
