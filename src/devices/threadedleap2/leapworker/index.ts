@@ -21,7 +21,6 @@ import {
   LeapStatusWord,
   LeapDeviceFrame
 } from "@/devices/leapmotion/leaptrackingdata";
-import { ThreadedEngine } from "@/classify/engines/ThreadedEngine";
 import { ThumbSpreadClassifier } from "@/classify/classifiers/thumbspread";
 import { ClassifyResolver } from "@/classify/resolver";
 import { PreProcessorConfig, PreProcessingEngine } from "@/processing/types";
