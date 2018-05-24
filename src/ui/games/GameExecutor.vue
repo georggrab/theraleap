@@ -42,27 +42,34 @@ export default class GameExecutor extends Vue {
   public gameLoadError: string = "";
   public gameIsLoading: boolean = true;
 
-  private game: Game | null = null;
+  private game: Game | undefined = undefined;
   private gameIsPaused: boolean = false;
+  private onStopCalled: boolean = false;
 
   private classificationSubscription: Subscription | undefined;
   private motionTrackingSubscription: Subscription | undefined;
 
   private keyUpEvent(event: KeyboardEvent) {
+    console.log(event.keyCode);
     if (event.keyCode === 32) {
-      if (this.game !== null && !this.gameIsPaused) {
+      if (this.game !== undefined && !this.gameIsPaused) {
         this.game.onPause();
-      } else if (this.game !== null && this.gameIsPaused) {
+      } else if (this.game !== undefined && this.gameIsPaused) {
         this.game.onResume();
       }
       this.gameIsPaused = !this.gameIsPaused;
+    }
+    if (event.keyCode === 27) {
+      if (this.game !== undefined) {
+        this.game.onStop(this);
+      }
     }
   }
 
   public async mounted() {
     this.cleanGameElement();
     await this.loadGame();
-    this.initializePauseKeyListener();
+    this.initializeKeyListener();
     this.setupStreams();
   }
 
@@ -74,14 +81,15 @@ export default class GameExecutor extends Vue {
   }
 
   public async beforeDestroy() {
-    if (this.game) {
-      await this.game.onStop();
-    }
+    this.stopGame();
     window.removeEventListener("keyup", this.keyUpEvent);
   }
 
-  public pausePressed() {
-    console.log("paused");
+  private stopGame() {
+    if (!this.onStopCalled && this.game !== undefined) {
+      this.onStopCalled = true;
+      this.game.onStop(this);
+    }
   }
 
   private async loadGame() {
@@ -95,8 +103,8 @@ export default class GameExecutor extends Vue {
           {
             element: this.$refs.gameElement
           } as GameConfiguration,
-          (arg: (vm: Vue) => void) => {
-            arg(this);
+          async () => {
+            this.stopGame();
           }
         );
         this.game!.onResume();
@@ -115,7 +123,7 @@ export default class GameExecutor extends Vue {
     }
   }
 
-  private initializePauseKeyListener() {
+  private initializeKeyListener() {
     window.addEventListener("keyup", (event: KeyboardEvent) => {
       this.keyUpEvent(event);
     });

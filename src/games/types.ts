@@ -10,11 +10,11 @@ export interface GameConfiguration {
 export interface Game {
   onStart: (
     config: GameConfiguration,
-    notifyGameOver: ((cb: (vm: Vue) => void) => void)
+    notifyGameOver: () => void
   ) => Promise<void>;
   onPause: () => Promise<void>;
   onResume: () => Promise<void>;
-  onStop: () => Promise<void>;
+  onStop: (vm: Vue) => Promise<void>;
 
   onClassificationReceived: (c: ClassificationData) => void;
   onMotionTrackingDataReceived: (m: GenericHandTrackingData) => void;

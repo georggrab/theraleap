@@ -40,17 +40,13 @@ export default class SpaceShooterGame implements Game {
   private bullets: Bullet[] = [];
   private spaceRocks: SpaceRock[] = [];
 
-  async onStart(
-    config: GameConfiguration,
-    notifyGameOver: (cb: (vm: Vue) => void) => void
-  ) {
+  async onStart(config: GameConfiguration, notifyGameOver: () => void) {
     this.width = config.element.clientWidth;
     this.height = config.element.clientHeight;
     this.x = config.element.clientWidth / 2;
     this.y = config.element.clientHeight - 50;
     this.iP5 = new p5((s: p5) => {
       s.setup = () => {
-        console.log(config.element.clientWidth);
         s.createCanvas(config.element.clientWidth, config.element.clientHeight);
       };
 
@@ -74,9 +70,7 @@ export default class SpaceShooterGame implements Game {
           this.spaceRocks
         );
         if (this.gameOver) {
-          notifyGameOver((vm: Vue) => {
-            vm.$router.push("/games/list");
-          });
+          notifyGameOver();
           s.remove();
         } else {
           drawScene(s);
@@ -89,7 +83,8 @@ export default class SpaceShooterGame implements Game {
     }, config.element);
   }
 
-  async onStop() {
+  async onStop(vm: Vue) {
+    vm.$router.push("/games/list");
     console.log("onStop");
   }
 
