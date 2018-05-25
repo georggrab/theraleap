@@ -32,6 +32,7 @@ const GameSettings = () => import("@/ui/games/GameSettings.vue");
 const GameRoot = () => import("@/ui/games/GameRoot.vue");
 const GameTabs = () => import("@/ui/games/GameTabs.vue");
 const GameExecutor = () => import("@/ui/games/GameExecutor.vue");
+const GameOver = () => import("@/ui/games/GameOver.vue");
 
 import App from "@/ui/App.vue";
 
@@ -143,6 +144,12 @@ export const RootRouter = new VueRouter({
             {
               component: GameExecutor,
               path: "play/:gameIdentifier",
+              props: true
+            },
+            {
+              component: GameOver,
+              path: "game-over",
+              name: "game-over",
               props: true
             }
           ],

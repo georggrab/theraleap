@@ -84,7 +84,14 @@ export default class SpaceShooterGame implements Game {
   }
 
   async onStop(vm: Vue) {
-    vm.$router.push("/games/list");
+    vm.$router.push({
+      name: "game-over",
+      params: {
+        gameIdentifier: "space-shooter",
+        score: this.score,
+        statistics: [12, 23, 23]
+      } as any
+    });
     console.log("onStop");
   }
 

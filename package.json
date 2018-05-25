@@ -36,6 +36,7 @@
   },
   "devDependencies": {
     "@types/chai": "^4.1.2",
+    "@types/d3": "^5.0.0",
     "@types/jasmine": "^2.8.6",
     "@types/jest": "^22.2.3",
     "@types/sinon": "^4.3.1",
@@ -75,6 +76,7 @@
     "worker-loader": "^1.1.1"
   },
   "dependencies": {
+    "d3": "^5.4.0",
     "idb": "^2.1.1",
     "inversify": "^4.11.1",
     "leapjs": "^0.6.4",
