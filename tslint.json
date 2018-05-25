@@ -14,6 +14,9 @@
     // Sometimes used for Dependency Injection
     "no-empty-interface": false,
 
-    "no-console": [true, "log", "debug", "trace"]
+    "no-console": [true, "log", "debug", "trace"],
+
+    // Needed for p5js import
+    "no-var-requires": false
   }
 }

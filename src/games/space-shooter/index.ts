@@ -92,7 +92,6 @@ export default class SpaceShooterGame implements Game {
         statistics: [12, 23, 23]
       } as any
     });
-    console.log("onStop");
   }
 
   public async onPause() {
