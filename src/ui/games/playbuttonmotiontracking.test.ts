@@ -3,8 +3,9 @@ import { expect } from "chai";
 import Vuex from "vuex";
 import PlayButtonMotionTracking from "./PlayButtonMotionTracking.vue";
 
-// @ts-ignore
 import sinon from "sinon";
+
+// @ts-ignore
 import VueMaterial from "vue-material";
 
 const localVue = createLocalVue();
@@ -18,9 +19,9 @@ describe("PlayButtonMotionTracking", () => {
       mocks: {
         $store: {
           getters: {
-            "record/getActiveRecording": undefined,
             "classifier/getActiveClassifier": {},
-            "device/isConnectionHealthy": false
+            "device/isConnectionHealthy": false,
+            "record/getActiveRecording": undefined
           }
         }
       }
@@ -33,9 +34,9 @@ describe("PlayButtonMotionTracking", () => {
       mocks: {
         $store: {
           getters: {
-            "record/getActiveRecording": {},
             "classifier/getActiveClassifier": {},
-            "device/isConnectionHealthy": false
+            "device/isConnectionHealthy": false,
+            "record/getActiveRecording": {}
           }
         }
       }
@@ -48,9 +49,9 @@ describe("PlayButtonMotionTracking", () => {
       mocks: {
         $store: {
           getters: {
-            "record/getActiveRecording": undefined,
             "classifier/getActiveClassifier": {},
-            "device/isConnectionHealthy": true
+            "device/isConnectionHealthy": true,
+            "record/getActiveRecording": undefined
           }
         }
       }

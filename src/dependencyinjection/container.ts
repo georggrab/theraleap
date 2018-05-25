@@ -1,4 +1,5 @@
 import { Container, injectable, interfaces } from "inversify";
+import "reflect-metadata";
 import { Store } from "vuex";
 
 import DIIdent from "@/dependencyinjection/symbols";
