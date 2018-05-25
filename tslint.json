@@ -1,0 +1,19 @@
+{
+  "defaultSeverity": "error",
+  "extends": ["tslint:latest", "tslint-config-prettier"],
+  "jsRules": {},
+  "rulesDirectory": [],
+  "rules": {
+    // Interfaces are used for type annotations
+    "interface-name": false,
+
+    // Root Import with @/ is not supported properly by tslint
+    "no-implicit-dependencies": false,
+    "no-submodule-imports": false,
+
+    // Sometimes used for Dependency Injection
+    "no-empty-interface": false,
+
+    "no-console": [true, "log", "debug", "trace"]
+  }
+}
