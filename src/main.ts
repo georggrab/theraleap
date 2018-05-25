@@ -64,7 +64,7 @@ if ("serviceWorker" in navigator && __prod__) {
 
 export const RootVue = new Vue({
   el: "#app",
+  render: create => create("router-view"),
   router: RootRouter,
-  store: AppContainer.get<IStoreFactory>(DIInject.VUEX_STORE_FACTORY).get(),
-  render: create => create("router-view")
+  store: AppContainer.get<IStoreFactory>(DIInject.VUEX_STORE_FACTORY).get()
 });
