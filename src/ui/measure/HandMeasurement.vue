@@ -87,7 +87,9 @@ export default class HandMeasurement extends Vue {
     ringPinky: undefined
   };
 
-  public mounted() {}
+  public mounted() {
+    this.setupSubscription();
+  }
 
   public beforeDestroy() {
     this.frameSubscription && this.frameSubscription.unsubscribe();
