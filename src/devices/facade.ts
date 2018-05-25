@@ -91,12 +91,16 @@ export abstract class AbstractDeviceFacade implements DeviceFacade {
   private updateStreamSources(store: Store<RootState>) {
     const recordedData = getActiveRecording(store);
     this.clearSubscriptions();
-    if (recordedData) {
+    if (recordedData !== undefined) {
       this.fakeSubscription = createFakeDeviceStream(recordedData).subscribe(
         fakeData => {
           this.getDeviceDriver().digest(fakeData);
         }
       );
+    } else {
+      if (this.fakeSubscription) {
+        this.fakeSubscription.unsubscribe();
+      }
     }
   }
 }

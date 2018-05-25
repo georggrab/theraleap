@@ -163,7 +163,7 @@ export default class DeviceRecorder extends Vue {
       this.restoreInProgress = true;
       const recordings = await this.persistor.getAll();
       recordings.forEach(recording => {
-        addRecording(this.$store, { recording, persistor: undefined })
+        addRecording(this.$store, { recording, persistor: undefined });
       });
       this.restoreInProgress = false;
       this.showRestore = false;
@@ -191,14 +191,14 @@ export default class DeviceRecorder extends Vue {
   }
 
   public downloadRecord(id: number) {
-    const obj = this.recordings[id]
-    const data = new Blob([JSON.stringify(obj)], {type: 'octet/stream'});
+    const obj = this.recordings[id];
+    const data = new Blob([JSON.stringify(obj)], { type: "octet/stream" });
     const url = URL.createObjectURL(data);
-    const anchor = document.createElement('a');
-    anchor.download = `thera-rec--${obj.name.replace(/\s/g, '-')}.json`;
+    const anchor = document.createElement("a");
+    anchor.download = `thera-rec--${obj.name.replace(/\s/g, "-")}.json`;
     anchor.href = url;
-    anchor.target = '_blank';
-    anchor.setAttribute('display', 'none;');
+    anchor.target = "_blank";
+    anchor.setAttribute("display", "none;");
     document.body.appendChild(anchor);
     anchor.click();
   }
@@ -266,6 +266,7 @@ export default class DeviceRecorder extends Vue {
     this.activatedId == id
       ? setActivatedId(this.$store, -1)
       : setActivatedId(this.$store, id);
+    this.deviceFacade.notifyStreamSourceShouldUpdate(this.$store);
   }
 
   public update(id: number, update: Partial<HandTrackRecording>) {
