@@ -149,7 +149,7 @@ body {
 <style lang="scss" scoped>
 .md-app {
   border: 1px solid rgba(#000, 0.12);
-  min-height: 50vh;
+  min-height: 100vh;
 }
 
 .spacer {
