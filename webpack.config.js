@@ -12,18 +12,16 @@ let definitions = {
   __prod__: JSON.stringify(false)
 };
 
-const precachePlugin = new SWPrecacheWebpackPlugin({
+const precachePluginSettings = {
   cacheId: "theraleap",
   filename: "service-worker.js",
   minify: false,
-  stripPrefix: "dist",
-  staticFileGlobs: [
-    "dist/*.html",
-    "dist/*.js",
-    "dist/**/*.json",
-    "dist/*.woff2"
-  ]
-});
+  mergeStaticsConfig: true,
+  stripPrefixMulti: {
+    "dist/": "/theraleap/"
+  },
+  staticFileGlobs: ["dist/*.html", "dist/**/*.json"]
+};
 
 module.exports = {
   entry: "./src/main.ts",
@@ -33,7 +31,7 @@ module.exports = {
   },
   mode: "development",
   devtool: "cheap-module-eval-source-map",
-  plugins: [new BundleAnalyzerPlugin(), precachePlugin],
+  plugins: [new BundleAnalyzerPlugin()],
   resolve: {
     extensions: [".webpack.js", ".web.js", ".ts", ".tsx", ".js", ".vue"],
     plugins: [new TsconfigPathsPlugin({})],
@@ -83,8 +81,12 @@ if (process.env.NODE_ENV === "production") {
   // for Github Pages Deployment
   module.exports.output.publicPath = "/theraleap/";
 
-  precachePlugin.replacePrefix = "/theraleap";
-  precachePlugin.navigateFallback = ["/therleap/index.html"];
+  precachePluginSettings.stripPrefixMulti[module.exports.output.path + "/"] =
+    "/theraleap/";
+  precachePluginSettings.navigateFallback = "/theraleap/index.html";
+  module.exports.plugins.push(
+    new SWPrecacheWebpackPlugin(precachePluginSettings)
+  );
 }
 
 module.exports.plugins.push(new webpack.DefinePlugin(definitions));
