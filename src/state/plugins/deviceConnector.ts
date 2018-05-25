@@ -2,12 +2,12 @@ import { AppContainer } from "@/dependencyinjection";
 import DIIdent from "@/dependencyinjection/symbols";
 
 import { DeviceDriver, DeviceFacade } from "@/devices";
-import {
-  setConnectionState,
-  setDeviceFacade,
-  setConnectionHealth
-} from "../modules/device";
 import { Store } from "vuex";
+import {
+  setConnectionHealth,
+  setConnectionState,
+  setDeviceFacade
+} from "../modules/device";
 import { RootState } from "../store";
 
 export const deviceConnector = (driver: DeviceDriver) => (

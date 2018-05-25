@@ -1,9 +1,9 @@
-import { WireframeGeometry } from 'three';
-import * as THREE from 'three';
+import { WireframeGeometry } from "three";
+import * as THREE from "three";
 
 import { LeapPointable } from "@/devices/leapmotion";
-import { MultiHandScene, HandConfig } from '@/ui/graphics/types';
-import { project3 } from '@/ui/graphics/util';
+import { HandConfig, MultiHandScene } from "@/ui/graphics/types";
+import { project3 } from "@/ui/graphics/util";
 
 /**
  * Create a new Finger Object and add it to the internal scene state

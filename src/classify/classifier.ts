@@ -1,6 +1,6 @@
-import { Observable } from "rxjs";
 import { GenericHandTrackingData } from "@/devices";
 import { HandTrackRecording } from "@/state/modules/record";
+import { Observable } from "rxjs";
 
 export interface ClassificationData {
   actionName: string;

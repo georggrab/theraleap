@@ -1,7 +1,7 @@
+import * as record from "@/state/modules/record";
+import { RootState } from "@/state/store";
 import { Store } from "vuex";
-import { RootState } from '@/state/store';
-import * as record from '@/state/modules/record';
-import * as device from './modules/device';
+import * as device from "./modules/device";
 
 /**
  * Determines whether a salvagable Tracking Data Stream
@@ -12,12 +12,15 @@ import * as device from './modules/device';
  * @param store The VueX Root Store
  */
 export const hasSalvagableStream = (store: Store<RootState>): boolean => {
-    if (record.getActiveRecording(store) !== undefined) {
-      return true;
-    }
-    const deviceConnectionHealthy = device.getConnectionHealthy(store);
-    if (deviceConnectionHealthy === undefined || deviceConnectionHealthy === false) {
-        return false;
-    }
+  if (record.getActiveRecording(store) !== undefined) {
     return true;
-}
+  }
+  const deviceConnectionHealthy = device.getConnectionHealthy(store);
+  if (
+    deviceConnectionHealthy === undefined ||
+    deviceConnectionHealthy === false
+  ) {
+    return false;
+  }
+  return true;
+};

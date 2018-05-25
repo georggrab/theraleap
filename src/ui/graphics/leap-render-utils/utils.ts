@@ -1,34 +1,40 @@
-import * as THREE from 'three';
+import * as THREE from "three";
 
 import { LeapHandTrackingData, LeapInteractionBox } from "@/devices/leapmotion";
-import { MultiHandScene, HandScene } from '@/ui/graphics/types';
+import { HandScene, MultiHandScene } from "@/ui/graphics/types";
 
 /**
  * Compares an incoming Leap Motion Frame to the current state of the Scene.
- * If the incoming Frame does NOT contain objects that ARE currently painted in 
+ * If the incoming Frame does NOT contain objects that ARE currently painted in
  * the scene, delete them from the scene and clean up the internal state.
  * @param frame The Frame to compare to
  * @param scene The current multihand scene state
  */
-export function deleteStaleHands(frame: LeapHandTrackingData, scene: MultiHandScene): {[_: string]: HandScene} {
+export function deleteStaleHands(
+  frame: LeapHandTrackingData,
+  scene: MultiHandScene
+): { [_: string]: HandScene } {
   const shownHands = frame.data.hands.map(hand => hand.type);
-  const validHands: {[s: string]: HandScene} = {};
+  const validHands: { [s: string]: HandScene } = {};
 
   /** Delete the Hand Objects that are not in this frame from the native THREE scene */
   Object.entries(scene.hands).forEach(([type, sceneHand]) => {
     if (!shownHands.includes(type)) {
-      scene.nativeSceneRef.remove(sceneHand.palm, ...Object.values(sceneHand.fingers))
+      scene.nativeSceneRef.remove(
+        sceneHand.palm,
+        ...Object.values(sceneHand.fingers)
+      );
     }
-  })
+  });
 
   /** Build and return new HandScenes containing only the valid (i.e., contained in this frame) Scenes */
-  shownHands.forEach((shownHand) => {
+  shownHands.forEach(shownHand => {
     if (scene.hands.hasOwnProperty(shownHand)) {
       validHands[shownHand] = scene.hands[shownHand];
     }
-  })
+  });
 
-  return validHands
+  return validHands;
 }
 
 /**
@@ -41,7 +47,7 @@ export function deleteStaleHands(frame: LeapHandTrackingData, scene: MultiHandSc
 export function setProjection(iBox: LeapInteractionBox, scene: MultiHandScene) {
   const min = [];
   const max = [];
-  for (let i in [0, 1, 2]) {
+  for (const i in [0, 1, 2]) {
     min.push(iBox.center[i] - iBox.size[i] / 2);
     max.push(iBox.center[i] + iBox.size[i] / 2);
   }
@@ -51,7 +57,7 @@ export function setProjection(iBox: LeapInteractionBox, scene: MultiHandScene) {
 
 /**
  * Create a 3d THREE Vector Object pointing from the center of the
- * THREE Coordinate System to the coordinate (10, 10, 10). Used to 
+ * THREE Coordinate System to the coordinate (10, 10, 10). Used to
  * initialize Vector Objects
  */
 export function makeLineVector(): THREE.Line {
@@ -63,4 +69,3 @@ export function makeLineVector(): THREE.Line {
     new THREE.LineBasicMaterial({ color: 0xff0000 })
   );
 }
-

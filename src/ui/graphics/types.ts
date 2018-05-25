@@ -22,7 +22,9 @@ export interface HandScene {
 }
 
 /** Represents multiple Finger Objects */
-export type MultiFingerScene = { [fingerType: number]: THREE.Object3D };
+export interface MultiFingerScene {
+  [fingerType: number]: THREE.Object3D;
+}
 
 /** Represents multiple Hand Objects */
 export interface MultiHandScene {

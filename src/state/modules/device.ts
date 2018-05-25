@@ -2,8 +2,8 @@ import { ActionContext, Store } from "vuex";
 import { getStoreAccessors } from "vuex-typescript";
 
 import {
-  DeviceFacade,
   DeviceConnectionState,
+  DeviceFacade,
   InitialDeviceState
 } from "@/devices";
 import { RootState } from "@/state/store";

@@ -1,26 +1,26 @@
 import { Container, injectable, interfaces } from "inversify";
 import { Store } from "vuex";
 
+import DIIdent from "@/dependencyinjection/symbols";
 import {
   DeviceDriver,
   DeviceFacade,
   HardwareDriverConnectionSettings
 } from "@/devices";
-import DIIdent from "@/dependencyinjection/symbols";
 import {
-  RootState,
   IStoreFactory,
-  StoreFactory,
   IStoreHolder,
+  RootState,
+  StoreFactory,
   StoreHolder
 } from "@/state/store";
 
-import {
-  KVPersistenceProvider,
-  IndexedDBPersistenceProvider
-} from "@/state/persistence";
-import { ThreadedLeap2Driver } from "@/devices/threadedleap2/threadedleap2driver";
 import { AllPurposeRecordingFacade } from "@/devices/allpurposefacade";
+import { ThreadedLeap2Driver } from "@/devices/threadedleap2/threadedleap2driver";
+import {
+  IndexedDBPersistenceProvider,
+  KVPersistenceProvider
+} from "@/state/persistence";
 
 const AppContainer = new Container();
 AppContainer.bind<DeviceDriver>(DIIdent.SERVICE_MOTION_TRACKING_DEVICE_DRIVER)
@@ -29,9 +29,9 @@ AppContainer.bind<DeviceDriver>(DIIdent.SERVICE_MOTION_TRACKING_DEVICE_DRIVER)
 AppContainer.bind<HardwareDriverConnectionSettings>(
   DIIdent.SETTINGS_HARDWARE_DRIVER_CONNECTION
 ).toConstantValue({
+  frameEventName: "animationFrame",
   host: "127.0.0.1",
   port: 6437,
-  frameEventName: "animationFrame",
 
   enableGestures: false
 });

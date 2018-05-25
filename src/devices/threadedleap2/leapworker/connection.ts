@@ -1,18 +1,18 @@
 import { DeviceConnectionState } from "@/devices/generic";
+import { LeapWorkerContext } from "@/devices/threadedleap2/leapworker/types";
 import {
   WORKER_EVT_CONNECTION_STATE_CHANGED,
   WORKER_EVT_FINALIZED_FRAME_RECEIVED
 } from "@/devices/threadedleap2/messages";
-import { LeapWorkerContext } from "@/devices/threadedleap2/leapworker/types";
-import { processDeviceMessage } from "./process-device-message";
 import { initializePreProcessingPipeline } from "./preprocessing";
+import { processDeviceMessage } from "./process-device-message";
 
 export const handleNoConnection = (ctx: LeapWorkerContext) => {
   updateConnectionState(
     {
-      nativeDeviceDriverOnline: false,
       connectedToNativeDeviceDriver: false,
-      deviceHardwareConnected: undefined
+      deviceHardwareConnected: undefined,
+      nativeDeviceDriverOnline: false
     },
     ctx
   );
@@ -27,8 +27,8 @@ export const updateConnectionState = (
 ) => {
   ctx.connectionState = { ...ctx.connectionState, ...state };
   ctx.postMessage({
-    type: WORKER_EVT_CONNECTION_STATE_CHANGED,
-    payload: ctx.connectionState
+    payload: ctx.connectionState,
+    type: WORKER_EVT_CONNECTION_STATE_CHANGED
   });
 };
 
@@ -51,8 +51,8 @@ export const enterConnectLoop = (timeout: number, ctx: LeapWorkerContext) => {
     }, 1000);
     updateConnectionState(
       {
-        nativeDeviceDriverOnline: true,
-        connectedToNativeDeviceDriver: true
+        connectedToNativeDeviceDriver: true,
+        nativeDeviceDriverOnline: true
       },
       ctx
     );
@@ -66,8 +66,8 @@ export const establishConnection = (ctx: LeapWorkerContext) => {
   initializePreProcessingPipeline(ctx);
   ctx.pipeline.outputSubject.subscribe(next => {
     ctx.postMessage({
-      type: WORKER_EVT_FINALIZED_FRAME_RECEIVED,
-      payload: next
+      payload: next,
+      type: WORKER_EVT_FINALIZED_FRAME_RECEIVED
     });
   });
   if (ctx.configuration === undefined) {

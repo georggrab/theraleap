@@ -1,9 +1,18 @@
-import { LeapHand, LeapHandTrackingData, LeapPointable } from "@/devices/leapmotion";
-import { HandConfig, MultiHandScene } from '@/ui/graphics/types';
+import {
+  LeapHand,
+  LeapHandTrackingData,
+  LeapPointable
+} from "@/devices/leapmotion";
+import { HandConfig, MultiHandScene } from "@/ui/graphics/types";
 
-import { deleteStaleHands, setProjection } from './utils';
-import { initializePalm, updatePalmPosition, updatePalmAlign, updatePalmNormalVector } from './palm';
-import { initializeFinger, updateFinger } from './finger';
+import { initializeFinger, updateFinger } from "./finger";
+import {
+  initializePalm,
+  updatePalmAlign,
+  updatePalmNormalVector,
+  updatePalmPosition
+} from "./palm";
+import { deleteStaleHands, setProjection } from "./utils";
 
 /**
  * Object containing the Default Hand Configuration.
@@ -20,11 +29,15 @@ export function initializeScene(nativeSceneRef: THREE.Scene): MultiHandScene {
   return { nativeSceneRef, hands: {} } as MultiHandScene;
 }
 
-export function render(frame: LeapHandTrackingData, scene: MultiHandScene, config: Partial<HandConfig>) {
-  const mergedConfig = {...DefaultHandConfig, ...config};
+export function render(
+  frame: LeapHandTrackingData,
+  scene: MultiHandScene,
+  config: Partial<HandConfig>
+) {
+  const mergedConfig = { ...DefaultHandConfig, ...config };
 
   setProjection(frame.data.interactionBox, scene);
-  scene.hands = deleteStaleHands(frame, scene)
+  scene.hands = deleteStaleHands(frame, scene);
 
   frame.data.hands.forEach(hand => {
     renderHand(hand, scene, mergedConfig);
@@ -37,7 +50,11 @@ export function render(frame: LeapHandTrackingData, scene: MultiHandScene, confi
   });
 }
 
-export function renderHand(hand: LeapHand, scene: MultiHandScene, config: HandConfig) {
+export function renderHand(
+  hand: LeapHand,
+  scene: MultiHandScene,
+  config: HandConfig
+) {
   if (!scene.hands[hand.type]) {
     scene.hands[hand.type] = initializePalm(hand.type, config);
     scene.nativeSceneRef.add(scene.hands[hand.type].palm);
@@ -45,16 +62,16 @@ export function renderHand(hand: LeapHand, scene: MultiHandScene, config: HandCo
   const position = updatePalmPosition(hand, scene);
   updatePalmAlign(hand, scene);
   updatePalmNormalVector(hand, position, scene);
-  //updatePalmDirectionalVector(hand, scene);
+  // updatePalmDirectionalVector(hand, scene);
 }
 
 export function renderFinger(
   type: string,
   pointable: LeapPointable,
   scene: MultiHandScene,
-  config: HandConfig,
+  config: HandConfig
 ) {
-  let fingers = scene.hands[type].fingers;
+  const fingers = scene.hands[type].fingers;
   if (!fingers[pointable.type]) {
     fingers[pointable.type] = initializeFinger(pointable, scene, config);
     scene.nativeSceneRef.add(fingers[pointable.type]);

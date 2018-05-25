@@ -10,9 +10,9 @@ export const tickBullets = (b: Bullet[], ctx: p5) => {
       bullet.y > 0
     ) {
       const newBullet = {
+        speed: bullet.speed,
         x: bullet.x,
-        y: bullet.y - bullet.speed,
-        speed: bullet.speed
+        y: bullet.y - bullet.speed
       };
       newBullets.push(newBullet);
     }
@@ -35,14 +35,14 @@ export const randomIntInRange = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min)) + min;
 };
 
-export const createNewRock = (ctx: p5) => {
+export const createNewRock = (ctx: p5): SpaceRock => {
   return {
-    x: randomIntInRange(0, ctx.width),
-    y: -50,
+    edges: randomIntInRange(3, 10),
     speedX: randomIntInRange(-2, 2),
     speedY: randomIntInRange(2, 6),
-    edges: randomIntInRange(3, 10)
-  } as SpaceRock;
+    x: randomIntInRange(0, ctx.width),
+    y: -50
+  };
 };
 
 export const tickSpaceRocks = (s: SpaceRock[], ctx: p5) => {
@@ -59,12 +59,12 @@ export const tickSpaceRocks = (s: SpaceRock[], ctx: p5) => {
       rock.y < ctx.height + 100
     ) {
       newRocks.push({
-        x: rock.x + rock.speedX,
-        y: rock.y + rock.speedY,
+        edges: rock.edges,
         speedX: rock.speedX,
         speedY: rock.speedY + randomIntInRange(0, 1),
-        edges: rock.edges
-      } as SpaceRock);
+        x: rock.x + rock.speedX,
+        y: rock.y + rock.speedY
+      });
     }
   });
   return newRocks;

@@ -1,15 +1,14 @@
+import { PreProcessor, PreProcessorConfig } from "@/processing/types";
 import { Operator } from "rxjs";
-import { PreProcessorConfig } from "processing/types";
-import { PreProcessor } from "@/processing/types";
 import {
-  DropNFramesPreProcessorId,
-  DropNFramesOperator
+  DropNFramesOperator,
+  DropNFramesPreProcessorId
 } from "./generic/dropnframes";
+import { FPSThrottler, FPSThrottlerId } from "./generic/fpsthrottler";
 import {
   DestroyUselessFramesId,
   DestroyUselessFramesOperator
 } from "./leap/destroyuselessframes";
-import { FPSThrottlerId, FPSThrottler } from "./generic/fpsthrottler";
 
 /**
  * All Preprocessors ought to be registered here, so that device drivers or facades

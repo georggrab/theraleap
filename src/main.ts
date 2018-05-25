@@ -1,22 +1,22 @@
 import Vue from "vue";
 import {
-  MdCard,
   MdApp,
-  MdSwitch,
-  MdSubheader,
-  MdField,
-  MdDivider,
-  MdIcon,
-  MdProgress,
-  MdTooltip,
-  MdTabs,
-  MdContent,
   MdButton,
-  MdList,
+  MdCard,
+  MdContent,
+  MdDivider,
   MdDrawer,
-  MdToolbar,
   MdEmptyState,
-  MdSnackbar
+  MdField,
+  MdIcon,
+  MdList,
+  MdProgress,
+  MdSnackbar,
+  MdSubheader,
+  MdSwitch,
+  MdTabs,
+  MdToolbar,
+  MdTooltip
   // @ts-ignore
 } from "vue-material/dist/components";
 
@@ -49,10 +49,10 @@ Vue.use(Vuex);
 import VueOffline from "vue-offline";
 Vue.use(VueOffline);
 
-import { RootRouter } from "@/router";
-import { DeviceDriver } from "@/devices";
 import { AppContainer } from "@/dependencyinjection";
 import DIInject from "@/dependencyinjection/symbols";
+import { DeviceDriver } from "@/devices";
+import { RootRouter } from "@/router";
 import { IStoreFactory } from "state/store";
 
 declare const __path__: string;

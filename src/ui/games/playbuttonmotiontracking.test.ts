@@ -1,11 +1,11 @@
-import { mount, shallowMount, createLocalVue } from "@vue/test-utils";
+import { createLocalVue, mount, shallowMount } from "@vue/test-utils";
 import { expect } from "chai";
-import PlayButtonMotionTracking from "./PlayButtonMotionTracking.vue";
 import Vuex from "vuex";
+import PlayButtonMotionTracking from "./PlayButtonMotionTracking.vue";
 
 // @ts-ignore
-import VueMaterial from "vue-material";
 import sinon from "sinon";
+import VueMaterial from "vue-material";
 
 const localVue = createLocalVue();
 localVue.use(Vuex);

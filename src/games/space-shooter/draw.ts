@@ -16,11 +16,11 @@ export const drawBullets = (bullets: Bullet[], ctx: p5) => {
 };
 
 const polygon = (x: number, y: number, radius: number, n: number, ctx: p5) => {
-  var angle = Math.PI * 2 / n;
+  let angle = Math.PI * 2 / n;
   ctx.beginShape();
-  for (var a = 0; a < Math.PI * 2; a += angle) {
-    var sx = x + ctx.cos(a) * radius;
-    var sy = y + ctx.sin(a) * radius;
+  for (let a = 0; a < Math.PI * 2; a += angle) {
+    let sx = x + ctx.cos(a) * radius;
+    let sy = y + ctx.sin(a) * radius;
     ctx.vertex(sx, sy);
   }
   ctx.endShape(ctx.CLOSE);

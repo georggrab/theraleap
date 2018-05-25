@@ -1,17 +1,16 @@
-import { EventEmitter, Controller } from "leapjs";
-import { Observable, Observer, fromEvent, Subject, Subscription } from "rxjs";
-import { injectable, inject } from "inversify";
-import { isEqual } from "underscore";
+import { inject, injectable } from "inversify";
 import * as leap from "leapjs";
+import { fromEvent, Observable, Observer, Subject, Subscription } from "rxjs";
+import { isEqual } from "underscore";
 
-import DIIdent from "@/dependencyinjection/symbols";
-import { PreProcessorConfig } from "@/processing/types";
 import { ClassifierConfig } from "@/classify";
+import DIIdent from "@/dependencyinjection/symbols";
 import {
-  DeviceDriver,
   DeviceConnectionState,
+  DeviceDriver,
   GenericHandTrackingData
 } from "@/devices";
+import { PreProcessorConfig } from "@/processing/types";
 
 export const LEAP_MOTION_DEVICE_NAME = "Leap Motion";
 
@@ -19,7 +18,7 @@ export const LEAP_MOTION_DEVICE_NAME = "Leap Motion";
 export class LeapDriver implements DeviceDriver {
   public deviceName = LEAP_MOTION_DEVICE_NAME;
 
-  private controller: Controller;
+  private controller: leap.Controller;
   private monitor: Observable<DeviceConnectionState> | undefined;
   private connectionActive: boolean = false;
   private deviceConnected: boolean | undefined;
@@ -70,7 +69,7 @@ export class LeapDriver implements DeviceDriver {
 
   public enableClassification(classifiers: string[]) {
     // TODO implement non threaded classification
-    throw "Not Implemented";
+    throw new Error("Not Implemented");
   }
 
   public getClassificationData() {
@@ -79,13 +78,14 @@ export class LeapDriver implements DeviceDriver {
   }
 
   public async getDeviceConnectionState(): Promise<DeviceConnectionState> {
-    return {
-      nativeDeviceDriverOnline: await this.isLeapServerRunning(1000),
+    const state: DeviceConnectionState = {
       connectedToNativeDeviceDriver: this.connectionActive,
       deviceHardwareConnected: this.connectionActive
         ? this.controller.streaming()
-        : undefined
-    } as DeviceConnectionState;
+        : undefined,
+      nativeDeviceDriverOnline: await this.isLeapServerRunning(1000)
+    };
+    return state;
   }
 
   public establishConnection(
@@ -97,7 +97,7 @@ export class LeapDriver implements DeviceDriver {
         let previousConnectionState = await this.getDeviceConnectionState();
         observer.next(previousConnectionState);
         window.setInterval(async () => {
-          let connectionState = await this.getDeviceConnectionState();
+          const connectionState = await this.getDeviceConnectionState();
           if (!isEqual(connectionState, previousConnectionState)) {
             previousConnectionState = connectionState;
             this.connect();

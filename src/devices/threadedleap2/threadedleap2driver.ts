@@ -1,27 +1,27 @@
-import { injectable, inject } from "inversify";
-import { Observable, Subject, BehaviorSubject } from "rxjs";
+import { inject, injectable } from "inversify";
+import { BehaviorSubject, Observable, Subject } from "rxjs";
 
-import LeapWorker from "worker-loader!./leapworker/index.ts";
-import {
-  WORKER_CMD_ESTABLISH_CONNECTION,
-  WORKER_EVT_CONNECTION_STATE_CHANGED,
-  WORKER_EVT_FINALIZED_FRAME_RECEIVED,
-  WORKER_EVT_CLASSIFICATION,
-  WORKER_CMD_UPDATE_CONFIGURATION,
-  WORKER_CMD_UPDATE_PREPROCESS,
-  WORKER_CMD_ENABLE_CLASSIFICATION,
-  WORKER_CMD_UPDATE_CLASSIFIER,
-  WORKER_CMD_DIGEST
-} from "./messages";
+import { ClassificationData, ClassifierConfig } from "@/classify";
 import DIIdent from "@/dependencyinjection/symbols";
 import {
-  GenericHandTrackingData,
-  DeviceDriver,
   DeviceConnectionState,
+  DeviceDriver,
+  GenericHandTrackingData,
   InitialDeviceState
 } from "@/devices/generic";
 import { PreProcessorConfig } from "@/processing/types";
-import { ClassifierConfig, ClassificationData } from "@/classify";
+import LeapWorker from "worker-loader!./leapworker/index.ts";
+import {
+  WORKER_CMD_DIGEST,
+  WORKER_CMD_ENABLE_CLASSIFICATION,
+  WORKER_CMD_ESTABLISH_CONNECTION,
+  WORKER_CMD_UPDATE_CLASSIFIER,
+  WORKER_CMD_UPDATE_CONFIGURATION,
+  WORKER_CMD_UPDATE_PREPROCESS,
+  WORKER_EVT_CLASSIFICATION,
+  WORKER_EVT_CONNECTION_STATE_CHANGED,
+  WORKER_EVT_FINALIZED_FRAME_RECEIVED
+} from "./messages";
 
 @injectable()
 export class ThreadedLeap2Driver implements DeviceDriver {

@@ -1,9 +1,9 @@
 import { Observable, Subject } from "rxjs";
 
-import { PreProcessorConfig } from "@/processing/types";
-import { LeapWorkerContext } from "@/devices/threadedleap2/leapworker/types";
 import { GenericHandTrackingData } from "@/devices";
+import { LeapWorkerContext } from "@/devices/threadedleap2/leapworker/types";
 import { PreProcessingResolver } from "@/processing/resolver";
+import { PreProcessorConfig } from "@/processing/types";
 import { updateClassifier } from "./classification";
 
 export const initializePreProcessingPipeline = (ctx: LeapWorkerContext) => {

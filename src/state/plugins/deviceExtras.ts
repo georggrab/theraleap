@@ -3,19 +3,19 @@ import DIIdent from "@/dependencyinjection/symbols";
 
 import { DeviceDriver, DeviceFacade } from "@/devices";
 import {
+  DeviceDataTransferRate,
+  setConnectionHealth,
   setConnectionState,
   setDeviceFacade,
-  setConnectionHealth,
-  updateDeviceDataTransferRate,
-  DeviceDataTransferRate
+  updateDeviceDataTransferRate
 } from "../modules/device";
 
-//@ts-ignore
+// @ts-ignore
 import { sizeof } from "sizeof";
 import { Store } from "vuex";
-import { RootState } from "../store";
 import { getActiveRecording } from "../modules/record";
-import { hasSalvagableStream } from '../utils';
+import { RootState } from "../store";
+import { hasSalvagableStream } from "../utils";
 
 export const deviceDataTransferRate = (facade: DeviceFacade) => (
   store: Store<RootState>

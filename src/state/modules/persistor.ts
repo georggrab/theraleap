@@ -1,7 +1,7 @@
 import { getStoreAccessors } from "vuex-typescript";
 
-import { RootState } from "@/state/store";
 import { KVPersistenceProvider } from "@/state/persistence";
+import { RootState } from "@/state/store";
 
 export interface PersistorState {
   persistor: KVPersistenceProvider<string, any> | undefined;

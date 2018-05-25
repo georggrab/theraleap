@@ -1,4 +1,6 @@
 {
   "git.ignoreLimitWarning": true,
-  "C_Cpp.intelliSenseEngineFallback": "Disabled"
+  "C_Cpp.intelliSenseEngineFallback": "Disabled",
+  "tslint.enable": true,
+  "tslint.typeCheck": true
 }

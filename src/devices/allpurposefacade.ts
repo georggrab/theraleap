@@ -1,14 +1,14 @@
-import { injectable, inject, LazyServiceIdentifer } from "inversify";
+import { inject, injectable, LazyServiceIdentifer } from "inversify";
 import { Observable } from "rxjs";
 
+import DIIdent from "@/dependencyinjection/symbols";
+import { AbstractDeviceFacade } from "@/devices/facade";
 import {
-  DeviceDriver,
   DeviceConnectionState,
+  DeviceDriver,
   DeviceFacade,
   GenericHandTrackingData
 } from "@/devices/generic";
-import { AbstractDeviceFacade } from "@/devices/facade";
-import DIIdent from "@/dependencyinjection/symbols";
 import { IStoreFactory, IStoreHolder } from "state/store";
 
 @injectable()

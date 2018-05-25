@@ -1,24 +1,24 @@
+import { inject, injectable } from "inversify";
 import {
   Observable,
-  Subscriber,
+  ReplaySubject,
   Subject,
-  Subscription,
-  ReplaySubject
+  Subscriber,
+  Subscription
 } from "rxjs";
 import { Store } from "vuex";
-import { injectable, inject } from "inversify";
 
+import DIIdent from "@/dependencyinjection/symbols";
 import {
-  DeviceFacade,
   DeviceDriver,
+  DeviceFacade,
   GenericHandTrackingData
 } from "@/devices/generic";
-import DIIdent from "@/dependencyinjection/symbols";
 import { IStoreFactory, IStoreHolder, RootState } from "@/state/store";
 
-import { getActiveRecording, HandTrackRecording } from "@/state/modules/record";
-import { PreProcessorConfig } from "@/processing/types";
 import { ClassifierConfig } from "@/classify";
+import { PreProcessorConfig } from "@/processing/types";
+import { getActiveRecording, HandTrackRecording } from "@/state/modules/record";
 
 async function replayInfinite(
   subscriber: Subscriber<GenericHandTrackingData>,
@@ -53,8 +53,8 @@ export function createFakeDeviceStream(
 export abstract class AbstractDeviceFacade implements DeviceFacade {
   private fakeSubscription: Subscription | undefined;
 
-  abstract getDeviceDriver(): DeviceDriver;
-  abstract getDeviceTrackingData():
+  public abstract getDeviceDriver(): DeviceDriver;
+  public abstract getDeviceTrackingData():
     | Observable<GenericHandTrackingData>
     | undefined;
 
@@ -67,6 +67,18 @@ export abstract class AbstractDeviceFacade implements DeviceFacade {
   ): Observable<GenericHandTrackingData> | undefined {
     this.updateStreamSources(store);
     return this.getDeviceTrackingData();
+  }
+
+  public updatePreProcessors(configs: PreProcessorConfig[]) {
+    this.getDeviceDriver().updatePreProcessors(configs);
+  }
+
+  public updateClassifier(config: ClassifierConfig) {
+    this.getDeviceDriver().updateClassifier(config);
+  }
+
+  public getClassificationStream() {
+    return this.getDeviceDriver().getClassificationData();
   }
 
   private clearSubscriptions() {
@@ -86,17 +98,5 @@ export abstract class AbstractDeviceFacade implements DeviceFacade {
         }
       );
     }
-  }
-
-  public updatePreProcessors(configs: PreProcessorConfig[]) {
-    this.getDeviceDriver().updatePreProcessors(configs);
-  }
-
-  public updateClassifier(config: ClassifierConfig) {
-    this.getDeviceDriver().updateClassifier(config);
-  }
-
-  public getClassificationStream() {
-    return this.getDeviceDriver().getClassificationData();
   }
 }

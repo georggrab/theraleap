@@ -1,9 +1,9 @@
-import { Subject, Subscription } from "rxjs";
+import { ClassificationData, ClassifierConfig } from "@/classify";
 import {
   DeviceConnectionState,
   GenericHandTrackingData
 } from "@/devices/generic";
-import { ClassificationData, ClassifierConfig } from "@/classify";
+import { Subject, Subscription } from "rxjs";
 
 export interface LeapWorkerContext extends Worker {
   connectionState: DeviceConnectionState;

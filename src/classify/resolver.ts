@@ -1,10 +1,10 @@
-import { Operator } from "rxjs";
-import { Classifier, ClassificationData, ClassifierConfig } from "./classifier";
 import { GenericHandTrackingData } from "@/devices";
+import { Operator } from "rxjs";
+import { ClassificationData, Classifier, ClassifierConfig } from "./classifier";
 
 import {
-  ThumbSpreadClassifierId,
-  ThumbSpreadClassifier
+  ThumbSpreadClassifier,
+  ThumbSpreadClassifierId
 } from "@/classify/classifiers/thumbspread";
 
 export const ClassifierRegistry: {

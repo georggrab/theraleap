@@ -31,7 +31,7 @@ export function project3(
   projection: { projectionFrom: Projection3; projectionTo: Projection3 }
 ): number[] {
   const projected = [];
-  for (let i in [0, 1, 2]) {
+  for (const i in [0, 1, 2]) {
     projected.push(
       project(
         vector3[i],

@@ -1,13 +1,13 @@
-import * as THREE from 'three';
-import { Geometry } from 'three';
+import * as THREE from "three";
+import { Geometry } from "three";
 
 import { LeapHand } from "@/devices/leapmotion";
+import { HandConfig, HandScene, MultiHandScene } from "@/ui/graphics/types";
 import { project3 } from "@/ui/graphics/util";
-import { MultiHandScene, HandConfig, HandScene } from '@/ui/graphics/types';
 
 export function initializePalm(
   type: string,
-  config: Partial<HandConfig>,
+  config: Partial<HandConfig>
 ): HandScene {
   const mesh = new THREE.Object3D();
   const geometry = new THREE.CircleBufferGeometry(10, 32, 0, 2 * Math.PI);
@@ -46,8 +46,10 @@ export function initializePalm(
   } as HandScene;
 }
 
-
-export function updatePalmPosition(hand: LeapHand, scene: MultiHandScene): number[] {
+export function updatePalmPosition(
+  hand: LeapHand,
+  scene: MultiHandScene
+): number[] {
   const [x, y, z] = project3(hand.palmPosition, scene);
   scene.hands[hand.type].palm.position.set(x, y, z);
   return [x, y, z];

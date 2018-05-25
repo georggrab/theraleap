@@ -1,9 +1,9 @@
 import { Observable, Subscriber } from "rxjs";
 import { Store } from "vuex";
 
-import { RootState } from "@/state/store";
+import { ClassificationData, ClassifierConfig } from "@/classify";
 import { PreProcessorConfig } from "@/processing/types";
-import { ClassifierConfig, ClassificationData } from "@/classify";
+import { RootState } from "@/state/store";
 
 /**
  * Represents to current connection State of the
@@ -35,11 +35,11 @@ export interface GenericHandTrackingData {
 
 export interface HardwareDriverConnectionSettings {}
 
-export const InitialDeviceState = {
-  deviceHardwareConnected: undefined,
+export const InitialDeviceState: DeviceConnectionState = {
   connectedToNativeDeviceDriver: false,
+  deviceHardwareConnected: undefined,
   nativeDeviceDriverOnline: undefined
-} as DeviceConnectionState;
+};
 
 export interface DeviceDriver {
   deviceName: string;

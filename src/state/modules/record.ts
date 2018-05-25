@@ -1,10 +1,10 @@
 import Vue from "vue";
 import { getStoreAccessors } from "vuex-typescript";
 
-import { DeviceState } from "@/state/modules/device";
 import { GenericHandTrackingData } from "@/devices/generic";
-import { RootState } from "@/state/store";
+import { DeviceState } from "@/state/modules/device";
 import { KVPersistenceProvider } from "@/state/persistence";
+import { RootState } from "@/state/store";
 
 export interface RecordState {
   recordings: { [id: string]: HandTrackRecording };

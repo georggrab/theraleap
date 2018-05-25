@@ -1,5 +1,5 @@
-import { injectable } from "inversify";
 import idb from "idb";
+import { injectable } from "inversify";
 
 import { KVPersistenceProvider } from "@/state/persistence";
 
@@ -19,17 +19,17 @@ export class IndexedDBPersistenceProvider<K, V extends Object>
 
   public async get(key: K): Promise<V> {
     const store = await this.getObjectStore("readonly");
-    return await store.get(key);
+    return store.get(key);
   }
 
   public async getAll(): Promise<V[]> {
     const store = await this.getObjectStore("readonly");
-    return await store.getAll();
+    return store.getAll();
   }
 
   public async count(): Promise<number> {
     const store = await this.getObjectStore("readonly");
-    return await store.count();
+    return store.count();
   }
 
   public async put(key: K, val: V): Promise<void> {
@@ -45,7 +45,7 @@ export class IndexedDBPersistenceProvider<K, V extends Object>
 
   public async delete(key: K): Promise<void> {
     const store = await this.getObjectStore("readwrite");
-    return await store.delete(key.toString());
+    return store.delete(key.toString());
   }
 
   public async clear(): Promise<number> {

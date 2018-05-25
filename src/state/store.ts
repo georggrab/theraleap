@@ -1,23 +1,23 @@
+import { inject, injectable } from "inversify";
 import Vuex, { Store } from "vuex";
-import { injectable, inject } from "inversify";
 
 import DIIdent from "@/dependencyinjection/symbols";
 
-import { DeviceState, device } from "@/state/modules/device";
-import { DebugState, debug } from "@/state/modules/debug";
-import { RecordState, record } from "@/state/modules/record";
-import { GraphicsState, graphics } from "@/state/modules/graphics";
-import { PersistorState, persist } from "./modules/persistor";
-import { ClassifierState, classifier } from "./modules/classifiers";
-import { PreProcessorsState, preprocessors } from "./modules/preprocessors";
+import { debug, DebugState } from "@/state/modules/debug";
+import { device, DeviceState } from "@/state/modules/device";
+import { graphics, GraphicsState } from "@/state/modules/graphics";
+import { record, RecordState } from "@/state/modules/record";
+import { classifier, ClassifierState } from "./modules/classifiers";
+import { persist, PersistorState } from "./modules/persistor";
+import { preprocessors, PreProcessorsState } from "./modules/preprocessors";
 
+import { DeviceDriver, DeviceFacade } from "devices";
+import { KVPersistenceProvider } from "./persistence";
 import {
   deviceConnector,
   deviceFacadeConnector
 } from "./plugins/deviceConnector";
 import { deviceDataTransferRate } from "./plugins/deviceExtras";
-import { DeviceFacade, DeviceDriver } from "devices";
-import { KVPersistenceProvider } from "./persistence";
 import { initializePersistence } from "./plugins/persistor";
 
 export interface RootState {
@@ -55,7 +55,7 @@ export class StoreFactory implements IStoreFactory {
     private persistor: KVPersistenceProvider<string, any>
   ) {}
 
-  get(): Store<RootState> {
+  public get(): Store<RootState> {
     if (!this.storeHolder.store) {
       this.storeHolder.store = new Vuex.Store<RootState>({
         modules: {

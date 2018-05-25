@@ -1,8 +1,8 @@
 import { ClassifierConfig, ClassifyResolver } from "@/classify";
-import { LeapWorkerContext } from "@/devices/threadedleap2/leapworker/types";
-import { Subject, Observable } from "rxjs";
 import { ClassificationData } from "@/classify/classifier";
 import { GenericHandTrackingData } from "@/devices";
+import { LeapWorkerContext } from "@/devices/threadedleap2/leapworker/types";
+import { Observable, Subject } from "rxjs";
 import { WORKER_EVT_CLASSIFICATION } from "../messages";
 
 export const updateClassifier = (
@@ -26,10 +26,9 @@ export const updateClassifier = (
     );
     ctx.pipeline.classifyOutputSubscription = ctx.pipeline.classifySubject.subscribe(
       data => {
-        console.log(data);
         ctx.postMessage({
-          type: WORKER_EVT_CLASSIFICATION,
-          payload: data
+          payload: data,
+          type: WORKER_EVT_CLASSIFICATION
         });
       }
     );

@@ -1,6 +1,6 @@
-import Vue from "vue";
 import { mount, shallowMount } from "@vue/test-utils";
 import { expect } from "chai";
+import Vue from "vue";
 import DeviceTransferRate from "./DeviceTransferRate.vue";
 
 describe("DeviceTransferRate", () => {

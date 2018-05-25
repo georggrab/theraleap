@@ -2,15 +2,15 @@ import Vue from "vue";
 import { ActionContext, Store } from "vuex";
 import { getStoreAccessors } from "vuex-typescript";
 
-import { RootState } from "@/state/store";
+import { DropNFramesPreProcessorId } from "@/processing/generic/dropnframes";
+import { FPSThrottlerId } from "@/processing/generic/fpsthrottler";
+import { DestroyUselessFramesId } from "@/processing/leap/destroyuselessframes";
 import {
   PreProcessorConfigMap,
   PreProcessorDescription
 } from "@/processing/types";
-import { DropNFramesPreProcessorId } from "@/processing/generic/dropnframes";
 import { PreProcessorConfig } from "@/processing/types";
-import { DestroyUselessFramesId } from "@/processing/leap/destroyuselessframes";
-import { FPSThrottlerId } from "@/processing/generic/fpsthrottler";
+import { RootState } from "@/state/store";
 
 export interface PreProcessorsState {
   preprocessors: PreProcessorConfigMap;
