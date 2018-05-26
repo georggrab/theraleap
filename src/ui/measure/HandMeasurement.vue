@@ -132,7 +132,7 @@ export default class HandMeasurement extends Vue {
               );
             }
           }),
-          bufferTime(windowSize, 50)
+          bufferTime(windowSize, 500)
         )
         .subscribe(this.performMeasurement);
     }
@@ -145,18 +145,30 @@ export default class HandMeasurement extends Vue {
   private performMeasurement(data: GenericHandTrackingData[]) {
     if (this.deviceName !== LEAP_MOTION_DEVICE_NAME) return;
     const frames: LeapHandTrackingData[] = data;
+    let numFramesProcessed = 0;
+    const angles = {
+      thumbIndex: 0,
+      indexMiddle: 0,
+      middleRing: 0,
+      ringPinky: 0
+    };
     frames.forEach(frame => {
       const sortedPointables = sortPointables(frame);
       if (sortedPointables !== undefined) {
+        numFramesProcessed++;
         const [thumb, index, middle, ring, pinky] = sortedPointables;
-        this.angles = {
-          thumbIndex: calculatePointableAngle(thumb, index),
-          indexMiddle: calculatePointableAngle(index, middle),
-          middleRing: calculatePointableAngle(middle, ring),
-          ringPinky: calculatePointableAngle(ring, pinky)
-        };
+        angles.thumbIndex += calculatePointableAngle(thumb, index);
+        angles.indexMiddle += calculatePointableAngle(index, middle);
+        angles.middleRing += calculatePointableAngle(middle, ring);
+        angles.ringPinky += calculatePointableAngle(ring, pinky);
       }
     });
+    this.angles = {
+      thumbIndex: angles.thumbIndex / numFramesProcessed,
+      indexMiddle: angles.indexMiddle / numFramesProcessed,
+      middleRing: angles.middleRing / numFramesProcessed,
+      ringPinky: angles.ringPinky / numFramesProcessed
+    };
   }
 
   private deviceName = device.getDeviceFacade(this.$store).getDeviceDriver()
