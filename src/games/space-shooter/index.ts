@@ -40,6 +40,8 @@ export default class SpaceShooterGame implements Game {
   private bullets: Bullet[] = [];
   private spaceRocks: SpaceRock[] = [];
 
+  private metricsArray: GenericHandTrackingData[] = [];
+
   public async onStart(config: GameConfiguration, notifyGameOver: () => void) {
     this.width = config.element.clientWidth;
     this.height = config.element.clientHeight;
@@ -89,7 +91,7 @@ export default class SpaceShooterGame implements Game {
       params: {
         gameIdentifier: "space-shooter",
         score: this.score,
-        statistics: [12, 23, 23]
+        statistics: this.metricsArray
       } as any
     });
   }
@@ -107,6 +109,9 @@ export default class SpaceShooterGame implements Game {
   }
 
   public onMotionTrackingDataReceived(m: GenericHandTrackingData) {
+    if (this.metricsArray.length < 1000) {
+      this.metricsArray.push(m);
+    }
     const leap = m.data as LeapDeviceFrame;
     const iBox = leap.interactionBox;
     if (leap.hands && leap.hands.length >= 1) {

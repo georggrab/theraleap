@@ -41,7 +41,9 @@ export default class ClassifyBadge extends Vue {
 .disappear-immediate-enter-active {
   transition: opacity 0.5s;
 }
-.disappear-immediate-enter-to {
+.disappear-immediate-enter-to,
+.disappear-immediate-leave,
+.disappear-immediate-leave-to {
   opacity: 0;
 }
 </style>

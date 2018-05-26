@@ -69,7 +69,7 @@ import {
   },
   filters: {
     displayAngle: (value: number | undefined) => {
-      if (value === undefined) {
+      if (value === undefined || Number.isNaN(value)) {
         return "unknown";
       } else {
         return (

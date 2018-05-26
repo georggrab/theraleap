@@ -6,7 +6,7 @@
 
       <md-card-header>
         <div class="md-title">Space Shooter</div>
-        <div class="md-subhead">Destroy evil Rocks with the epic power of your hand!</div>
+        <div class="md-subhead">Destroy evil Polygons with the epic power of your hand!</div>
       </md-card-header>
 
       <md-card-content>
