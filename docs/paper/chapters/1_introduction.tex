@@ -1,7 +1,27 @@
 \chapter{Introduction}
 \section{Problem description}
-hand therapy from home, refer to previous works
+In 2016, approximately 60.000 german residents have been hospitalized due to hand or wrist injuries \cite{DeStatisHandInjuries}. The initial treatment of such injuries is often followed by a lengthy recovery phase in which ergotherapeutic treatment occurs in order to further aid recovery. As ergo therapy sessions are usually held in one-on-one sessions, this results in a significant time and resource both by the patient and the treating clinic. Additionally, the sessions themselves are often described by patients as boring and unmotivating by their repetitive nature.
+
+Ergo therapists of the Katharinenhospital Stuttgart are currently researching alternative treatment methods that could be an improvement to all three of these fundamental problems. The aim of the research is to introduce various gamification aspects to the recovery sessions. The patients should be enabled to do repetitive parts of the recovery exercises at home by means of successfully executing them while controlling video games. This methodology of executing prevention and rehabilitation measures is an active and well known field of research commonly referred to as Exergames\cite{RehaCareExergames}. In a more general sense, games that are designed with a second primary purpose (apart from entertainment) are referred to as serious games \cite{SeriousGamesBook}. 
+
 \section{Requirement Analysis}
+Outsourcing recovery exercises into a space where no direct therapeutic supervision is available generates a series of challenges that have to be overcome before successfully integrating Exergames in the recovery sessions. In the software development industry, the challenges a system has to solve in order to become useful are called functional requirements.  The most notable functional requirements are outlined as follows.
+
+\subsection{Functional Requirements}
+
+\begin{description}[align=left]
+    \item [Domain Virtualization] In order for Exergames to fundamentally function, they require an accurate, real-time virtualized representation of the problem domain. For example, in order to develop Exergames for trating hand injuries, a virtual representation of the hand must be available.
+
+    \item [Exercise Classification] The most important capability of an Exergame is to correctly classify whether a recovery exercise has been executed. This information can then be used to control the Exergames.
+
+    \item [Patient Adaptibility] One-on-one therapy sessions in ergo therapy are required because of the huge variety of different hand injuries, each requiring a different set of recovery exercises. Additionally, the recovery exercises themselves have to be adaptable to how far the patient has progressed so far in recovery. For example, if the patient is making progress in recovery, the exercises have to be increased in difficulty in order to remain effective.
+
+    \item [Monitorability] The ergo therapist has to be able to view monitoring information related to the patients playing activity. Most fundamentally, the ergo therapist should be able to view the number of times and total duration of Exergames played in order to verify if the agreed upon exercise volume has been completed. Additionally, specific information that aid the ergo therapist in assessing the recovery progress of the patient should be available.
+
+    \item [Modularization] On a technical level, the program logic responsible for classifying if an exercise has been completed should be separated from the game logic. This would pose the advantage of introducing a modular aspect to the system, as both exercise classifiers and games could be exchanged.
+\end{description}
+
+
 \section{Solution Design}
 \subsection{Available Alternatives}
 "dumb" web platform for visualizing, main work happening in server processes running locally
