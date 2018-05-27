@@ -17,6 +17,16 @@
 \usepackage[titletoc]{appendix}
 \usepackage[acronym]{glossaries}
 \usepackage{enumitem}
+\usepackage{adjustbox}
+\usepackage{array}
+
+\newcolumntype{R}[2]{%
+    >{\adjustbox{angle=#1,lap=\width-(#2)}\bgroup}%
+    l%
+    <{\egroup}%
+}
+\newcommand*\rot{\multicolumn{1}{R{45}{1em}}}% no optional argument here, please!
+
 
 \graphicspath{{images/}}    % location of images and graphics
 \logofile{dhbw-logo}				% logo file = images/logo.pdf (use \logofile{} for no logo)

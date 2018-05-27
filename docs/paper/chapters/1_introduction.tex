@@ -25,7 +25,8 @@ The most important capability of an Exergame is to correctly classify whether a 
 One-on-one therapy sessions in ergo therapy are required because of the large variety of different hand injuries, each requiring a different set of recovery exercises. Additionally, the classification logic (see \ref{sec:exercise-classification}) for the recovery exercises themselves have to be adaptable to how far the patient has progressed so far in recovery. For example, if the patient is progressing well in recovery, the relevant exercise has to be increased in difficulty in order for the treatment to remain effective.
 
 \subsubsection{Monitorability}
-The ergo therapist has to be able to view monitoring information related to the patients playing activity. Most fundamentally, the therapist should be able to view the number of times and total duration of Exergames played in order to verify if the agreed upon exercise volume has been completed. Additionally, specific information that aid the ergo therapist in assessing the recovery progress of the patient should be available. If the therapist determines that the current exercise has to be adapted in some way, or for exchanging other kinds of information with the patient, such as providing hints or agreeing on the next physical appointment date, this should be possible through an integrated messaging platform.
+\label{sec:req:monitorability}
+The ergo therapist has to be able to view monitoring information related to the patients playing activity. Most fundamentally, the therapist should be able to view the number of times and total duration of Exergames played in order to verify if the agreed upon exercise volume has been completed. Additionally, specific information that aid the ergo therapist in assessing the recovery progress of the patient should be available. If the therapist determines that the current exercise has to be adapted in some way, or for exchanging other kinds of information with the patient, such as providing hints or agreeing on the next physical appointment date, this should be possible through an integrated messaging platform. Furthermore, the monitoring information should be able accessible through a web-based interface.
 
 \subsubsection{Gameplay and Frontend}
 \label{sec:gameplay}
@@ -48,10 +49,51 @@ As the system is acting primarily as an underlying framework on which other deve
 
 \section{Solution Design}
 \subsection{Available Alternatives}
-"dumb" web platform for visualizing, main work happening in server processes running locally
+Based on the requirements, which have been gathered and derived on various in person meetings with the stakeholding therapists, multiple technologies for implementing the system seem feasible. The alternatives considered at the beginning of this project are outlined as follows.
 
-fully featured web platform, doing everything
+\subsubsection{Fully featured Web Application}
+\label{sec:alt:fully-featured-web-app}
+One technological possibility would be to implement the core system framework as a fully featured Web Application. All requirements would be implemented using web technologies. Most notably, data ingestion, preprocessing, classification, and monitoring would have to be accomplished entirely in the context of a web browser. The system would be self-sufficient in this configuration, without reliance on any external systems, though an external server component for sending the monitoring information is conceivable (see requirement \ref{sec:req:monitorability}).
 
-GUI Application
+This configuration is very favorable in terms of deployment and extensibility, as every component is consistently written in Javascript, the standardized programming language of the web. Likewise, as functionality is not distributed over multiple systems, the deployment of the systems only requires a web browser\footnote{The installation of relevant hardware device drivers on the target device is also required for the system to function, but as the same is true for all other alternatives, this is not considered under the ease of deployment aspect.}.
+
+However, for this configuration to be feasible, it is required that the domain virtualization device contains an API to the Web Browser. Also, the Javascript programming language is sometimes critizied for its relatively poor performance when compared to programming languages with compilers capable of producing native code. This is owed in large parts to the dynamically typed and interpreted nature of the language. Some benchmarks show that Javascript is up to ten times slower in terms of runtime performance compared to C++ when running computationally expensive tasks \cite{BenchmarksGame}. The question of whether Javascript is performant enough to tackle the task at hand has to be clarified before this alternative can be considered feasible.
+\subsubsection{Web Application with local server component}
+\label{sec:alt:thin-web-app}
+The two main disadvantages of the Fully featured Web Application ,the need for a Web API of the virtualization device and the performance considerations, could be mitigated by moving the computationally expensive logic in a locally running server component, and interfacing the two components by using an asynchronous communication specifications such as WebSockets or XmlHttpRequest. As the code running in the server component is running with Operating System permissions, it could directly interface with the hardware device. Additionally, all logic concerned with working with the virtualization device data could be implemented in native code, resulting in high performance.
+
+This approach in turn poses the disadvantage that a lot of additional complexity is introduced into the system. The system would no longer be implemented in a single programming language. Additionally, the system would no longer be easy to deploy, as compiled binary packages would have to be provided and thoroughly tested for each desired target Operating System.
+\subsubsection{Web Application with remote server component (backend)}
+\label{sec:alt:thin-remote-web-app}
+Following up on the design outlined in section \ref{sec:alt:thin-web-app}, the system could also be designed with a remote server component instead of a locally running server. This would have the advantage of all device data being available
+at one centralized location, where very elaborate analytics could be performed. As all alternatives outlined in this section will eventually require a backend component for accumulating monitoring information for the therapist to view and inspect, this approach initially seems to reduce complexity.
+
+However, the virtualized domain data would again have to be ingested by the Web Application, in a similar fashion to the alternative outlined in \ref{sec:alt:fully-featured-web-app}, as no local application is available to handle the connection to the hardware device. Furthermore, all virtualization device data would have to be sent over the network connection of the end device, potentially resulting in high latency, and possibly full system outage if the end device fails to establish an internet connection.
+\subsubsection{Desktop Application}
+\label{sec:alt:desktop-app}
+Finally, the system could be designed without relying on Web technologies altogether, and be instead implemented as a traditional Desktop Application.
+
+\begin{table}[h]\footnotesize
+\caption{Comparison of implementation alternatives based on estimated requirement fulfillment}
+\label{alt:table-requirement-comparison}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{l|ccccc}
+    &
+    \rot{Functional Reqs.} &
+    \rot{Modularization} &
+    \rot{Performance} &
+    \rot{Deployment} &
+    \rot{Extensibility}
+        \\ \hline
+    Web fat client (\ref{sec:alt:fully-featured-web-app})     & X & X & ? & X & X \\ 
+    Web thin client (\ref{sec:alt:thin-web-app})   & X & X &   &   & X \\ 
+    Web local client (\ref{sec:alt:thin-remote-web-app}) & X & X & X &   &   \\
+    Desktop App (\ref{sec:alt:desktop-app}) &   & X & X & X &  \\ \hline
+\end{tabular}
+\normalsize
 \subsection{Elected Alternative}
-fully featured web platform, because modern web technologies allow it, GUI Application does not fit the requirements, and separating main work into server thread is, while potentially more performant, both potentially insecure and unnecessarily complex.
+Table \ref{alt:table-requirement-comparison} gives an overview over the likely requirement fulfillment of the discussed implementation alternatives.
+
+\end{table}
+
+% fully featured web platform, because modern web technologies allow it, GUI Application does not fit the requirements, and separating main work into server thread is, while potentially more performant, both potentially insecure and unnecessarily complex.
