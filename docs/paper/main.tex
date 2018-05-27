@@ -14,6 +14,8 @@
 %%%----------------------------------------------------------
 
 \RequirePackage[utf8]{inputenc}		% Remove when using lualatex or xelatex entfernen!
+\usepackage[titletoc]{appendix}
+\usepackage[acronym]{glossaries}
 
 \graphicspath{{images/}}    % location of images and graphics
 \logofile{dhbw-logo}				% logo file = images/logo.pdf (use \logofile{} for no logo)
@@ -32,112 +34,40 @@
 
 \advisor{Dirk Reichardt, Prof. Dr.} 
 
-%%% Restricted publication license instead of CC (master only):
-%\strictlicense
+\makeglossaries
 
-%%%----------------------------------------------------------
+\loadglsentries{other/acronym}
+\loadglsentries{other/glossary}
 \begin{document}
-%%%----------------------------------------------------------
-
-%%%----------------------------------------------------------
-\frontmatter							% title part (roman page numbers)
-%%%----------------------------------------------------------
+\frontmatter
 
 \maketitle
 \tableofcontents
+\printglossary[type=\acronymtype,title=Acronyms]
+\printglossary[title=Glossary]
 
 \include{front/abstract}
 
 %%%----------------------------------------------------------
 \mainmatter          			% main part (arabic page numbers)
 %%%----------------------------------------------------------
-\chapter{Introduction}
-\section{Problem description}
-hand therapy from home, refer to previous works
-\chapter{Solution Design}
-\section{Available Alternatives}
-"dumb" web platform for visualizing, main work happening in server processes running locally
-
-fully featured web platform, doing everything
-
-GUI Application
-\section{Elected Alternative}
-fully featured web platform, because modern web technologies allow it, GUI Application does not fit the requirements, and separating main work into server thread is, while potentially more performant, both potentially insecure and unnecessarily complex.
-\chapter{Project Scope}
-framework for others to build upon. minimum viable product covering as much of the overall required architecture as possible.
-
-\section{System Architecture}
-\chapter{Development Pipeline}
-Webpack 4
-
-VueJS 2, Vue Router, VueX, inversify Dependency Injection
-
-Karma Unit Tests
-
-THREE.js
-\chapter{Implemented Subsystems}
-\section{Device Driver Interface}
-Describe Generalized Device Driver Interface. Point out that adding different devices is possible with this architecture.
-\section{Device Facade}
-Justify for a need of a Facade in Front of the raw Device Driver: Seperation of Concerns and Recording (Mock data) Functionality. Ease of Testing.
-\section{Device Debug Interface}
-Describe Component: Raw Device Logger, Device Status Log, Device Graphical Log
-\section{Graphical Hand Logger}
-THREE.JS, OrbitControls, Smoothing, Prop Configuration
-\section{Device Recorder}
-Record Segments of hand movements in order to aid in development, make classification errors reproducible
-\section{Persistence Provider}
-Describe Abstract Persistence Provider Interface
-
-Describe Concrete Persistence Provider Interface Implementation: IndexedDB
-\section{Preprocessing Framework}
-Justify need for Preprocessing: Lots of useless data coming from the device. Preliminary
-clean up of data may be relevant for all classifiers
-\section{Classification Framework}
-Describe how Classifiers receive the preprocessed data frame stream, and transform the stream in order to emit another stream of classifications, along with relevant metadata
-\section{Game Execution Engine}
-Describe how Games are receiving the Classification Stream and using that in order to drive the gameplay.
-\chapter{Recommended Future Works}
-\section{Proposed Subsystems}
-\subsection{Data Postprocessing Framework}
-Generic interface that does something with classification data / game data. For example logging it to a remote location, like a backend
-
-auth -> classification data -> backend
-\subsection{Progress Analysis Dashboard}
-Component that gets patients postprocessed classification / game results, and visualizes progress
-
-auth -> backend -> select patient -> patient view
-\subsection{Messaging Platform}
-Therapist Requirement. Ability to send messages to / from patients
-\section{Proposed Enhancements}
-\subsection{Classification Metadata}
-Anti Cheat (Therapist requirement)
-
-Log Classification Specific relevant Metadata for Therapist Analysis
-
-\chapter{Conclusion}
-Possibility of Project Confirmed, Modern Web is evolved enough to tackle this task. But lots of extensions should be made in order to make the project actually useful
-
-
+\include{chapters/1_introduction}
+\include{chapters/2_relatedwork}
+\include{chapters/3_technologies_methods}
+\include{chapters/4_impl}
+\include{chapters/5_future}
+\include{chapters/6_conclusion}
 
 
 %%%----------------------------------------------------------
-\appendix                                         % appendix 
+\begin{appendices}
+    
 %%%----------------------------------------------------------
-\chapter{User Manual}
-\section{Installing the Hardware Device Driver}
-\section{Verifying the Installation Success}
-\section{Configuration}
-\subsection{Preprocessors}
-\subsection{Classificators}
-\section{Gameplay}
-\chapter{Developer Manual}
-\section{Building and Running the Project in Development Mode}
-\section{Executing Unit Tests}
-\section{Extending the Framework}
-\subsection{Adding a Preprocessor}
-\subsection{Adding a Classifier}
-\subsection{Adding a Game}
+\include{back/usermanual}
+\include{back/developermanual}
+
+\end{appendices}
+
 
 %%%----------------------------------------------------------
 \MakeBibliography                        				% references

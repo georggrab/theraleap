@@ -1,0 +1,33 @@
+\chapter{Framework Implementation}
+\section{System Architecture}
+\section{Development Pipeline}
+Webpack 4
+
+VueJS 2, Vue Router, VueX, inversify Dependency Injection
+
+Karma Unit Tests
+
+THREE.js
+\section{Implemented Subsystems}
+\subsection{Device Driver Interface}
+Describe Generalized Device Driver Interface. Point out that adding different devices is possible with this architecture.
+\subsection{Device Facade}
+Justify for a need of a Facade in Front of the raw Device Driver: Seperation of Concerns and Recording (Mock data) Functionality. Ease of Testing.
+\subsection{Device Debug Interface}
+Describe Component: Raw Device Logger, Device Status Log, Device Graphical Log
+\subsection{Graphical Hand Logger}
+THREE.JS, OrbitControls, Smoothing, Prop Configuration
+\subsection{Device Recorder}
+Record Segments of hand movements in order to aid in development, make classification errors reproducible
+\subsection{Persistence Provider}
+Describe Abstract Persistence Provider Interface
+
+Describe Concrete Persistence Provider Interface Implementation: IndexedDB
+\subsection{Preprocessing Framework}
+Justify need for Preprocessing: Lots of useless data coming from the device. Preliminary
+clean up of data may be relevant for all classifiers
+\subsection{Classification Framework}
+Describe how Classifiers receive the preprocessed data frame stream, and transform the stream in order to emit another stream of classifications, along with relevant metadata
+\subsection{Game Execution Engine}
+Describe how Games are receiving the Classification Stream and using that in order to drive the gameplay.
+
