@@ -1,13 +1,16 @@
 \chapter{Technologies and Methods}
 \label{sec:tech_and_methods}
-This chapter gives a quick introduction to the non-trivial technologies and methods used while developing the system. For purposes of brevity, technologies that are well known or only marginally relevant to the following chapters have been ommited\footnote{Such as CSS3, HTML5, ES6, CSS Preprocessors, and GIT}. The utilized technologies can roughly be categorized into runtime specific technologies, which are relevant during system execution, and development technologies, which are only relevant while developing, compiling, and testing the system. 
+This chapter gives a quick introduction to the non-trivial technologies and methods used while developing the system. For purposes of brevity, technologies that are well known or only marginally relevant to the following chapters have been ommited\footnote{Such as CSS3, HTML5, JS ES6, CSS Preprocessors, the vue-router extension, and the Git distributed version control system}. The utilized technologies can roughly be categorized into runtime specific technologies, which are relevant during system execution, and development technologies, which are only relevant while developing, compiling, and testing the system. 
 \section{Runtime specific Technologies}
 \subsection{Vue.JS ecosystem}
-\subsubsection{Single Page Applications}
-\subsubsection{State management and Flux Architecture}
-\subsubsection{Routing and lazy loading}
+\subsubsection{Vue Framework}
+Vue is a Javascript framework used for simplifying the development of reusable, responsive frontend components. The core framework was initially developed by Evan You, in 2014. Since then, the framework quickly gained popularity in the open source community, currently being the 5th most popular open source project on the popular code sharing platform GitHub \cite{GitHubMostStars}. The framework serves a similar purpose as other popular Javascript frontend libraries such as React and Angular, though design, scope, and implementation differences can be found in various places \cite{VueComparisonOtherFrameworks}.
+\subsubsection{VueX: State management and Flux Architecture}
+The Vue core library is intentionally restricted in scope to the applications view layer. However, a vast Ecosystem has recently emerged around the Vue library covering other required functionalities of modern Web Applications, such as state management, client-side routing, or network connectivity. VueX is a library providing a state management system to the Vue core library which is modelled after Facebooks Flux Architecture \cite{Vuex}\cite{FacebookFlux}. It serves as a centralized store where all application state is located. State can only be retrieved and modified in a predictable fashion. This results in easier maintainability and extensibility for large applications, as developers always know how state is located, accessed, and modified.
 \subsubsection{Material Design Components}
+Material Design is an open source user interface design system developed and maintained by Google. It consists of design guidelines, components, and development tools. At the time of writing, it is being used in a large quantity of Google products. Furthermore, it is the officially recommended Design Language to use when developing Applications for the Android Platform \cite{AndroidAppQualityGuidelines}. The Design Components are thus familiar and intuitive to use for a large amount of potential end users. The Design Components are available for Vue.JS applications through the vue-material library \cite{VueMaterial}.
 \subsection{Reactive Extensions and rx.js}
+Reactive Extensions is a language agnostic API for asynchronous programming with observable streams.
 \subsection{Leap Motion Web Interface}
 \subsection{Graphics}
 \subsubsection{THREE.js: Hand Visualization}
