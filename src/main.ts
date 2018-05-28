@@ -3,6 +3,7 @@ import {
   MdApp,
   MdButton,
   MdCard,
+  MdCheckbox,
   MdContent,
   MdDivider,
   MdDrawer,
@@ -25,6 +26,7 @@ import Vuex from "vuex";
 
 [
   MdCard,
+  MdCheckbox,
   MdApp,
   MdSwitch,
   MdSubheader,
