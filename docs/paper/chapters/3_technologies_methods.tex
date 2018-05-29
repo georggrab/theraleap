@@ -18,7 +18,7 @@ The \gls{RX} specification extends on this concept by providing a variety of \em
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=8cm]{filter}
+    \includegraphics[width=10cm]{filter}
     \caption{An example Observable transformation, represented using \emph{Rx Marble Diagrams}.}
     \label{fig:rx-marbles-filter}
 \end{figure}
@@ -27,18 +27,43 @@ Figure \ref{fig:rx-marbles-filter} gives a visual presentation of an Observable 
 
 Apart from the Observable operators, \gls{RX} also includes specialized versions of the traditional Observable, such as the \emph{Subject}, which has the property of being able to act as Observable and Observer simultaneously, or the \emph{Single}, which represents a singular value emission in the future (similar to the Javascript ES5 Promise).
 
-%
-%\subsection{Leap Motion Web Interface
-%\subsection{Graphics}
-%\subsubsection{THREE.js: Hand Visualization}
-%\subsubsection{p5.js: Game Development}
-%\subsubsection{d3.js: Dynamic Documents and Visualizations}
-%\subsection{Web Specifications}
-%\subsubsection{IndexedDB: Persistent Storage}
-%\subsubsection{Web Workers: Javascript threading}
-%\subsubsection{Service Workers: Offline capability}
-%\section{Development specific Technologies}
-%\subsection{Webpack: module bundling}
-%\subsection{Typescript: static typing}
-%\subsection{Inversify: Inversion of Control}
-%\subsection{jest and sinon.js: Unit Testing and Mocking}
+
+\subsection{Leap Motion Device}
+\subsubsection{Virtualized Domain Model}
+The Leap Motion Device is capable of producing a virtualized model of one or more hands placed inside the devices field of view. The Device Data consists of a stream of JSON-formatted device frames. Each device frame contains the current position of all detected hands in that point of time. The data is transmitted in a certain amount of \gls{FPS} (depending on device version, protocol version, and device driver settings), usually in the vicinity of $30 - 100$ \gls{FPS}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=8cm]{leap-data}
+    \caption{High Level view of the Leap Motion Device Frame Data}
+    \label{fig:leap-frame-data}
+\end{figure}
+
+Figure \ref{fig:leap-frame-data} gives an overview of the relevant device frame data. The frame data consists of multiple subcomponents. The subcomponents relevant for this paper are the \emph{hands} and \emph{pointable} arrays. The hands array contains representations of all hands that have been detected in the frame. The hand representations contain positional information, such as estimated position, width, and velocity, as well as metainformation, such as a frame-unique ID.
+
+The pointables array essentially contains all detected fingers, though recent Leap Motion devices are capable of detecting other types of pointed objects as well. Like for tracked hands, positional information such as estimated position, width, velocity, and finger type (thumb, index..) is encoded in the representation. Additionally, recent Leap Motion Devices are capable of tracking skeletal information, such as the position of the hands metacarpals, proximal phalanges, intermediate phalanges, and distal phalanges \cite{LeapJsProtocol}. Finally, the pointable is associated to a hand by referencing its ID.
+
+\subsubsection{Hardware Device Driver}
+In order to interface with the Leap Motion Controller, its Hardware Device Driver has to be installed on the target device. The Hardware Device Driver is constituted by an operating system service named \emph{leapd} which interprets data coming from the Leap Motion controller and makes it available through a locally running Web Socket Server (see section \ref{sec:tech-web-sockets}).
+\subsection{Graphics}
+\subsubsection{THREE.js}
+Recent Web Specifications such as WebGL make it possible to run graphically and computationally expensive programs directly in the browser, by allowing Web Applications to directly access the devices Graphical Processing Unit \cite[sec. 1]{WebGl2Spec}. Several Javascript libraries have since been created to simplify working with the WebGL API. A popular library is THREE.js, which is specializing simplifying the creation of 3D Applications.
+\subsubsection{p5.js: Game Development}
+p5.js is a simplistic Graphics Library similar in functionality to THREE.js. However, it primarily focused on 2D drawing, and has been simplified greatly in other aspects as well, allowing for rapid graphical prototyping and game development \cite{P5JS}.
+\subsubsection{d3.js: Dynamic Documents and Visualizations}
+The final relevant graphics library is d3.js, which greatly differs in purpose to the two previously introduced libraries. Its primary purpose is simplifying the creation of interactive, data-driven documents and data visualizations, such as diagrams and plots \cite[preface]{zhu2013data}. 
+\subsection{Web Specifications}
+\subsubsection{IndexedDB: Persistent Storage}
+IndexedDB is a Browser API allowing the Browser Application to persist arbitrary data. It differs from other client side persistence APIs such as Cookies and Localstorage in various aspects, most notably the amount of data it can hold. Unlike Cookies and Localstorage, with both are constrained to a relatively small maximum size, the maximum size of an IndexedDB Database is usually much larger, sometimes restricted solely to the free space on an end devices hard drive\footnote{The exact size limitation depends on the implementation of the Web browser, as no standardization exists thus far.} \cite{MDNIndexedDB}. Additionally, IndexedDB allows for highly efficient storage access by providing the possibility to locate entries using incides. Though the exact implementation of the IndexedDB specification is dependent on the Browser vendor, it is usually implemented using a persistent B-tree data structure \cite[sec. 1]{IndexedDBSpec}.
+\subsubsection{Web Workers: Javascript threading}
+The Web Workers specification defines an API for executing Javascript code segregated from the main thread, often also called the window context. The Web Workers can thus be executed on a different processing core, resulting in no noticable performance inpact while navigating the Web Application, even if computationally expensive tasks are performed \cite[sec. 1.2.1]{workerdraft}. A Web Worker is able to communicate with the window context through a bidirectional, event based API \cite[sec. 4.6.1]{workerdraft}.
+\subsubsection{Service Workers: Offline capability}
+Service Workers are a special form of Web Workers that additionally allow the Web Application to work in an offline mode by means of intercepting and caching its asynchronous HTTP requests \cite[sec 4.5, 5]{serviceworkersdraft}.
+\subsubsection{Web Sockets: bidirectional message streaming}
+The WebSocket protocol is a protocol allowing for low overhead, full-duplex communication with a WebSocket compliant Server over a single TCP connection \cite[sec. 1.1]{rfc6455}. The protocol is able to be used from a Web Application context.
+\label{sec:tech-web-sockets}
+\section{Development specific Technologies}
+\subsection{Webpack: module bundling}
+\subsection{Typescript: static typing}
+\subsection{Inversify: Inversion of Control}
+\subsection{jest and sinon.js: Unit Testing and Mocking}
