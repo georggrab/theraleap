@@ -10,18 +10,35 @@ The Vue core library is intentionally restricted in scope to the applications vi
 \subsubsection{Material Design Components}
 Material Design is an open source user interface design system developed and maintained by Google. It consists of design guidelines, components, and development tools. At the time of writing, it is being used in a large quantity of Google products. Furthermore, it is the officially recommended Design Language to use when developing Applications for the Android Platform \cite{AndroidAppQualityGuidelines}. The Design Components are thus familiar and intuitive to use for a large amount of potential end users. The Design Components are available for Vue.JS applications through the vue-material library \cite{VueMaterial}.
 \subsection{Reactive Extensions and rx.js}
-Reactive Extensions is a language agnostic API for asynchronous programming with observable streams.
-\subsection{Leap Motion Web Interface}
-\subsection{Graphics}
-\subsubsection{THREE.js: Hand Visualization}
-\subsubsection{p5.js: Game Development}
-\subsubsection{d3.js: Dynamic Documents and Visualizations}
-\subsection{Web Specifications}
-\subsubsection{IndexedDB: Persistent Storage}
-\subsubsection{Web Workers: Javascript threading}
-\subsubsection{Service Workers: Offline capability}
-\section{Development specific Technologies}
-\subsection{Webpack: module bundling}
-\subsection{Typescript: static typing}
-\subsection{Inversify: Inversion of Control}
-\subsection{jest and sinon.js: Unit Testing and Mocking}
+\gls{RX} is a language agnostic, open source API for asynchronous programming with observable streams. It can be seen as an extension of the Observer pattern \cite{ReactiveXManual}, one of the twenty-three well-known "Gang of Four" design patterns \cite{Gamma:1995:DPE:186897}.
+
+The traditional Observer pattern is based on the fundamental concepts of the \emph{Observable} and the \emph{Observer}. The \emph{Observable} has the ability to \emph{emit} items over time. An \emph{Observer} may declare a dependency on the \emph{Observable} by means of \emph{subscribing} to it. If a subscription has been established, the \emph{Observer} will receive the items as they are emitted from the \emph{Observable}.
+
+The \gls{RX} specification extends on this concept by providing a variety of \emph{Observable operators} to change the emission behavior, transform the emissions, or combine multiple \emph{Observables}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=8cm]{filter}
+    \caption{An example Observable transformation, represented using \emph{Rx Marble Diagrams}.}
+    \label{fig:rx-marbles-filter}
+\end{figure}
+%
+Figure \ref{fig:rx-marbles-filter} gives a visual presentation of an Observable transformation. The top and bottom arrows both represent Observables. The arrow-direction represents time, the colored circles on the arrows represent items emitted by the Observable. The box in the center represents the application of an Observable operator, in this case the \emph{filter} operator, which filters Observable emissions by applying the given predicate, in this example $x > 10$. The result of the transformation is a new Observable that only includes the items that match the given predicate.
+
+Apart from the Observable operators, \gls{RX} also includes specialized versions of the traditional Observable, such as the \emph{Subject}, which has the property of being able to act as Observable and Observer simultaneously, or the \emph{Single}, which represents a singular value emission in the future (similar to the Javascript ES5 Promise).
+
+%
+%\subsection{Leap Motion Web Interface
+%\subsection{Graphics}
+%\subsubsection{THREE.js: Hand Visualization}
+%\subsubsection{p5.js: Game Development}
+%\subsubsection{d3.js: Dynamic Documents and Visualizations}
+%\subsection{Web Specifications}
+%\subsubsection{IndexedDB: Persistent Storage}
+%\subsubsection{Web Workers: Javascript threading}
+%\subsubsection{Service Workers: Offline capability}
+%\section{Development specific Technologies}
+%\subsection{Webpack: module bundling}
+%\subsection{Typescript: static typing}
+%\subsection{Inversify: Inversion of Control}
+%\subsection{jest and sinon.js: Unit Testing and Mocking}
