@@ -27,26 +27,33 @@ Figure \ref{fig:rx-marbles-filter} gives a visual presentation of an Observable 
 
 Apart from the Observable operators, \gls{RX} also includes specialized versions of the traditional Observable, such as the \emph{Subject}, which has the property of being able to act as Observable and Observer simultaneously, or the \emph{Single}, which represents a singular value emission in the future (similar to the Javascript ES5 Promise).
 
+As the \gls{RX} project only outlines the specification and API of the programming concept, concrete implementations have to be provided for the target programming environment. For Javascript, the official implementation of \gls{RX} is rx.js.
+
 
 \subsection{Leap Motion Device}
 \subsubsection{Virtualized Domain Model}
+\label{sec:tech:leap-domain-model}
 The Leap Motion Device is capable of producing a virtualized model of one or more hands placed inside the devices field of view. The Device Data consists of a stream of JSON-formatted device frames. Each device frame contains the current position of all detected hands in that point of time. The data is transmitted in a certain amount of \gls{FPS} (depending on device version, protocol version, and device driver settings), usually in the vicinity of $30 - 100$ \gls{FPS}.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=8cm]{leap-data}
+    \includegraphics[width=14cm]{leap-data}
     \caption{High Level view of the Leap Motion Device Frame Data}
     \label{fig:leap-frame-data}
 \end{figure}
 
-Figure \ref{fig:leap-frame-data} gives an overview of the relevant device frame data. The frame data consists of multiple subcomponents. The subcomponents relevant for this paper are the \emph{hands} and \emph{pointable} arrays. The hands array contains representations of all hands that have been detected in the frame. The hand representations contain positional information, such as estimated position, width, and velocity, as well as meta-information, such as a frame-unique ID.
+Figure \ref{fig:leap-frame-data} gives an overview of the relevant device frame data. The frame data consists of multiple subcomponents. The subcomponents relevant for this paper are the \emph{hands} and \emph{pointable} arrays, as well as the \emph{interactionBox} object. The hands array contains representations of all hands that have been detected in the frame. The hand representations contain positional information, such as estimated position, width, and velocity, as well as meta-information, such as a frame-unique ID.
 
-The pointables array essentially contains all detected fingers, though recent Leap Motion devices are capable of detecting other types of pointed objects as well. Like for tracked hands, positional information such as estimated position, width, velocity, and finger type (thumb, index..) is encoded in the representation. Additionally, recent Leap Motion Devices are capable of tracking skeletal information, such as the position of the hands metacarpals, proximal phalanges, intermediate phalanges, and distal phalanges \cite{LeapJsProtocol}. Finally, the pointable is associated to a hand by referencing its ID.
+The pointables array essentially contains all detected fingers, though recent Leap Motion devices are capable of detecting other types of pointable objects, such as pencils as well. Like for tracked hands, positional information such as estimated position, width, velocity, and finger type (thumb, index..) is encoded in the representation. Additionally, recent Leap Motion Devices are capable of tracking skeletal information, such as the position of the hands metacarpals, proximal phalanges, intermediate phalanges, and distal phalanges \cite{LeapJsProtocol}. Finally, the pointable is associated to a hand object of the same frame by referencing its ID.
+
+The interactionBox object denotes the position of a virtual three-dimensional rectangle positioned above the device sensor. The box describes the area in which the device is able to detect hand objects. All positional data coming from the device is described in relation to the interactionBox.
 
 \subsubsection{Hardware Device Driver}
+\label{sec:tech:leap-hardware-driver}
 In order to interface with the Leap Motion Controller, its Hardware Device Driver has to be installed on the target device. The Hardware Device Driver is constituted by an operating system service named \emph{leapd} which interprets data coming from the Leap Motion controller and makes it available through a locally running Web Socket Server (see section \ref{sec:tech-web-sockets}).
 \subsection{Graphics}
 \subsubsection{THREE.js}
+\label{sec:tech:threejs}
 Recent Web Specifications such as WebGL make it possible to run graphically and computationally expensive programs directly in the browser, by allowing Web Applications to directly access the devices Graphical Processing Unit \cite[sec. 1]{WebGl2Spec}. Several Javascript libraries have since been created to simplify working with the WebGL API. A popular library is THREE.js, which is specializing simplifying the creation of 3D Applications.
 \subsubsection{p5.js: Game Development}
 p5.js is a simplistic Graphics Library similar in functionality to THREE.js. However, it primarily focused on 2D drawing, and has been simplified greatly in other aspects as well, allowing for rapid graphical prototyping and game development \cite{P5JS}.
@@ -67,8 +74,8 @@ The WebSocket protocol is a protocol allowing for low overhead, full-duplex comm
 \label{sec:tech-webpack}
 Webpack is described as a module bundler for Javascript, essentially allowing to express dependencies between modules \cite{WebpackConcepts}. In the terminology used by Webpack, modules are defined as anything that is required for the compilation of the Web Application, such as Javascript source code, but also images, style information, and HTML source code. Webpack transforms modules with dependencies into multiple static assets that are ready to be executed by the Web Browser. The transformation step may include various preprocessing and postprocessing steps, allowing the optimization of the Web Applications build pipeline regarding development comfort, runtime performance, and final asset size.
 \subsection{Typescript: static typing}
-Typescript is a typed superset of Javascript. Its primary purpose is to augment the language with a strong static type system \cite{TypescriptUnderstanding}. As Javascript is an interpreted and dynamically typed language, Typescript is capable of introducing some compile time type safety to the language. Typescript is not able to be executed directly in the Web Browser, but has to be compiled back to Javascript prior to execution. This can for example be achieved by preprocessing the Typescript source using a module bundler such as Webpack (see section \ref{sec:tech-webpack}). During the compilation phase, the Typescript Compiler is able to perform static type checks and checks for nullity, usually resulting in less runtime errors. Additionally, as Typescript introduces constructs well known from statically typed programming languages, scaled development is claimed to be become simpler, as multiple developers are able to define interfaces and contracts between submodules. 
+Typescript is a typed superset of Javascript. Its primary purpose is to augment the language with a static type system \cite{TypescriptUnderstanding}. As Javascript is an interpreted and dynamically typed language, Typescript is capable of introducing some compile time type safety to the language. Typescript is not able to be executed directly in the Web Browser, but has to be compiled back to Javascript prior to execution. This can for example be achieved by preprocessing the Typescript source using a module bundler such as Webpack (see section \ref{sec:tech-webpack}). During the compilation phase, the Typescript Compiler is able to perform static type checks and checks for nullity, usually resulting in less runtime errors. Additionally, as Typescript introduces constructs well known from statically typed programming languages, scaled development is claimed to be become simpler, as multiple developers are able to define interfaces and contracts between submodules. 
 \subsection{Inversify: Inversion of Control}
-Inversify is an Inversion of Control framework, providing support for dependency injection to the language.
+Inversify is an Inversion of Control framework, providing support for dependency injection to the Javascript language.
 \subsection{jest and sinon.js: Unit Testing and Mocking}
 Jest is an open source unit testing framework for Web Applications, primarily developed by Facebook Inc. Unit tests require all external dependencies of the tested module to be mocked, so that only the relevant code is tested. sinon.js is a library providing this mocking functionality to Javascript tests.

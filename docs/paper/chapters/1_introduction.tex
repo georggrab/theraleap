@@ -16,6 +16,7 @@ Outsourcing recovery exercises into a space where no direct therapeutic supervis
 In a software development context, the challenges a system has to solve in order to become useful to the stakeholders are referred to as functional requirements \cite{SystemRequirementsArmyFR}.  The most notable functional requirements are outlined as follows.
 
 \subsubsection{Domain Virtualization}
+\label{sec:freq:domain-virtualization}
 In order for Exergames to fundamentally function, they require an accurate, real-time virtualized representation of the problem domain. For example, in order to develop Exergames for treating hand injuries, a virtual representation of the hand must be available. For the domain of upper extremities, several hardware devices exist that are capable of providing the virtualized representations. Notable examples are the Leap Motion Device by Leap Motion, Inc.\footnote{\url{https://www.leapmotion.com}}, and Microsofts Handpose technology for the Kinect Device\footnote{\url{http://research.microsoft.com/en-us/projects/handpose/}}. Both devices, normally used in the context of \gls{VR} and \gls{AR}, are capable of producing the virtual representation by employing a variety of hardware sensors.
 
 \subsubsection{Exercise Classification}
@@ -37,85 +38,32 @@ Finally, the system should provide a frontend component, from which the actual g
 In addition to the functional requirements, the following \glspl{NFR} have to be considered while designing and implementing the system. \glspl{NFR} are global requirements that are not directly related to function, but refer to the development or operational costs of the system, such as performance, reliability, and maintainability \cite{chung2012non}.
 
 \subsubsection{Modularization}
+\label{sec:nfr:modularization}
 On a technical level, the program logic responsible for classifying if an exercise has been completed (see \ref{sec:exercise-classification}) should be separated from the actual Exergames logic (see \ref{sec:gameplay}). This would pose the advantage of introducing a modular aspect to the system, as both exercise classifiers and games could be exchanged, both keeping the patients engaged in the platform by allowing them to train their assigned exercise using a variety of games, and greatly simplifying the work of future developers, as they will be enabled to develop games for the platform without any prior knowledge of exercise classification, and vice versa.
 
 \subsubsection{Performance}
+\label{sec:nfr:performance}
 Performance is a critical \gls{NFR} for the system. All data coming from the device providing the relevant domain virtualization has to be ingested, preprocessed, and classified in real time. If this is not the case, the patient will experience a significant lag between the performed exercise and the feedback of the Exergames, quickly resulting in frustration. Additionally, the execution of the Exergames themselves should be performant enough so that the gameplay experience isn't negatively obstructed. 
 
 \subsubsection{Availability}
+\label{sec:nfr:availability}
 From the therapists point of view, it is critical that the platform is capable of running without an active network connection. This results in the technical restriction that all network connections made by the platform must be both optional and fault tolerant. This requirement originates from the assumption of the therapists that the system will not always be used in contexts where an internet connection is readily available.
 
 
 \subsubsection{Ease of deployment}
+\label{sec:nfr:deployment}
 The system should ultimately be primarily executed on a patient provided device. As such, deployment of the application should be easy, and robust with respect to a multitude of possible, previously unknown target environments.
 
 \subsubsection{Extensibility}
+\label{sec:nfr:extensibility}
 As the system is acting primarily as an underlying framework on which other developers should build upon in the future, it should be written in a way that allows for easy extensibility. It should especially be written in a computer programming language that is well known to the potential target developer audience, so minimum prior knowledge is required before starting development with the project. Additionally, the framework should be future proof: it should be simple to exchange subcomponents with more modern equivalents in the future. For example, it should be simple to add support for more modern hardware devices providing domain virtualization, or more modern graphics libraries for developing the Exergames in the future.
 
-\section{Solution Design}
-\subsection{Available Alternatives}
-Based on the requirements, which have been gathered and derived on various in person meetings with the stakeholding therapists, multiple technologies for implementing the system seem feasible. The alternatives considered at the beginning of this project are outlined as follows.
-
-\subsubsection{Fully featured Web Application}
-\label{sec:alt:fully-featured-web-app}
-One technological possibility would be to implement the core system framework as a fully featured Web Application. All requirements would be implemented using web technologies. Most notably, data ingestion, preprocessing, classification, and monitoring would have to be accomplished entirely in the context of a web browser. The system would be self-sufficient in this configuration, without reliance on any external systems, though an external server component for sending the monitoring information is conceivable (see requirement \ref{sec:req:monitorability}).
-
-This configuration is very favorable in terms of deployment and extensibility, as every component is consistently written in Javascript, the standardized programming language of the web. Likewise, as functionality is not distributed over multiple systems, the deployment of the systems only requires a web browser\footnote{The installation of relevant hardware device drivers on the target device is also required for the system to function, but as the same is true for all other alternatives, this is not considered under the ease of deployment aspect.}.
-
-However, for this configuration to be feasible, it is required that the domain virtualization device contains an API to the Web Browser. Also, the Javascript programming language is sometimes critizied for its relatively poor performance when compared to programming languages with compilers capable of producing native code. This is owed in large parts to the dynamically typed and interpreted nature of the language. Some benchmarks show that Javascript is up to ten times slower in terms of runtime performance compared to C++ when running computationally expensive tasks \cite{BenchmarksGame}. The question of whether Javascript is performant enough to tackle the task at hand has to be clarified before this alternative can be considered feasible.
-\subsubsection{Web Application with local server component}
-\label{sec:alt:thin-web-app}
-The two main disadvantages of the fully featured Web Application, the need for a Web API of the virtualization device and the performance considerations, could be mitigated by moving the computationally expensive logic in a locally running server component, and interfacing the two components by using an asynchronous communication specifications such as WebSockets or XmlHttpRequest. As the code running in the server component is running with Operating System permissions, it could directly interface with the hardware device. Additionally, all logic concerned with working with the virtualization device data could be implemented in native code, resulting in high performance.
-
-This approach in turn poses the disadvantage that a lot of additional complexity is introduced into the system. The system would no longer be implemented in a single programming language. Additionally, the system would no longer be easy to deploy, as compiled binary packages would have to be provided and thoroughly tested for each desired target Operating System.
-\subsubsection{Web Application with remote server component (backend)}
-\label{sec:alt:thin-remote-web-app}
-Following up on the design outlined in section \ref{sec:alt:thin-web-app}, the system could also be designed with a remote server component instead of a locally running server. This would have the advantage of all device data being available
-at one centralized location, where very elaborate analytics could be performed. As all alternatives outlined in this section will eventually require a backend component for accumulating monitoring information for the therapist to view and inspect, this approach initially seems to reduce complexity.
-
-However, the virtualized domain data would again have to be ingested by the Web Application, in a similar fashion to the alternative outlined in \ref{sec:alt:fully-featured-web-app}, as no local application is available to handle the connection to the hardware device. Furthermore, all virtualization device data would have to be sent over the network connection of the end device, potentially resulting in high latency, and possibly full system outage if the end device fails to establish an internet connection.
-\subsubsection{Desktop Application}
-\label{sec:alt:desktop-app}
-Finally, the system could be designed without relying on Web technologies altogether, and be instead implemented as a traditional Desktop Application.
-
-\begin{table}[h]\footnotesize
-\caption{Comparison of implementation alternatives based on estimated requirement fulfillment}
-\label{alt:table-requirement-comparison}
-\renewcommand{\arraystretch}{1.3}
-\begin{tabular}{l|cccccc}
-    &
-    \rot{Functional Reqs.} &
-    \rot{Modularization} &
-    \rot{Performance} &
-    \rot{Availability} &
-    \rot{Deployment} &
-    \rot{Extensibility}
-        \\ \hline
-    Desktop App (\ref{sec:alt:desktop-app})               &   & X & X & X &   &   \\ 
-    Web thin client (\ref{sec:alt:thin-web-app})          & X & X &   &   & X & X \\ 
-    Web local client (\ref{sec:alt:thin-remote-web-app})  & X & X & X & X &   &   \\
-    Web fat client (\ref{sec:alt:fully-featured-web-app}) & X & X & ? & X & X & X \\ \hline
-\end{tabular}
-\normalsize
-\end{table}
-\subsection{Elected Alternative}
-Table \ref{alt:table-requirement-comparison} gives an overview over the likely requirement fulfillment of the discussed implementation alternatives. 
-\\
-The Desktop Application is the only proposed architecture incapable of intrinsically meeting the functional requirements: as the therapists plan on viewing and evaluating the platform monitoring data from a Web based interface, a separate application would need to be developed for that sole purpose. Regarding the \glspl{NFR}, Performance and Modularization can be fulfilled easily, as statically typed, modern programming languages that compile to platform-native code can be employed. In addition, the system could be designed in such a way that meets the Availability requirement. However, as the architecture cannot fulfill all Functional Requirements, and additionally lacks the \glspl{NFR} of Deployment (platform dependant binary must be provided) and Extensibility (future developers will likely need to learn a new programming language), this alternative is ruled out as a potential platform architecture.
-\\\\
-While the Web based thin client outlined in section \ref{sec:alt:thin-remote-web-app} is capable of implementing all functional requirements, the architecture is ruled out as it is relying on a remote server for basic functionality, resulting in a failure to meet the Availability \gls{NFR}. Additionally, even if a network connection is available, there are serious considerations to be made regarding network latency. The latency aspect imposes a performance dependency on the quality of the users internet connection, resulting in at least unreliable performance.
-\\\\
-The Web based client backed up by a local webserver as outlined in section \ref{sec:alt:thin-web-app} solves the problems of the Web based thin client regarding Availability and Performance, however, the ease of deployment aspect would be lost by the fact that a native platform binary is required for executing the application. Also extensibility is jeopardized, as a large amount of complexity is introduced into the system, most notably the fact that two separate programming languages or frameworks would be required for developing the system. While these tradeoffs would certainly not be critical, this choice of architecture is considered unfavorable for the time being.
-\\\\
-The fully featured Web Application has the theoretical capability to meet all functional requirements. Additionally, most non-fuctional requirements can be met by the architecture: the modern Javascript ecosystem allows for modularization and code splitting capabilities through the use of ES6 Modules. Furthermore, supersets of the language exist that provide support for static typing, such as Typescript. A static type system has the advantage that programming interfaces may be explicitly typed, so the program becomes easier to extend by developers not fully familiar with the program as a whole \cite{TypescriptUnderstanding}. It can be assumed that development on the Web platform is well known to the target developer audience, as it is a well established topic that is teached in most computer science related university courses. In addition, the architecture is easy deploy on the target end devices: in essence, all that is required from the end users is to navigate to a Website using a relatively recent Internet Browser. While this action initially seems to break the Availability requirement, modern Web Specifications, most notably the Service Worker Specification, allow for the application to still be available if the network connection is lost \cite{serviceworkersdraft}. The only non-functional requirement of the application that is in need for clarification is whether the architecture supports adequate performance for resolving the task at hand. However, several Web technologies are currently developed to mitigate this exact problem. Most notably, the widely adoped Web Workers specification essentially allows for developing multi threaded applications on the Web \cite{workerdraft}. Additionally, the WebAssembly specification has recently reached a mature state and is available in all major browsers. WebAssembly is a binary instruction format designed to be deployed on the web, allowing for web developers to develop code executing at near native speed while maintaining cross platform compatibility \cite{wasmdraft}.
-
-Based on the considerations employed in this section, the fully featured Web Application is chosen as the system architecture, as it seems to support implementation of all imposed requirements.
 
 \section{Outline and structure}
-Section \ref{sec:introduction} gave a general overview of the project motivation, scope, and method. Additionally, the project requirements were outlined, and possible project architectures were presented and evaluated. The section concludes with the design decision that a fully featured Web Application is the most desirable target architecture given the requirements.
+Section \ref{sec:introduction} gave a general overview of the project motivation, scope, and method. Additionally, the project requirements gathered in various in person meetings with the stakeholding therapists were outlined.
 
 Section \ref{sec:relatedwork} presents prior relevant work on the subject of computer aided ergotherapy and puts this work into context. The following section will introduce the relevant technologies and theoretical foundations used in the implementation phase of the project.
 
-The main part of this paper is constituted by section \ref{sec:impl}, where the project reference implementation is detailed and architecture and technology choices are justified. The work concludes with the recommended next steps in developing the system (section \ref{sec:future}), and a critical conclusion (section \ref{sec:conclusion}).
+The main part of this paper is constituted by section \ref{sec:impl}, where possible project architectures are presented, the project reference implementation is detailed and architecture and technology choices are justified. The work concludes with the recommended next steps in developing the system (section \ref{sec:future}), and a critical conclusion (section \ref{sec:conclusion}).
 
 % fully featured web platform, because modern web technologies allow it, GUI Application does not fit the requirements, and separating main work into server thread is, while potentially more performant, both potentially insecure and unnecessarily complex.
