@@ -174,6 +174,27 @@ The System contains a reference implementation of the Device Facade Interface, n
 \subsection{Device Driver Interface}
 \label{sec:impl:driver}
 Components implementing the Device Driver Interface are primarily responsible for handling the connection to the physical device from the Web Context. In case of the Leap Motion Platform, such a connection is obtained by connecting to a local Websocket Server provided by the Leap Motion Hardware Device Driver \emph{leapd} (see section \ref{sec:tech:leap-hardware-driver}). Other potential Motion Tracking Devices, such as the Microsoft Kinect Platform, provide similar methods of accessing the Hardware Device from a Web Context \cite{KinectSDK}. New Device support can thus be added to the platform by means of adding a Device Driver Implementation, and optionally providing the parts of the Platform that depend on specific Device Data with the relevant device-specific implementations, for example providing rendering methods for the new Device to the Graphical Device Logger (see \ref{sec:impl:frontend}, par. \emph{Graphical Device Logger}).
+\begin{figure}
+\begin{minted}{typescript}
+export interface DeviceDriver {
+  deviceName: string;
+  establishConnection: () => Observable<DeviceConnectionState>;
+  getTrackingData: () => Observable<GenericHandTrackingData>;
+  getClassificationData: () => Observable<ClassificationData> | undefined;
+  enableClassification: (classifiers: string[]) => void;
+  updatePreProcessors: (configs: PreProcessorConfig[]) => boolean;
+  updateClassifier: (config: ClassifierConfig) => boolean;
+  digest: (data: GenericHandTrackingData) => void;
+  ...
+}
+\end{minted}
+\caption{Device Driver Interface Definition (excerpt)}
+\label{fig:device-driver-interface}
+\end{figure}
+
+Figure \ref{fig:device-driver-interface} illustrates the methods and properties that must be implemented by Device Drivers. The \texttt{deviceName} property must be defined on the implementing class. This property acts as a unique device identifier across the whole system. If device specific implementations are required for some parts of the system, they are resolved using this identifier. The method \texttt{establishConnection} is used to signal to the DeviceDriver that a connection should be established. This method is called on system start. The method must return a \gls{RX} Observable representing the connection state to the device driver over time. After \texttt{establishConnection} has been called, the DeviceDriver should automatically attempt to reconnect to the native device driver if the connection has been lost or could not be established initially, and update the Observable on each registered change of connectivity.
+
+The \texttt{getTrackingData} method must return a \gls{RX} Observable that should emit the tracking data each time a new frame is received by the driver. The generic type of a device frame is named \texttt{GenericHandTrackingData}. The concrete implementations of the Interface may extend this type in order to explicitly type the data coming from the device. The methods \texttt{enableClassification}, \texttt{updatePreProcessors}, and \texttt{updateClassifier} are used to signal to the device driver that its internal Data Preprocessing and Classification pipelines should update. These subcomponents of the Device Driver are further explained in sections \ref{sec:impl:preprocessing} and \ref{sec:impl:classify}.
 
 \subsection{Persistence Framework}
 \label{sec:impl:persist}
