@@ -74,6 +74,7 @@ The Frontend, illustrated by a single rectangle in this case, communicates with 
 The Application State itself contains, apart from the state of the Frontend Components, references to the other subcomponents of the application, namely references to a component facilitating persistence, configuration information for data preprocessors and classifiers, and finally a reference to the device facade component, which facilitates access to the device driver implementation. These components are further elaborated in the following sections. 
 
 \subsection{Frontend}
+\label{sec:impl:frontend}
 \begin{figure}[h]
     \centering
     \includegraphics[width=14cm]{frontend}
@@ -109,7 +110,7 @@ x_{proj} = proj_{min} + (proj_{max} - proj_{min}) * \dfrac{x_{leap} - iBox_{min}
 
 to each dimension of relevant positional data, where $x_{proj}$ is the target position, $proj$ describes the bounds of the target projection, $x_{leap}$ is the positional data of the Leap Motion Device, and $iBox$ describes the bounds of the interactionBox. 
 
-Afterwards, the palm is drawn by constructing a 2-dimensional disc from the hand data. The fingers are drawn by constructing a 3-dimensional tube from each pointable object of the frame data. The tube is constructed from the skeletal tracking information of the pointable and interpolated using a Centripetal Catmull-Rom spline. This type of interpolating curve is widely used in the field of computer graphics because of several useful mathematical properties \cite{Yuksel2011}.
+Afterwards, the palm is drawn by constructing a 2-dimensional disc, and sizing, positioning, and rotating it according to the transformed hand data. The fingers are drawn by constructing a 3-dimensional tube from each pointable object of the frame data. The tube is constructed from the skeletal tracking information of the pointable and interpolated using a Centripetal Catmull-Rom spline. This type of interpolating curve is widely used in the field of computer graphics because of several useful mathematical properties \cite{Yuksel2011}.
 
 \paragraph*{Device Status Log}
 The Device Status Log is the final debugging component of the framework. The Status Log portrays the state of the three main failure points of the application. The main failure points include the connection of the Javascript Device Driver to the Native Device Driver (see \ref{sec:tech:leap-hardware-driver}), the availability of the Native Device Driver, and the Physical availability of the hardware tracking device. The Framework is able to detect the state of all three of these failure conditions, and displays instructions to the user on how to mitigate these problems in case one or more failures occur.
@@ -136,6 +137,54 @@ angle = \arccos(\dfrac{\vec{p_1} * \vec{p_2}}{\norm{\vec{p_1}} * \norm{\vec{p_2}
 \end{equation}
 
 to the directional vectors of neighboring fingers.
+
+\subsubsection{Preprocessing and Classification Configuration}
+The stream pre-processing and classification frameworks, outlined in further detail in sections \ref{sec:impl:preprocessing} and \ref{sec:impl:classify} respectively, require user configuration from the frontend. The available subcomponents that are available for each framework can be toggled on or off, and supplied with configuration that the subcomponent requires. Every change made in the Frontend configuration will automatically be propagated through the system, and will be available immediately.
+
+\subsubsection{Game Listing}
+The most integral part of the system is for the patient to be able to play games by means of performing the relevant recovery exercises as dictated by the therapist (see section \ref{sec:frs}). In order to implement this functionality in the system, the frontend has a component where the available Games are listed. For each available Game, a short title and description is shown. Furthermore, this component validates if the system is ready to execute the game (i.e., the motion tracking device is plugged in and functioning normally, and a classifier has been activated, as outlined in \ref{sec:impl:classify}). After the component has validated that the system is ready, a Play Button becomes available to the user. After the Play Button has been pressed, the component hands control to the Game Execution Framework (see section \ref{sec:impl:gameexec}).
+
+\subsubsection{Hand Recorder}
+The Hand Recorder is a Frontend Component with the primary purpose to alleviate framework developers from having to physically connect a hand tracking device in order to develop preprocessors, classifiers, or games for the platform. The component allows to record series of device frames. Optionally, the recordings may be titled, and persisted in the Persistence Provider implementation (see section \ref{sec:impl:persist}). If a previously saved recording is activated using this component, the contained frames will be propagated in an endless loop through the framework as if they were coming from a physical device. Only one saved recording may be active at any given time. If a hand tracking device is already connected and functioning as expected, the data coming from the recording will be preferred. Furthermore, the user is able to download saved recordings, for example in order to reproduce bugs, or using them for illustration purposes in other parts of the system.
+
+\subsection{Device Facade Interface}
+The Device Facade Interface is the primary access point for frontend components that wish to work with motion tracking device data. The Interface, named after the well-known Facade pattern in Software Development \cite{Gamma:1995:DPE:186897}, decouples the Frontend Components both from the actual implementation of the Device Driver (see section \ref{sec:impl:driver}), as well as the actual data source (i.e., Recording, Physical, or potential future data sources).
+
+
+Figure \ref{fig:device-facade-interface} shows an excerpt of the Interface. References to \gls{RX} streams representing Hand Tracking Data, Classification Data (see \ref{sec:impl:classify}), and the DeviceDriver implementation itself may be optained. Additionally, the Facade may receive Configuration updates regarding the Data Preprocessing and Classification Frameworks from Frontend Components, which will subsequently be relayed into the Device Driver for further processing.
+\begin{figure}
+\begin{minted}{typescript}
+export interface DeviceFacade {
+    getHandTrackingData: (
+      store: Store<RootState>
+    ) => Observable<GenericHandTrackingData> | undefined;
+    getClassificationStream: () => Observable<ClassificationData> | undefined;
+    getDeviceDriver: () => DeviceDriver;
+    updatePreProcessors: (x: PreProcessorConfig[]) => void;
+    updateClassifier: (x: ClassifierConfig) => void;
+    ...
+}
+\end{minted}
+\caption{Device Facade Interface Definition (excerpt)}
+\label{fig:device-facade-interface}
+\end{figure}
+The Interface is bound to the desired Implementation at compile time through dependency injection, and registered to the global application state on page load.
+
+The System contains a reference implementation of the Device Facade Interface, named \emph{AllPurposeFacade}, though different implementations, for example a mock implementation for utilization in Unit Tests, are conceivable.
+\subsection{Device Driver Interface}
+\label{sec:impl:driver}
+Components implementing the Device Driver Interface are primarily responsible for handling the connection to the physical device from the Web Context. In case of the Leap Motion Platform, such a connection is obtained by connecting to a local Websocket Server provided by the Leap Motion Hardware Device Driver \emph{leapd} (see section \ref{sec:tech:leap-hardware-driver}). Other potential Motion Tracking Devices, such as the Microsoft Kinect Platform, provide similar methods of accessing the Hardware Device from a Web Context \cite{KinectSDK}. New Device support can thus be added to the platform by means of adding a Device Driver Implementation, and optionally providing the parts of the Platform that depend on specific Device Data with the relevant device-specific implementations, for example providing rendering methods for the new Device to the Graphical Device Logger (see \ref{sec:impl:frontend}, par. \emph{Graphical Device Logger}).
+
+\subsection{Persistence Framework}
+\label{sec:impl:persist}
+\subsection{Stream pre-processing framework}
+\label{sec:impl:preprocessing}
+\subsection{Classification framework}
+\label{sec:impl:classify}
+\subsection{Game Execution Framework}
+\label{sec:impl:gameexec}
+
+
 
 
 \section{Development Pipeline}
