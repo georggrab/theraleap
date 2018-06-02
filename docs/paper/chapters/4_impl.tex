@@ -199,6 +199,8 @@ The \texttt{getTrackingData} method must return a \gls{RX} Observable that shoul
 
 Finally, it is possible to inject arbitrary data into the Device Driver by means of calling the \texttt{digest} method. The Device Driver is responsible for processing the data coming through this method in the same way that real device data is processed. This enables testing of the Device Driver without requiring a physical hardware device, and furthermore provides the technical foundation for tooling such as the Hand Recorder (section \ref{sec:impl:hand-recorder})
 
+As part of this work, two implementations of the Device Driver interface are provided: \texttt{LeapMotionDeviceDriver} and \texttt{ThreadedLeap2Driver}, both providing support for the Leap Motion Device. While the \texttt{LeapMotionDeviceDriver} only provides minimal support for the most basic functionality, the \texttt{ThreadedLeap2Driver} provides a full implementation of all required functionality. Additionally, this implementation is spawning a Web Worker (see section \ref{sec:tech-web-worker}) internally, so all data ingestion and preprocessing is performed in a separate thread, ensuring performant operation for the rest of the system.
+
 \subsection{Persistence Framework}
 \label{sec:impl:persist}
 It can be argued that the User Experience of a complex software product improves significantly if it has the capability of persisting the User Configuration over subsequent visits. If this were not the case, the User would have to reenter any settings that have been made previously each time the application is restarted. In the context of Web Applications, various possibilities exist for persisting data, such as storing and loading the data from a Backend, saving the data using Browser Cookies, or using more recent Web Specifications such as Local Storage or IndexedDB.
@@ -208,42 +210,109 @@ All of these technologies have several advantages and disadvantages. In addition
 
 \subsection{Stream pre-processing framework}
 \label{sec:impl:preprocessing}
+As mentioned briefly in section \ref{sec:impl:frontend}, the user has the option to configure various data pre-processors. The goal of pre-processors may be to provide more accurate data to subsequent system components, or reduce workload by stopping unnecessary data from further propagating through the system. The configuration, which pre-processors have been activated by the user and how they are configured, is supplied to the device facade, and subsequently, the device driver implementation, on each change. In the case of pre-processors, the configuration consists of an array of configuration objects, in turn consisting of a unique pre-processor identifier, and an array of pre-processor specific configuration options. The Device Driver implementation should now call the provided entrypoint to pre-processing framework, named \texttt{PreProcessingResolver}, with the received configuration. The \texttt{PreProcessingResolver} internally looks up the pre-processing identifier in the \texttt{PreProcessingRegistry}, where the identifier is resolved to a class reference implementing the desired preprocessor. The class reference is then instantiated by calling its constructor with the supplied configuration options, and returned from the resolver.
+
+The Preprocessors themselves must implement the standard \gls{RX} Operator interface. The Operator interface is primarily used internally in the rx.js library in order to implement the \gls{RX} Operators (such as \texttt{map} or \texttt{filter}), but implementing the interface in order to develop custom Operators is possible and the official recommendation for creating reusable Observable transformations \cite{RxJsOperatorCreation}. This architecture allows multiple Preprocessors to be chained, allowing for complex data cleansing and refinement pipelines to be implemented.
+
+Preprocessors may be device specific or generic. Device specific Preprocessors are allowed to access the data supplied by the device, and thus unusable for other devices which likely send a different data format,
+
+As part of this work, a number of example Preprocessors have been defined.
+
+\subsubsection{Destroy Useless Frames}
+The \texttt{DestroyUselessFramesPreProcessor} is a configuration-less Leap Motion device-specific preprocessor which stops frame propagation when the \texttt{hands[]} array of the frame is empty, and thus likely unsalvagable by the rest of the System. The \texttt{hands[]} array is empty if and only if no hand has been detected by the Leap Motion Device at that point in time. The PreProcessor reduces processing load and provides more accurate data to the rest of the system in most cases\footnote{The Leap Motion Device sometimes reports empty frames even if a hand is positioned above the sensor. As all empty frames are omitted by this preprocessor, the overall accuracy arguably increases}.
+
+\subsubsection{Drop N Frames}
+The \texttt{DropNFramesPreProcessor} is a generic preprocessors which drops every n-th frame. The variable \texttt{n} is supplied through configuration. Its primary purpose is to reduce load for slow devices at the cost of some accuracy.
+
+\subsubsection{Limit FPS}
+The \texttt{LimitFPSPreProcessor} is a generic preprocessor which throttles the device framerate to a specific number per second, as supplied through configuration.
+
 \subsection{Classification framework}
 \label{sec:impl:classify}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=14cm]{reactive-pipeline}
+    \caption{Recommended Data flow pipeline for Device Driver implementations.}
+    \label{fig:reactive-pipeline}
+\end{figure}
+
+Figure \ref{fig:reactive-pipeline} gives an overview over the recommended reactive data flow pipeline for Device Driver Implementations. Data is first ingested into a \gls{RX} Subject named \texttt{DeviceFrameSubject} from either the physical data source or the Device Drivers \texttt{digest} method. Afterwards, the data is preprocessed according to any configured preprocessing operators and afterwards fed into the \texttt{PreProcessSubject}. After Preprocessing, the data is directly relayed back to the facade, and, subsequently, the frontend, in order to provide it to relevant frontend components (i.e. Hand Loggers and Games). Additionally, the Data is fed into the \texttt{ClassifySubject}, where the Hand Exercise Classification occurs.
+
+The Classification is functioning in a similar fashion to the Preprocessing. The Device Facade receives data from the Frontend containing an Exercise ID, and Exercise specific configuration data, which is relayed to the Device Driver, where the ID is resolved to the concrete Classification Operator. However, while the Preprocessing Operators both input and output Hand Tracking Data, the Classification Operators only receive the Hand Tracking Data as Input and produce data of type \texttt{ClassificationData} as output. The \texttt{ClassificationData} type may contain information regarding what kind of Exercise has been detected, how precisely the Exercise has been executed, how likely the result was a result of cheating, and other potentially relevant, Exercise specific monitoring information. 
+
+As part of this work, an example implementation for one Exercise Classifier has been provided.
+
+\subsubsection{Thumb Abduction Exercise}
+A common exercise required in ergo therapy is to spread the thumb from the otherwise closed hand as far as possible, an exercise known as Thumb Abduction\cite[sec. 4.1.5, par. Abduction]{StudiArbeitVolzBaumotte}. By composing several \gls{RX} Operators, as illustrated in Figure \ref{fig:rx-composition}, the classification algorithm for this exercise can be provided to the framework.
+
+\begin{figure}
+\begin{minted}{haskell}
+                     bufferTime(w, f) 
+                         >>= map(hof_thumb)
+                         >>= filter(pred) 
+                         >>= map(hof_deriv) 
+                         >>= map(classify)
+\end{minted}
+\caption{Composition of \gls{RX} Operators suitable for detecting Thumb Abduction}
+\label{fig:rx-composition}
+\end{figure}
+
+Using the \gls{RX} \texttt{bufferTime($w$, $f$)} Operator, the incoming preprocessed device frames, represented by the Observable $O$, can be accumulated over a window $w$ in an array representing that timeframe. This accumulation is executed every $f$ milliseconds. The application of the Operator returns a new Observable, $O'$, emitting arrays of device frames that were emitted by $O$ in the specified time period. For example, applying \texttt{bufferTime(200, 50)} to $O$ returns a new Observable $O'$, emitting arrays containing the emissions of $O$ in the timeframe $t_1 = [0; 200] ms$, $t_2 = [50; 250] ms$, $t_3 = [100; 300] ms$, etc.
+
+By applying the \texttt{map($hof$)} Operator to $O'$, the emitted arrays of device frames can now by transformed into arrays of specific tracking information required for detecting the Thumb Abduction. The higher order function $hof$ required as an argument to the Operator must be implemented for each Device that should support the Abduction Exercise. In the provided implementation, the $hof$ transforms the Device Frames into the tip position of the first detected hand of the frame\footnote{This results in adequate detection accuracy, though transforming the device frames into angles between the thumb and index finger would obviously be the better choice when implementing a serious Thumb Abduction classifier.}. The result of the \texttt{map($hof$)} Operator is now a new Observable $O''$ emitting arrays of thumb tip positions, representing the timeframes as configured by the previous \texttt{bufferTime} transformation.
+
+By applying the \texttt{filter($pred$)} Operator to $O''$, a new Observable $O^{(3)}$ is returned containing only emissions of $O''$ that satisfy the predicate function $pred$. In this algorithm, the predicate function compares the difference between the maximum and minimum values of the emitted arrays to a variable $threshhold$, denoting the minimum distance in millimeters the thumb has to be spread in order to register as a successful exercise execution.
+
+The \texttt{map} Operator is now applied to Observable $O^{(3)}$, taking the first derivative of the emitted thumb positions. The resulting Observable, $O^{(4)}$, now emits arrays representing the change of thumb positions in the configured timeframe (thumb tip velocity).
+
+In a final application of the \texttt{map} Operator, it is first determined if a zero intersection can be found in the emissions of $O^{(4)}$. This would mean that the timeframe contains data indicating that a thumb abduction, followed by an adduction (return of the extended thumb to the closed hand) has been performed. Finally, if the zero intersection has happened near the center of the emission, the classifier reports that the Exercise has been performed\footnote{For reasons of brevity, some transformations responsible for omitting duplicate classification emissions have been left out in the textual explanation of the algorithm.}.
+
+The tolerance window used to determine if the zero intersection is in the center of the thumb velocity data, as well as all other variables mentioned in this section, are initialized with values giving good empirical classification results, and fully configurable from the frontend in order to adapt to a variety of patients and exercise variations.
+
+
 \subsection{Game Execution Framework}
 \label{sec:impl:gameexec}
 
+As mentioned briefly in section \ref{sec:impl:frontend}, after the Game List Frontend Component has determined that the system is ready to execute a game, and the User has clicked the play button, the Component hands control to the Game Execution Framework. The Framework is responsible for dynamically loading all additional libraries required by the Game Implementation, initializing the Game, as well as providing lifecycle hooks, classification data, and device tracking data to the Game.
 
+The Interface that all Game Implementations must implement is shown in Figure \ref{fig:game-interface}. 
 
+\begin{figure}
+\begin{minted}{typescript}
+      export interface Game {
+        onStart: (
+          config: GameConfiguration,
+          notifyGameOver: () => void
+        ) => Promise<void>;
+        onPause: () => Promise<void>;
+        onResume: () => Promise<void>;
+        onStop: (vm: Vue) => Promise<void>;
+      
+        onClassificationReceived: (c: ClassificationData) => void;
+        onMotionTrackingDataReceived: (m: GenericHandTrackingData) => void;
+      }
+\end{minted}
+\caption{Interface Definition for Platform Games}
+\label{fig:game-interface}
+\end{figure}
 
-\section{Development Pipeline}
-Webpack 4
+Once the Game Execution Framework has finished initializing the Game and loaded its third-party dependencies, the \texttt{onStart} method is called. Two parameters are supplied to the Game Implementations at that stage. The \texttt{config} Parameter currently contains only a reference to the HTML Element where the Game should reside in. The \texttt{notifyGameOver} parameter is a function reference that the Game should call once the Game is over, in order to notify the framework of this event, and appropriate action can be taken. In the \texttt{onStart} method, the Game Developer should initialize the Game inside the supplied HTML Element Reference, start Game Execution, and optionally save the \texttt{notifyGameOver} function reference for later use.
 
-VueJS 2, Vue Router, VueX, inversify Dependency Injection
+The Game Execution Framework implements a Pause functionality, which is triggered by pressing the Space Keyboard Button while playing the Game. The Game Execution Framework subsequently delegates the Information that the Player wishes to pause the Game to the Game Implementation, by calling its \texttt{onPause} or \texttt{onResume} methods. In these methods, the appropriate actions necessary to implement Pause or Resume functionality should be taken by the Game Developer.
 
-Karma Unit Tests
+The \texttt{onStop} method will be called by the Game Execution Framework if one if these conditions is true:
 
-THREE.js
-\section{Implemented Subsystems}
-\subsection{Device Driver Interface}
-Describe Generalized Device Driver Interface. Point out that adding different devices is possible with this architecture.
-\subsection{Device Facade}
-Justify for a need of a Facade in Front of the raw Device Driver: Seperation of Concerns and Recording (Mock data) Functionality. Ease of Testing.
-\subsection{Device Debug Interface}
-Describe Component: Raw Device Logger, Device Status Log, Device Graphical Log
-\subsection{Graphical Hand Logger}
-THREE.JS, OrbitControls, Smoothing, Prop Configuration
-\subsection{Device Recorder}
-Record Segments of hand movements in order to aid in development, make classification errors reproducible
-\subsection{Persistence Provider}
-Describe Abstract Persistence Provider Interface
+\begin{enumerate}
+   \item After the Game signals to the Framework that the Game is over, by calling the \texttt{notifyGameOver} method
+   \item After the Player presses the \texttt{Esc} Keyboard Button
+   \item After the Player navigates to a different Frontend Component 
+\end{enumerate}
 
-Describe Concrete Persistence Provider Interface Implementation: IndexedDB
-\subsection{Preprocessing Framework}
-Justify need for Preprocessing: Lots of useless data coming from the device. Preliminary
-clean up of data may be relevant for all classifiers
-\subsection{Classification Framework}
-Describe how Classifiers receive the preprocessed data frame stream, and transform the stream in order to emit another stream of classifications, along with relevant metadata
-\subsection{Game Execution Engine}
-Describe how Games are receiving the Classification Stream and using that in order to drive the gameplay.
+\noindent
+In the \texttt{onStop} method, the Game Developer is responsible for stopping the Game Execution, and releasing any global resources that were required for Game Execution (i.e., the \texttt{window.requestAnimationFrame()} handler, Timeouts set using \texttt{window.setTimeout()}, etc.). Additionally, the Game Developer may want to display a Game Over screen to the Player, perhaps also containing statistics, such as the final game score, or even a detailed analysis of hand movements and performance throughout the game. In order to make this possible, a reference \texttt{vm} to the Game Execution Frameworks Vue Instance is provided as a parameter to the \texttt{onStop} method. Using the capabilities of the parent Vue Instance, for example its programmatic routing facilities, accessed through the \texttt{vm.\$router} property, the Game Developer may redirect the User to any different part of the Application Frontend, where such final reporting may occur.
 
+The \texttt{onClassificationReceived} and \texttt{onMotionTrackingDataReceived} are called each time the Classification Frameworks currently active Exercise classifier reported a successful execution, and new motion tracking data was received from the Device Facade, respectively. The Game Developer can use the Data contained in \texttt{onMotionTrackingDataReceived} in any way that is useful, for example, to use the Palm Position for moving the Figure the Player controls. Every time data is received through the \texttt{onClassificationReceived} method, the Players Game Figure should execute a meaningful action, for example shooting a bullet in the context of an action game.
+
+As part of this paper, an example implementation of a Game has been provided.
+
+\subsubsection{Example Implementation: Space Shooter}
