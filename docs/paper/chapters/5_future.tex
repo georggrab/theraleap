@@ -1,23 +1,60 @@
 \chapter{Recommended Future Works}
 \label{sec:future}
-\section{Proposed Subsystems}
+As described in section \ref{sec:future}, the scope of this work was to design and provide implementations for a web based computer aided ergotherapy framework, which is architecurally capable of meeting the requirements outlined in section \ref{sec:reqanalysis}. While this work provides a working implementation of the framework, the focus has not been to provide actual implementations for the frameworks subcomponents, such as the preprocessing, exercise classification, and game components. While example implementations have been provided for each of these subcomponents, their function has yet to be verified by the stakeholding therapists. Additionally, more games and exercise classifiers have to be developed in order for the system to be useful to a broad spectrum of patients and ergo therapists. 
+
+While the System Architecture outlined in this work is theoretically capable of meeting all functional and non-functional requirements, as elaborated in section impl:reqanalysis, the provided implementation does not include the implementations required in order to fulfill the Monitorability requirement (see section \ref{sec:req:monitorability}). The additional components required in order to fulfill this requirement are outlined in the following section.
+\section{Monitorability: Additional Components}
 \subsection{Data Postprocessing Framework}
-Generic interface that does something with classification data / game data. For example logging it to a remote location, like a backend
+\label{sec:future:data-postprocessing-framework}
+In a similar manner to the preprocessing framework, which is included in the System implementation, an additional framework responsible for handling data after they are fully processed is conceivable. The implementations for this framework would be injected into the existing Game Execution Component. After the Game Execution Component has provided the Device Tracking and Classification data to the Game Implementation, it would also provide the Data to the Data Postprocessing Implementation. Furthermore, the Game Interfaces \texttt{onStart} method could be supplied an additional parameter \texttt{supplyPostProcessingData(data: PostProcessingData)}, a function reference that the Game Implementation may call if it wishes to supply additional data to the Postprocessing Implementation.
 
-\subsection{Backend Component}
+\begin{figure}
+\begin{minted}{typescript}
+export interface PostProcessingData {
+    type: string;
+    data: any;
+}
 
-auth -> classification data -> backend
+export interface PostProcessor {
+    openSession(authenticationData: any): Session;
+    closeSession(session: Session);
+    onDataReceived(session: Session, data: PostProcessingData);
+}
+\end{minted}
+\caption{A conceivable Interface Definition for Postprocessors.}
+\label{fig:postprocessors}
+\end{figure}
+
+A conceivable Interface Definition for such a Postprocessing Framework is illustrated in Figure \ref{fig:postprocessors}. The Postprocessor would have to implement a methods for opening and closing Sessions. In this context, Sessions represent a period where the patient is training using the System. In the simplest case, every Game Execution can be modelled as one Session. For opening the Session, data used to authenticate the patient may be required, and is supplied to the Postprocessor as an argument of the \texttt{openSession} method. Once the Postprocessor has opened a session, it returns a reference of it to the caller (in the simplest case, this would be a Session ID). The caller, that being either the Game Execution Framework or the Game itself, may now report to the Postprocessor that relevant monitoring data has accrued by calling its \texttt{onDataReceived} method. Arguments to the method may include the Session reference previously obtained by calling the \texttt{openSession} method, and arbitrary \texttt{PostProcessingData}. It may be useful to group the Post Processing Data using type identifiers, which could be used to separate Device Tracking Data, Classification Data, and other arbitrary Monitoring Data reported by the game. The Postprocessor may now arbitrarily process the data. At the end of a Session, it should be closed by the caller by using the \texttt{closeSession} method.
+
+Similarly to the existing Preprocessor Component, is may be useful to support using multiple Postprocessors at the same time. Several implementations of Postprocessors are conceivable.
+
+\subsubsection{Backend Reporter}
+\label{sec:future:backend-reporter}
+One possible implementation of the Postprocessor Interface might be a component \texttt{BackendReporter} that logs the accrued Postprocessing data to a remote Backend Server. The Backend could persist the data in a database, perform analytics and evaluation on it, and make the analysis results available again through an API. These insights could now be queried again by the System for purposes of visualization and progress analysis, as outlined in section \ref{sec:future:progress-analysis-dashboard}.
+
+\subsubsection{Local Reporter}
+\label{sec:future:local-reporter}
+It is also possible to implement the same functionality without a remote backend component. The data could be supplied to another locally running component of the system, perhaps running on a separate Thread by utilizing Web Workers, where the same tasks would be performed.
+
+\subsection{Backend and Authentication Components}
+In conjunction with the previously conceived Backend Reporter, an actual remote Backend System performing the evaluation must be implemented. In addition to performing the analytics and making it available in an API, it may be useful to also implement Authentication and User Roles at this stage, so the therapists can remotely view patients progress, and multiple patients are restricted to seeing their own progress. Authentication and Authorization could be provided with minimal development effort by utilizing existing implementations such as the Open Source Software Keycloak by RedHat\footnote{\url{https://www.keycloak.org/}}.
+
+Once a choice has been made on how Authentication and Authorization should be implemented, standard Login and Register Components can be trivially added to the Framework, by following the Implementation Choices best practice.
 \subsection{Progress Analysis Dashboard}
-Component that gets patients postprocessed classification / game results, and visualizes progress
-
-auth -> backend -> select patient -> patient view
+\label{sec:future:progress-analysis-dashboard}
+The Analytics and Evaluation generated by the Postprocessors outlined in section \ref{sec:future:data-postprocessing-framework} could be displayed in a Frontend Dashboard Component in order to inform the therapist and patient of the recovery progress. In order to implement this component, a \texttt{DataSource} Interface should be implemented for every relevant Postprocessor, so the user remains flexible in how to use the System.
 \subsection{Messaging Platform}
-Therapist Requirement. Ability to send messages to / from patients
-\section{Proposed Enhancements to existing Components}
-hand recorder upload
-\subsection{Local and Remote Persistence}
-Persistence for Preprocessing, Classification, and Measurement config
-\subsection{Classification Metadata}
-Anti Cheat (Therapist requirement)
+After a Backend Component is ready, and a method for Authentication is in place, a Messaging Platform as required as part of the Monitorability Requirement can be implemented trivially, for example by integrating existing Messaging Frameworks such as Socket.IO\footnote{\url{https://socket.io}}.
 
-Log Classification Specific relevant Metadata for Therapist Analysis
+\section{Proposed Enhancements to existing Components}
+Apart from adding new Features to the System, a few of which have been elaborated on in the previous section, many improvements to existing Component Implementations are conceivable.
+
+\subsection{Localization}
+Up until now, all Text Elements in the System are written in English and targeted at end users in Western Countries. Localization could be implemented to every existing textual Component in order to make the system usable to a broader end user spectrum. From a technical standpoint, this feature would be easiest to implement by using an existing Internationalization Plugin for Vue, such as \texttt{vue-i18n}\footnote{\url{https://github.com/dkfbasel/vuex-i18n}}.
+
+\subsection{Local and Remote Persistence}
+As part of the provided System implementation, Persistence is only implemented for the Device Recorder Frontend Component. Persistence could be trivially provided to the remaining Frontend Components by using the existing Persistence Provider Interfaces.
+
+\subsection{Classification Metadata}
+So far, the \texttt{ClassificationData} abstract data type does not contain any useful information, apart from the fact that a Exercise has been performed. A lot of other Information could be encoded in this type in the future, such as a \texttt{performance} property indicating how well the exercise has been performed, or a \texttt{cheatFactor} property indicating how likely the exercise execution was a result of cheating.
