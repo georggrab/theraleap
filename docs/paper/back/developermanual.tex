@@ -1,7 +1,68 @@
 \chapter{Developer Manual}
-\section{Building and Running the Project in Development Mode}
-\section{Executing Unit Tests}
-\section{Extending the Framework}
-\subsection{Adding a Preprocessor}
-\subsection{Adding a Classifier}
-\subsection{Adding a Game}
+Developers are advised to read through the main part of the paper in order to gain a general understanding on how the framework functions. Additionally, instructions on how to compile the project, and run the project in a development mode are given in the \texttt{README.me}, in the Source Code Repository (see Appendix \ref{app:code}). This Manual briefly gives practical advice on how to implement the System Interfaces, namely the \texttt{Preprocessing}, \texttt{Gesture Classification}, and \texttt{Game} Interfaces.
+\section{Adding a Preprocessor}
+As an example, let's add a Preprocessor for the Leap Motion Device that filters out frames where more than one hand is detected.
+\subsection{Implement the Preprocessor}
+This Preprocessor is specific to Leap Motion Device data, so be sure to put it into the \texttt{src/processing/leap} folder.
+\begin{minted}{typescript}
+// src/processing/leap/droptwohands.ts
+export const DropTwoHandsId = "DropTwoHands";
+
+export class DropTwoHandsPreProcessor
+  implements Operator<GenericHandTrackingData, GenericHandTrackingData> {
+  constructor() {}
+
+  public call(
+    subscriber: Subscriber<GenericHandTrackingData>,
+    source: Observable<GenericHandTrackingData>
+  ) {
+    return source
+      .pipe(
+        // filter every frame where the hand
+        // array is longer than 1.
+        filter((value: LeapHandTrackingData) => value.data.hands.length > 1)
+      )
+      .subscribe(subscriber);
+  }
+}
+\end{minted}
+
+\subsection{Register the Preprocessor to the Framework}
+in \texttt{src/processing/resolver.ts}, register your Preprocessor.
+\begin{minted}{typescript}
+// src/processing/resolver.ts
+export const ResolverRegistry: {
+  [_: string]: { new (...args: any[]): Operator<any, any> };
+} = {
+  [DropNFramesPreProcessorId]: DropNFramesOperator,
+  [DestroyUselessFramesId]: DestroyUselessFramesOperator,
+  [FPSThrottlerId]: FPSThrottler,
+  // our new preprocessor
+  [DropTwoHandsId]; DropTwoHandsPreProcessor
+};
+\end{minted}
+
+\subsection{Add the new Preprocessor to the Vuex State}
+To the \texttt{preprocessors.ts} state submodule, add a the state of the preprocessor, and implement the \texttt{constructConfig} method.
+\begin{minted}{typescript}
+// src/state/modules/preprocessors.ts
+state: {
+    preprocesors: {
+        ...
+        dropTwoHandsPreProcessor: {
+            enabled: false,
+            constructConfig: () => {
+                identifier: DropTwoHandsId,
+                // We don't need args for this
+                args: []
+            }
+        }
+        ...
+    }
+}
+\end{minted}
+\subsection{Add a Description to the Frontend}
+Create a new Vue Component, containing an \texttt{md-card}, describing your Preprocessor. Import and integrate it in the \texttt{PreProcessing.vue} Frontend Component. If the switch is flipped by the User, call \texttt{modifyPreProcessor}, and commit a state mutation to set the \texttt{enabled} property of your preprocessor to \texttt{true}. Finally, call \texttt{preprocessorSelectionUpdated}. This will tell the Device Driver that the Preprocessors have changed, call the state function \text{constructConfig} internally, and construct your Preprocessor, supplying any arguments to the constructor in the order you specified in the \texttt{args} array.
+Create a new C
+\section{Adding a Classifier}
+\section{Adding a Game}
