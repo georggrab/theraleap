@@ -63,6 +63,101 @@ state: {
 \end{minted}
 \subsection{Add a Description to the Frontend}
 Create a new Vue Component, containing an \texttt{md-card}, describing your Preprocessor. Import and integrate it in the \texttt{PreProcessing.vue} Frontend Component. If the switch is flipped by the User, call \texttt{modifyPreProcessor}, and commit a state mutation to set the \texttt{enabled} property of your preprocessor to \texttt{true}. Finally, call \texttt{preprocessorSelectionUpdated}. This will tell the Device Driver that the Preprocessors have changed, call the state function \text{constructConfig} internally, and construct your Preprocessor, supplying any arguments to the constructor in the order you specified in the \texttt{args} array.
-Create a new C
 \section{Adding a Classifier}
+Let's add a classifier that randomly classifies every nth frame as a Gesture.
+\subsection{Implement the Classifier}
+\begin{minted}{typescript}
+// src/classify/classifiers/randomtestclassifier.ts
+export const RandomTestClassifierId = "RandomTestClassifier";
+export class RandomTestClassifier
+  implements Operator<LeapHandTrackingData, ClassificationData> {
+  constructor(
+    // With this parameter we'll configure on which
+    // frame we'll emit the Classification
+    private n: number,
+  ) {}
+
+  public call(
+    subscriber: Subscriber<ClassificationData>,
+    source: Observable<LeapHandTrackingData>
+  ) {
+    return source
+      .pipe(
+          // Buffer n Frames
+          bufferCount(this.n),
+          // Transform the result into ClassificationData
+          map((_ : LeapHandTrackingData[]) => {
+              return {
+                actionName: "ONE_SHOT",
+                metrics: {
+                    cheatFactor: 0,
+                    quality: 0
+                }
+              }
+          })
+      )
+      .subscribe(subscriber);
+  }
+}
+\end{minted}
+\subsection{Register the Classifier to the Framework}
+In \texttt{src/classify/resolver.ts}, register the Classifier so the Resolver knows how to construct an instance of it.
+\begin{minted}{typescript}
+export const ClassifierRegistry: {
+  [_: string]: { new (...args: any[]): Operator<any, any> };
+} = {
+  [ThumbSpreadClassifierId]: ThumbSpreadClassifier,
+  // our shiny new classifier
+  [RandomTestClassifierId]: RandomTestClassifier
+};
+\end{minted}
+\subsection{Add the Classifier to the VueX state}
+Next, let's model the State of the Classifier Frontend Component. In \texttt{classifiers.ts}:
+
+\begin{minted}{typescript}
+// src/state/modules/classifiers.ts
+state: {
+classifiers: {
+    ...
+    RandomTestClassifier: {
+        enabled: false,
+        n: 150,
+        constructConfig: () => {
+            return {
+                identifier: RandomTestClassifierId,
+                args: [
+                    classifier.state.classifiers.RandomTestClassifier.n
+                ]
+            }
+        }
+    },
+    ...
+}
+\end{minted}
+\subsection{Add a Description to the Frontend}
+Create a new Vue Component, containing an \texttt{md-card}, describing your Classifier, how it works, and how to configure it. Import and integrate it in the \texttt{Classifiers.vue} Frontend Component. If the switch is flipped by the User, or any Configuration property has changed call \texttt{classifierSelectionUpdated}.
+
 \section{Adding a Game}
+\subsection{Implement the Game}
+If your Game needs any third party assets, such as images, put them into the \texttt{src/dist} directory, or alternatively import them using Webpack. 
+
+To add a Game, add a class implementing the \texttt{Game} interface, and make it the default export. In the class, you can import any third party libraries you may need. All of these will be lazy loaded by the Game Execution Framework, so you don't need to worry about making a negative impact on bundle size.
+
+\subsection{Register the Game to the Framework}
+Next, tell the Framework how to construct the game. The \texttt{import()} function should receive as an argument the path to the class implementing the \texttt{Game} Interface (or alternatively, the directory name. This works if there is an \texttt{index.ts} file in the directory.).
+\begin{minted}{typescript}
+// src/games/resolver.ts
+export const GameResolveMapping: { [key: string]: () => Promise<any> } = {
+  "space-shooter": () =>
+    import("@/games/space-shooter").then((imp: any) => {
+      return imp.default;
+    }),
+  // our new game
+  "new-game"; () =>
+    import("@/games/new-game").then((imp: any) => {
+      return imp.default;
+    }),
+};
+\end{minted}
+\subsection{Add the Game to the GameList}
+Finally, add the Game to the GameList component. Add a new card containing a brief description and title. Use the existing Button Components for rendering the Play Buttons. On click, call \texttt{play('new-game')} (the key you put into \texttt{GameResolveMapping}).
