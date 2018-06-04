@@ -1,7 +1,7 @@
 \chapter{Introduction}
 \label{sec:introduction}
 \section{Problem description}
-In 2016, approximately 60.000 german residents have been hospitalized due to hand or wrist injuries \cite{DeStatisHandInjuries}. The inpatient treatment of such injuries is often followed by a lengthy recovery phase in which ergotherapeutic treatment occurs in order to further aid recovery. As ergo therapy sessions are usually held in one-on-one sessions, this results in a significant time and resource both by the patient and the treating clinic. Additionally, the sessions themselves are often described by patients as boring and unmotivating, citing their repetitive nature.
+In 2016, approximately 60.000 German residents have been hospitalized due to hand or wrist injuries \cite{DeStatisHandInjuries}. The inpatient treatment of such injuries is often followed by a lengthy recovery phase in which ergotherapeutic treatment occurs in order to further aid recovery. As ergo therapy sessions are usually held in one-on-one sessions, this results in a significant time and resource investment both by the patient and the treating clinic. Additionally, the sessions themselves are often described by patients as boring and unmotivating, citing their repetitive nature.
 
 Ergo therapists of the Katharinenhospital Stuttgart are currently researching alternative treatment methodologies that could constitute an improvement to all three of these fundamental problems. The aim of the research is to introduce various gamification aspects to the recovery sessions. The patients should be enabled to perform repetitive parts of the recovery exercises at home by means of successfully executing them while controlling video games. This methodology of executing prevention and rehabilitation measures is an active and well known field of research commonly referred to as Exergames \cite{RehaCareExergames}. In a more general sense, games that are designed with a second primary purpose (apart from entertainment) are referred to as serious games \cite{SeriousGamesBook}. 
 
@@ -41,7 +41,7 @@ In addition to the functional requirements, the following \glspl{NFR} have to be
 
 \subsubsection{Modularization}
 \label{sec:nfr:modularization}
-On a technical level, the program logic responsible for classifying if an exercise has been completed (see \ref{sec:exercise-classification}) should be separated from the actual Exergames logic (see \ref{sec:gameplay}). This would pose the advantage of introducing a modular aspect to the system, as both exercise classifiers and games could be exchanged, both keeping the patients engaged in the platform by allowing them to train their assigned exercise using a variety of games, and greatly simplifying the work of future developers, as they will be enabled to develop games for the platform without any prior knowledge of exercise classification, and vice versa.
+On a technical level, the program logic responsible for classifying if an exercise has been completed (see \ref{sec:exercise-classification}) should be separated from the actual Exergames logic (see \ref{sec:gameplay}). This would pose the advantage of introducing a modular aspect to the system, as both exercise classifiers and games could be exchanged, both keeping the patients engaged in the platform by allowing them to practice their assigned exercise using a variety of games, and greatly simplifying the work of future developers, as they will be enabled to develop games for the platform without any prior knowledge of exercise classification, and vice versa.
 
 \subsubsection{Performance}
 \label{sec:nfr:performance}
@@ -49,7 +49,7 @@ Performance is a critical \gls{NFR} for the system. All data coming from the dev
 
 \subsubsection{Availability}
 \label{sec:nfr:availability}
-From the therapists point of view, it is critical that the platform is capable of running without an active network connection. This results in the technical restriction that all network connections made by the platform must be both optional and fault tolerant. This requirement originates from the assumption of the therapists that the system will not always be used in contexts where an internet connection is readily available.
+From the therapist point of view, it is critical that the platform is capable of running without an active network connection. This results in the technical restriction that all network connections made by the platform must be both optional and fault tolerant. This requirement originates from the assumption of the therapists that the system will not always be used in contexts where an internet connection is readily available.
 
 
 \subsubsection{Ease of deployment}
