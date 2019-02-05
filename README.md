@@ -1,4 +1,6 @@
 # theraleap
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Ftalkdirty%2Ftheraleap.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Ftalkdirty%2Ftheraleap?ref=badge_shield)
+
 
 Help patients recover from hand operations by allowing them to do recovery excercises at home by utilizing state of the art hand tracking technology &amp; the modern web.
 
@@ -114,3 +116,7 @@ This server component will be able to be run locally on the client PC, or altern
 Monitoring Server
 The Monitoring Server collects the data obtained from the patient playing the game and performs analysis on it. Data is saved in a time series database. The analysis is made available to the client frontend (for both patients and therapists) for progress tracking.
 This server component will be able to be run locally on the client PC, or alternatively in a hosted environment.
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Ftalkdirty%2Ftheraleap.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Ftalkdirty%2Ftheraleap?ref=badge_large)
